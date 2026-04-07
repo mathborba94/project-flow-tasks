@@ -1,0 +1,299 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users          User[]
+  projects       Project[]
+  tasks          Task[]
+  timeEntries    TimeEntry[]
+  taskTypes      TaskType[]
+  pipelines      Pipeline[]
+  documents      ProjectDocument[]
+  knowledgeBases KnowledgeBase[]
+  invitations    Invitation[]
+}
+
+model User {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  name        String
+  email       String   @unique
+  role        UserRole @default(MEMBER)
+  hourlyCost  Decimal  @db.Decimal(10, 2) @default(0)
+  avatarUrl   String?
+  supabaseUserId String? @unique
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownedProjects    Project[]         @relation("ProjectOwner")
+  assignedTasks    Task[]            @relation("TaskAssignedTo")
+  timeEntries      TimeEntry[]
+
+  @@index([organizationId])
+  @@index([email])
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model Project {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  name        String
+  description String?   @db.Text
+  status      ProjectStatus @default(ACTIVE)
+  
+  ownerId     String
+  owner       User     @relation("ProjectOwner", fields: [ownerId], references: [id])
+  
+  budget      Decimal? @db.Decimal(12, 2)
+  hourlyRate  Decimal? @db.Decimal(10, 2)
+  
+  startDate   DateTime?
+  endDate     DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tasks       Task[]
+  documents   ProjectDocument[]
+  timeEntries TimeEntry[]
+
+  @@index([organizationId])
+  @@index([ownerId])
+  @@index([status])
+}
+
+enum ProjectStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+model Task {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  projectId      String?
+  project        Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  
+  taskTypeId     String?
+  taskType       TaskType? @relation(fields: [taskTypeId], references: [id])
+  
+  pipelineStageId String?
+  pipelineStage   PipelineStage? @relation(fields: [pipelineStageId], references: [id])
+
+  title       String
+  description String?   @db.Text
+  
+  assignedToId String?
+  assignedTo   User?    @relation("TaskAssignedTo", fields: [assignedToId], references: [id])
+  
+  status      TaskStatus @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+
+  timeEntries    TimeEntry[]
+  sla            Sla?
+
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([assignedToId])
+  @@index([status])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model TimeEntry {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  taskId         String
+  task           Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  
+  projectId      String?
+  project        Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  minutes        Int
+  costSnapshot   Decimal  @db.Decimal(12, 2)
+  description    String?  @db.Text
+  
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([taskId])
+  @@index([userId])
+  @@index([projectId])
+  @@index([createdAt])
+}
+
+model TaskType {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  name        String
+  slaMinutes  Int       @default(480)
+  description String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tasks Task[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+model Sla {
+  id          String   @id @default(cuid())
+  taskId      String   @unique
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  startedAt   DateTime @default(now())
+  dueAt       DateTime
+  completedAt DateTime?
+  breached    Boolean  @default(false)
+
+  @@index([taskId])
+  @@index([dueAt])
+}
+
+model Pipeline {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  name        String
+  description String?
+  isDefault   Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  stages PipelineStage[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
+}
+
+model PipelineStage {
+  id          String   @id @default(cuid())
+  pipelineId  String
+  pipeline    Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  
+  name        String
+  order       Int
+  color       String   @default("#6B7280")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tasks Task[]
+
+  @@index([pipelineId])
+  @@index([order])
+}
+
+model ProjectDocument {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  name       String
+  fileUrl    String
+  type       DocumentType
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+enum DocumentType {
+  SCOPE
+  CONTRACT
+  ATTACHMENT
+  OTHER
+}
+
+model KnowledgeBase {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  title      String
+  content    String   @db.Text
+  status     KBStatus @default(DRAFT)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+enum KBStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Invitation {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  email       String
+  role        UserRole
+  token       String   @unique
+  expiresAt   DateTime
+  
+  acceptedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  @@unique([organizationId, email])
+  @@index([token])
+}
