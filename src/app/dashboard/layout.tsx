@@ -10,6 +10,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   let userEmail: string | undefined
   let userRole: string | undefined
   let orgLogoUrl: string | undefined
+  let orgLogoShape: string | undefined
   let orgName: string | undefined
 
   try {
@@ -25,11 +26,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         const org = await prisma.organization.findUnique({
           where: { id: dbUser.organizationId },
-          select: { name: true, logoUrl: true },
+          select: { name: true, logoUrl: true, logoShape: true },
         })
         if (org) {
           orgName = org.name
           orgLogoUrl = org.logoUrl || undefined
+          orgLogoShape = org.logoShape || 'square'
         }
       }
     }
@@ -44,6 +46,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         userEmail={userEmail}
         userRole={userRole}
         orgLogoUrl={orgLogoUrl}
+        orgLogoShape={orgLogoShape}
         orgName={orgName}
       />
       <main className="flex-1 overflow-auto pt-12 md:pt-0 bg-[#0b0b0e]">{children}</main>

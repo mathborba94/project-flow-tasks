@@ -94,6 +94,27 @@ function SectionCard({ title, icon: Icon, children, empty, emptyText }: {
   )
 }
 
+// ─── Motivational phrases ─────────────────────────────────────────────────────
+
+const MOTIVATIONAL_PHRASES = [
+  { text: 'Cada tarefa concluída é um passo mais perto do objetivo.', author: 'Anônimo' },
+  { text: 'O progresso, não a perfeição, é o que importa.', author: 'Anônimo' },
+  { text: 'Grandes conquistas começam com pequenas entregas consistentes.', author: 'Anônimo' },
+  { text: 'A disciplina é a ponte entre metas e realizações.', author: 'Jim Rohn' },
+  { text: 'Não espere pela motivação. Comece e ela virá.', author: 'Anônimo' },
+  { text: 'O sucesso é a soma de pequenos esforços repetidos dia após dia.', author: 'Robert Collier' },
+  { text: 'Foco no que você pode controlar. Entregue o melhor dentro disso.', author: 'Anônimo' },
+  { text: 'Uma tarefa por vez. Constância vence urgência.', author: 'Anônimo' },
+  { text: 'Feito é melhor que perfeito — mas feito com cuidado é melhor ainda.', author: 'Anônimo' },
+  { text: 'Seu próximo "concluído" está mais perto do que parece.', author: 'Anônimo' },
+  { text: 'O trabalho de hoje é o resultado de amanhã.', author: 'Anônimo' },
+  { text: 'Produtividade não é fazer mais — é fazer o que importa.', author: 'Anônimo' },
+]
+
+function getRandomPhrase(seed: number) {
+  return MOTIVATIONAL_PHRASES[seed % MOTIVATIONAL_PHRASES.length]
+}
+
 // ─── Member Dashboard ─────────────────────────────────────────────────────────
 
 async function MemberDashboard({ userId, organizationId, userName }: {
@@ -155,6 +176,7 @@ async function MemberDashboard({ userId, organizationId, userName }: {
   const totalHours = totalMinutes / 60
   const totalCost = Number(monthEntries._sum.costSnapshot || 0)
 
+  const phrase = getRandomPhrase(now.getDate() + now.getMonth() + lastCompleted.length)
   const greeting = now.getHours() < 12 ? 'Bom dia' : now.getHours() < 18 ? 'Boa tarde' : 'Boa noite'
   const firstName = userName.split(' ')[0]
 
@@ -247,30 +269,40 @@ async function MemberDashboard({ userId, organizationId, userName }: {
           </div>
         </SectionCard>
 
-        <SectionCard
-          title="Últimas concluídas"
-          icon={CircleCheck}
-          empty={lastCompleted.length === 0}
-          emptyText="Nenhuma tarefa concluída ainda"
-        >
-          <div className="space-y-px">
-            {lastCompleted.map(t => (
-              <Link
-                key={t.id}
-                href={`/dashboard/tasks/${t.id}`}
-                className="flex items-center gap-3 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
-              >
-                <CircleCheck className="w-3 h-3 text-emerald-500 shrink-0" />
-                <span className="text-xs text-zinc-500 group-hover:text-zinc-300 flex-1 truncate transition-colors">{t.title}</span>
-                {t.completedAt && (
-                  <span className="text-[10px] text-zinc-700">
-                    {new Date(t.completedAt).toLocaleDateString('pt-BR')}
-                  </span>
-                )}
-              </Link>
-            ))}
+        <div className="space-y-4">
+          <SectionCard
+            title="Últimas concluídas"
+            icon={CircleCheck}
+            empty={lastCompleted.length === 0}
+            emptyText="Nenhuma tarefa concluída ainda"
+          >
+            <div className="space-y-px">
+              {lastCompleted.map(t => (
+                <Link
+                  key={t.id}
+                  href={`/dashboard/tasks/${t.id}`}
+                  className="flex items-center gap-3 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+                >
+                  <CircleCheck className="w-3 h-3 text-emerald-500 shrink-0" />
+                  <span className="text-xs text-zinc-500 group-hover:text-zinc-300 flex-1 truncate transition-colors">{t.title}</span>
+                  {t.completedAt && (
+                    <span className="text-[10px] text-zinc-700">
+                      {new Date(t.completedAt).toLocaleDateString('pt-BR')}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </SectionCard>
+
+          {/* Frase motivacional */}
+          <div className="bg-violet-500/5 border border-violet-500/15 rounded-lg px-4 py-3">
+            <p className="text-xs text-zinc-400 italic leading-relaxed">"{phrase.text}"</p>
+            {phrase.author !== 'Anônimo' && (
+              <p className="text-[11px] text-zinc-600 mt-1.5">— {phrase.author}</p>
+            )}
           </div>
-        </SectionCard>
+        </div>
 
         {overdue.length > 0 && (
           <SectionCard title="Em atraso" icon={AlertCircle}>

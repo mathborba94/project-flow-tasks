@@ -21,17 +21,25 @@ export default async function ProjectsPage() {
     listOrganizationMembers(organizationId),
   ])
 
+  const canCreateProject = userRole !== 'VIEWER'
+  // MEMBER can only set themselves as owner
+  const ownerMembers = userRole === 'MEMBER'
+    ? members.filter(m => m.id === userId)
+    : members
+
   return (
     <ProjectsList
       projects={projects}
       members={members}
       createButton={
-        <CreateProjectDialog members={members}>
-          <button className="inline-flex items-center gap-1.5 text-xs font-medium bg-white text-black px-3 py-1.5 rounded-md hover:bg-zinc-200 transition-colors">
-            <Plus className="w-3.5 h-3.5" />
-            Novo Projeto
-          </button>
-        </CreateProjectDialog>
+        canCreateProject ? (
+          <CreateProjectDialog members={ownerMembers} currentUserId={userId} userRole={userRole}>
+            <button className="inline-flex items-center gap-1.5 text-xs font-medium bg-white text-black px-3 py-1.5 rounded-md hover:bg-zinc-200 transition-colors">
+              <Plus className="w-3.5 h-3.5" />
+              Novo Projeto
+            </button>
+          </CreateProjectDialog>
+        ) : undefined
       }
     />
   )

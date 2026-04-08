@@ -26,6 +26,7 @@ interface SidebarProps {
   userEmail?: string
   userRole?: UserRole
   orgLogoUrl?: string
+  orgLogoShape?: string
   orgName?: string
   onProfileClick?: () => void
   onNavItemClick?: () => void
@@ -68,14 +69,12 @@ function getNavItems(role?: UserRole) {
   ]
 }
 
-const bottomItems = [
-  { href: '/dashboard/settings', label: 'Organização', icon: Settings },
-]
-
-export function Sidebar({ userName, userEmail, userRole, orgLogoUrl, orgName, onProfileClick, onNavItemClick }: SidebarProps) {
+export function Sidebar({ userName, userEmail, userRole, orgLogoUrl, orgLogoShape, orgName, onProfileClick, onNavItemClick }: SidebarProps) {
   const pathname = usePathname()
   const navItems = getNavItems(userRole)
   const [aboutOpen, setAboutOpen] = useState(false)
+  const canAccessSettings = userRole === 'OWNER' || userRole === 'ADMIN'
+  const isHorizontalLogo = orgLogoShape === 'horizontal'
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -92,7 +91,9 @@ export function Sidebar({ userName, userEmail, userRole, orgLogoUrl, orgName, on
       <div className="hidden md:flex px-4 h-[52px] items-center border-b border-zinc-800/50">
         <Link href="/dashboard" className="flex items-center gap-2.5 group">
           {orgLogoUrl ? (
-            <img src={orgLogoUrl} alt={orgName || ''} className="w-6 h-6 rounded-md object-cover" />
+            isHorizontalLogo
+              ? <img src={orgLogoUrl} alt={orgName || ''} className="h-6 w-auto max-w-[110px] object-contain" />
+              : <img src={orgLogoUrl} alt={orgName || ''} className="w-6 h-6 rounded-md object-cover" />
           ) : (
             <div className="w-6 h-6 bg-zinc-900 border border-zinc-800 rounded-md flex items-center justify-center group-hover:border-zinc-700 transition-colors">
               <svg className="w-3.5 h-3.5 text-violet-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -128,29 +129,31 @@ export function Sidebar({ userName, userEmail, userRole, orgLogoUrl, orgName, on
         })}
       </nav>
 
-      {/* Bottom nav */}
-      <div className="px-2 pb-2 space-y-0.5 border-t border-zinc-800/40 pt-2">
-        {bottomItems.map(item => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavItemClick}
-              className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] font-medium transition-all duration-150 ${
-                isActive
-                  ? 'bg-zinc-800/80 text-zinc-100'
-                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/60'
-              }`}
-            >
-              <item.icon className={`w-[15px] h-[15px] flex-shrink-0 ${
-                isActive ? 'text-zinc-300' : 'text-zinc-600'
-              }`} />
-              <span className="truncate">{item.label}</span>
-            </Link>
-          )
-        })}
-      </div>
+      {/* Bottom nav — only for admin/owner */}
+      {canAccessSettings && (
+        <div className="px-2 pb-2 space-y-0.5 border-t border-zinc-800/40 pt-2">
+          {[{ href: '/dashboard/settings', label: 'Organização', icon: Settings }].map(item => {
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onNavItemClick}
+                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] font-medium transition-all duration-150 ${
+                  isActive
+                    ? 'bg-zinc-800/80 text-zinc-100'
+                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/60'
+                }`}
+              >
+                <item.icon className={`w-[15px] h-[15px] flex-shrink-0 ${
+                  isActive ? 'text-zinc-300' : 'text-zinc-600'
+                }`} />
+                <span className="truncate">{item.label}</span>
+              </Link>
+            )
+          })}
+        </div>
+      )}
 
       {/* Quick Task Button */}
       {userRole !== 'VIEWER' && (

@@ -33,7 +33,7 @@ export default async function PublicTaskFormPage({
 
   const org = await prisma.organization.findUnique({
     where: { id: project.organizationId },
-    select: { logoUrl: true, slug: true, publicKnowledgeBase: true },
+    select: { logoUrl: true, logoShape: true, slug: true, publicKnowledgeBase: true },
   })
 
   // Get project members to show as assignees options
@@ -83,7 +83,9 @@ export default async function PublicTaskFormPage({
               style={{ backgroundColor: `${project.color}15`, borderColor: `${project.color}30` }}
             >
               {org?.logoUrl ? (
-                <img src={org.logoUrl} alt="" className="w-9 h-9 rounded-xl object-cover" />
+                org.logoShape === 'horizontal'
+                  ? <img src={org.logoUrl} alt="" className="h-8 w-auto max-w-[100px] object-contain" />
+                  : <img src={org.logoUrl} alt="" className="w-9 h-9 rounded-xl object-cover" />
               ) : (
                 <div className="w-5 h-5 rounded-full" style={{ backgroundColor: project.color }} />
               )}

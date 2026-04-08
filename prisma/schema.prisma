@@ -12,6 +12,7 @@ model Organization {
   slug      String   @unique
   description String? @db.Text
   logoUrl   String?
+  logoShape String  @default("square")  // "square" | "horizontal"
   website   String?
   timezone  String   @default("America/Sao_Paulo")
   createdAt DateTime @default(now())

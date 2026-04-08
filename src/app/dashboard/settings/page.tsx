@@ -41,6 +41,7 @@ export default async function SettingsPage() {
   const orgData = {
     ...org,
     logoUrl: org.logoUrl || null,
+    logoShape: org.logoShape || 'square',
     publicKnowledgeBase: org.publicKnowledgeBase || false,
   }
 

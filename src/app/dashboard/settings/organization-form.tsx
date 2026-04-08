@@ -34,6 +34,7 @@ interface OrgData {
   website: string | null
   timezone: string
   logoUrl: string | null
+  logoShape: string
   publicKnowledgeBase: boolean
 }
 
@@ -51,6 +52,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
     website: org.website || '',
     timezone: org.timezone,
     logoUrl: org.logoUrl || '',
+    logoShape: org.logoShape || 'square',
     publicKnowledgeBase: org.publicKnowledgeBase || false,
   })
 
@@ -71,6 +73,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
           website: formData.website,
           timezone: formData.timezone,
           logoUrl: formData.logoUrl || null,
+          logoShape: formData.logoShape,
           publicKnowledgeBase: formData.publicKnowledgeBase,
         }),
       })
@@ -164,6 +167,30 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
             <p className="text-[10px] text-zinc-600 mt-1">PNG, JPG até 2MB</p>
           </div>
         </div>
+        {/* Logo shape */}
+        {formData.logoUrl && (
+          <div className="flex items-center gap-4 mt-3">
+            <p className="text-xs text-zinc-500">Formato do logo:</p>
+            <div className="flex items-center gap-3">
+              {[
+                { value: 'square', label: 'Quadrado' },
+                { value: 'horizontal', label: 'Horizontal' },
+              ].map(opt => (
+                <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="logoShape"
+                    value={opt.value}
+                    checked={formData.logoShape === opt.value}
+                    onChange={() => setFormData(prev => ({ ...prev, logoShape: opt.value }))}
+                    className="accent-violet-500"
+                  />
+                  <span className="text-xs text-zinc-400">{opt.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">

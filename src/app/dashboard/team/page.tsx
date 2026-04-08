@@ -104,20 +104,22 @@ export default async function TeamPage() {
                 <div className={`w-1.5 h-1.5 rounded-full ${role.dot}`} />
                 <span className="text-xs text-zinc-500">{role.label}</span>
               </div>
-              <div className="grid grid-cols-3 gap-3 pt-3 border-t border-zinc-800/40 text-center">
-                <div>
-                  <p className="text-sm font-medium text-zinc-200 tabular-nums">{Math.round(member.stats.totalHours)}h</p>
-                  <p className="text-[11px] text-zinc-600 mt-0.5">Horas</p>
+              {!isViewer && (
+                <div className="grid grid-cols-3 gap-3 pt-3 border-t border-zinc-800/40 text-center">
+                  <div>
+                    <p className="text-sm font-medium text-zinc-200 tabular-nums">{Math.round(member.stats.totalHours)}h</p>
+                    <p className="text-[11px] text-zinc-600 mt-0.5">Horas</p>
+                  </div>
+                  <div className="border-x border-zinc-800/40">
+                    <p className="text-sm font-medium text-zinc-200 tabular-nums">R$ {Math.round(member.stats.totalCost).toLocaleString('pt-BR')}</p>
+                    <p className="text-[11px] text-zinc-600 mt-0.5">Custo</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-zinc-200 tabular-nums">R$ {Number(member.hourlyCost) || 0}</p>
+                    <p className="text-[11px] text-zinc-600 mt-0.5">Taxa/h</p>
+                  </div>
                 </div>
-                <div className="border-x border-zinc-800/40">
-                  <p className="text-sm font-medium text-zinc-200 tabular-nums">R$ {Math.round(member.stats.totalCost).toLocaleString('pt-BR')}</p>
-                  <p className="text-[11px] text-zinc-600 mt-0.5">Custo</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-zinc-200 tabular-nums">R$ {Number(member.hourlyCost) || 0}</p>
-                  <p className="text-[11px] text-zinc-600 mt-0.5">Taxa/h</p>
-                </div>
-              </div>
+              )}
             </div>
           )
         })}

@@ -19,12 +19,14 @@ export default function DashboardSidebarClient({
   userEmail,
   userRole,
   orgLogoUrl,
+  orgLogoShape,
   orgName,
 }: {
   userName?: string
   userEmail?: string
   userRole?: string
   orgLogoUrl?: string
+  orgLogoShape?: string
   orgName?: string
 }) {
   const [profileOpen, setProfileOpen] = useState(false)
@@ -96,6 +98,7 @@ export default function DashboardSidebarClient({
     userEmail,
     userRole: userRole as any,
     orgLogoUrl,
+    orgLogoShape,
     orgName,
     onProfileClick: () => {
       setProfileName(userName || '')

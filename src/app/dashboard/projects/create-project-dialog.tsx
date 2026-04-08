@@ -31,6 +31,8 @@ interface Member {
 interface CreateProjectDialogProps {
   members: Member[]
   children?: React.ReactNode
+  currentUserId?: string
+  userRole?: string
 }
 
 const statusLabels: Record<string, string> = {
@@ -39,15 +41,16 @@ const statusLabels: Record<string, string> = {
   COMPLETED: 'Concluído',
 }
 
-export function CreateProjectDialog({ members, children }: CreateProjectDialogProps) {
+export function CreateProjectDialog({ members, children, currentUserId, userRole }: CreateProjectDialogProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const isMember = userRole === 'MEMBER'
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    ownerId: '',
+    ownerId: isMember && currentUserId ? currentUserId : '',
     budget: '',
     hourlyRate: '',
     status: 'ACTIVE',
@@ -121,21 +124,27 @@ export function CreateProjectDialog({ members, children }: CreateProjectDialogPr
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="owner" className="text-xs text-zinc-400">Responsável</Label>
-              <Select
-                value={formData.ownerId}
-                onValueChange={(value) => setFormData({ ...formData, ownerId: value || '' })}
-              >
-                <SelectTrigger className="h-8 text-sm">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {members.map((member) => (
-                    <SelectItem key={member.id} value={member.id} className="text-sm">
-                      {member.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {isMember ? (
+                <p className="text-sm text-zinc-400 h-8 flex items-center">
+                  {members.find(m => m.id === currentUserId)?.name || 'Você'}
+                </p>
+              ) : (
+                <Select
+                  value={formData.ownerId}
+                  onValueChange={(value) => setFormData({ ...formData, ownerId: value || '' })}
+                >
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {members.map((member) => (
+                      <SelectItem key={member.id} value={member.id} className="text-sm">
+                        {member.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             <div className="space-y-1">
               <Label htmlFor="status" className="text-xs text-zinc-400">Status</Label>

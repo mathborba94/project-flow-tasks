@@ -44,7 +44,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { name, slug, description, website, timezone, logoUrl, publicKnowledgeBase } = body
+    const { name, slug, description, website, timezone, logoUrl, logoShape, publicKnowledgeBase } = body
 
     // Validate slug uniqueness if changed
     if (slug && slug !== organizationId) {
@@ -68,6 +68,7 @@ export async function PATCH(
         ...(website !== undefined && { website }),
         ...(timezone && { timezone }),
         ...(logoUrl !== undefined && { logoUrl }),
+        ...(logoShape !== undefined && { logoShape }),
         ...(publicKnowledgeBase !== undefined && { publicKnowledgeBase }),
       },
     })

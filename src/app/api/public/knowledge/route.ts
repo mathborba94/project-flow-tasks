@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     const org = await prisma.organization.findUnique({
       where: { slug: orgSlug },
-      select: { id: true, name: true, description: true, website: true, publicKnowledgeBase: true, slug: true, logoUrl: true },
+      select: { id: true, name: true, description: true, website: true, publicKnowledgeBase: true, slug: true, logoUrl: true, logoShape: true },
     })
 
     if (!org || !org.publicKnowledgeBase) {
