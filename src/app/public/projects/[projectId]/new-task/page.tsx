@@ -4,6 +4,8 @@ import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import PublicTaskForm from '@/components/project/public-task-form'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PublicTaskFormPage({
   params,
   searchParams,

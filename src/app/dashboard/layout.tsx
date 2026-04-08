@@ -3,6 +3,8 @@ import DashboardSidebarClient from '@/components/layout/sidebar-wrapper'
 import { getSession } from '@/services/auth'
 import prisma from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   let userName: string | undefined
   let userEmail: string | undefined
