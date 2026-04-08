@@ -10,8 +10,18 @@ model Organization {
   id        String   @id @default(cuid())
   name      String
   slug      String   @unique
+  description String? @db.Text
+  logoUrl   String?
+  website   String?
+  timezone  String   @default("America/Sao_Paulo")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  defaultTaskTypeId String?
+  defaultTaskType   TaskType?  @relation("OrganizationDefaultTaskType", fields: [defaultTaskTypeId], references: [id], onDelete: SetNull)
+
+  // Knowledge Base settings
+  publicKnowledgeBase Boolean @default(false)
 
   users          User[]
   projects       Project[]
@@ -21,27 +31,34 @@ model Organization {
   pipelines      Pipeline[]
   documents      ProjectDocument[]
   knowledgeBases KnowledgeBase[]
+  knowledgeCategories KnowledgeCategory[]
   invitations    Invitation[]
+  supportAgents  SupportAgent[]
 }
 
 model User {
   id             String   @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
+
   name        String
   email       String   @unique
   role        UserRole @default(MEMBER)
   hourlyCost  Decimal  @db.Decimal(10, 2) @default(0)
   avatarUrl   String?
+  isActive    Boolean  @default(true)
   supabaseUserId String? @unique
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   ownedProjects    Project[]         @relation("ProjectOwner")
   assignedTasks    Task[]            @relation("TaskAssignedTo")
   timeEntries      TimeEntry[]
+  projectMemberships ProjectMember[]
+  taskHistory        TaskHistory[] @relation("TaskHistoryAuthor")
+  taskComments       TaskComment[] @relation("TaskCommentAuthor")
+  comments         ProjectComment[]
 
   @@index([organizationId])
   @@index([email])
@@ -58,26 +75,49 @@ model Project {
   id             String   @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
+
   name        String
   description String?   @db.Text
   status      ProjectStatus @default(ACTIVE)
-  
+  type        ProjectType @default(SCOPE_FIXED)
+  color       String   @default("#5c6ac4")
+  tags        String[]
+
+  pipelineTemplate PipelineTemplateType @default(AGILE)
+
   ownerId     String
   owner       User     @relation("ProjectOwner", fields: [ownerId], references: [id])
-  
+
   budget      Decimal? @db.Decimal(12, 2)
   hourlyRate  Decimal? @db.Decimal(10, 2)
-  
+
   startDate   DateTime?
   endDate     DateTime?
-  
+  targetEndDate DateTime?
+
+  archived    Boolean  @default(false)
+  archivedAt  DateTime?
+
+  // Public task form toggle
+  allowPublicTasks Boolean @default(false)
+
+  // Completion stage - tasks can't be created directly here
+  completionStageId String?
+  completionStage   PipelineStage? @relation("CompletionStage", fields: [completionStageId], references: [id], onDelete: SetNull)
+
+  // Project-specific pipeline (one-to-one, defined on Pipeline side)
+  pipeline     Pipeline?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   tasks       Task[]
   documents   ProjectDocument[]
   timeEntries TimeEntry[]
+  members     ProjectMember[]
+  comments    ProjectComment[]
+  taskAttachments TaskAttachment[]
+  supportAgents   SupportAgent[]
 
   @@index([organizationId])
   @@index([ownerId])
@@ -88,6 +128,17 @@ enum ProjectStatus {
   ACTIVE
   PAUSED
   COMPLETED
+}
+
+enum ProjectType {
+  SCOPE_FIXED
+  CONTINUOUS
+}
+
+enum PipelineTemplateType {
+  AGILE
+  WATERFALL
+  SIMPLE
 }
 
 model Task {
@@ -112,13 +163,22 @@ model Task {
   
   status      TaskStatus @default(TODO)
   priority    TaskPriority @default(MEDIUM)
-  
+
+  dueDate     DateTime?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   completedAt DateTime?
 
   timeEntries    TimeEntry[]
+  history        TaskHistory[]
   sla            Sla?
+  attachments    TaskAttachment[]
+  comments       TaskComment[]
+
+  // Requester info (for public tasks)
+  requesterName  String?
+  requesterEmail String?
 
   @@index([organizationId])
   @@index([projectId])
@@ -172,15 +232,16 @@ model TaskType {
   id             String   @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
+
   name        String
   slaMinutes  Int       @default(480)
   description String?
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   tasks Task[]
+  defaultForOrganization Organization[] @relation("OrganizationDefaultTaskType")
 
   @@unique([organizationId, name])
   @@index([organizationId])
@@ -202,35 +263,39 @@ model Sla {
 
 model Pipeline {
   id             String   @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  projectId      String?  @unique
+  project        Project?   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
   name        String
   description String?
   isDefault   Boolean  @default(false)
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   stages PipelineStage[]
 
-  @@unique([organizationId, name])
+  @@unique([projectId, name])
   @@index([organizationId])
+  @@index([projectId])
 }
 
 model PipelineStage {
   id          String   @id @default(cuid())
   pipelineId  String
   pipeline    Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
-  
+
   name        String
   order       Int
   color       String   @default("#6B7280")
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   tasks Task[]
+  completionProjects Project[] @relation("CompletionStage")
 
   @@index([pipelineId])
   @@index([order])
@@ -264,16 +329,37 @@ model KnowledgeBase {
   id             String   @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
+
   title      String
   content    String   @db.Text
   status     KBStatus @default(DRAFT)
-  
+
+  categoryId   String?
+  category     KnowledgeCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@index([organizationId])
   @@index([status])
+  @@index([categoryId])
+}
+
+model KnowledgeCategory {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?  @db.Text
+  color          String   @default("#6B7280")
+  includeInPublic Boolean @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  articles       KnowledgeBase[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
 }
 
 enum KBStatus {
@@ -296,4 +382,158 @@ model Invitation {
 
   @@unique([organizationId, email])
   @@index([token])
+}
+
+model ProjectMember {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        String   @default("MEMBER")
+  createdAt   DateTime @default(now())
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+}
+
+model ProjectComment {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([createdAt])
+}
+
+model TaskAttachment {
+  id          String   @id @default(cuid())
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  name        String
+  fileUrl     String
+  fileSize    Int
+  mimeType    String
+
+  createdAt   DateTime @default(now())
+
+  @@index([taskId])
+  @@index([projectId])
+}
+
+enum TaskHistoryEventType {
+  CREATED
+  STAGE_CHANGED
+  STATUS_CHANGED
+  ASSIGNEE_CHANGED
+  COMPLETED
+  PRIORITY_CHANGED
+  TITLE_CHANGED
+  DESCRIPTION_CHANGED
+}
+
+model TaskHistory {
+  id          String   @id @default(cuid())
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  eventType   TaskHistoryEventType
+  description String   @db.Text
+  metadata    Json?
+
+  createdById String?
+  createdBy   User?    @relation("TaskHistoryAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+
+  @@index([taskId])
+  @@index([createdAt])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  authorId  String?
+  author    User?    @relation("TaskCommentAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  content   String   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([taskId])
+  @@index([createdAt])
+}
+// ─── Support Agent ───────────────────────────────────────────────────────────
+
+model SupportAgent {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  name           String
+  personality    String?  @db.Text
+  voiceTone      String?  @db.Text
+  conductPrompt  String?  @db.Text
+
+  projectId      String?
+  project        Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  active         Boolean  @default(true)
+  showOnPublicKB Boolean  @default(false)
+
+  shareToken     String   @unique @default(cuid())
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  sessions       SupportSession[]
+
+  @@index([organizationId])
+  @@index([shareToken])
+}
+
+model SupportSession {
+  id           String       @id @default(cuid())
+  agentId      String
+  agent        SupportAgent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  sessionToken String       @unique @default(cuid())
+  visitorName  String?
+  visitorEmail String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  messages     SupportMessage[]
+
+  @@index([agentId])
+  @@index([sessionToken])
+}
+
+model SupportMessage {
+  id        String         @id @default(cuid())
+  sessionId String
+  session   SupportSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  role      String   // "user" | "assistant" | "tool"
+  content   String   @db.Text
+  fileUrl   String?
+  fileType  String?  // "image" | "audio" | "pdf"
+  fileName  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([createdAt])
 }

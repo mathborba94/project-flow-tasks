@@ -5,18 +5,32 @@ import { createProjectSchema, projectFilterSchema } from '@/types/project'
 
 export async function GET(request: NextRequest) {
   try {
-    const { organizationId } = await getCurrentUserWithOrg()
+    const { organizationId, user } = await getCurrentUserWithOrg()
     const { searchParams } = new URL(request.url)
-    
-    const filter = projectFilterSchema.parse({
-      status: searchParams.get('status'),
-      ownerId: searchParams.get('ownerId'),
-      search: searchParams.get('search'),
+    const all = searchParams.get('all')
+
+    const filter = projectFilterSchema.safeParse({
+      status: searchParams.get('status') || undefined,
+      ownerId: searchParams.get('ownerId') || undefined,
+      search: searchParams.get('search') || undefined,
     })
 
-    const projects = await projectService.listProjects(organizationId, filter)
+    const filterData = filter.success ? filter.data : {}
+
+    // OWNER/ADMIN with all=1: list all projects without membership filtering
+    const isAdmin = all === '1' && (user.role === 'OWNER' || user.role === 'ADMIN')
+
+    const projects = isAdmin
+      ? await projectService.listProjects(organizationId, filterData)
+      : await projectService.listProjects(organizationId, {
+          ...filterData,
+          userId: user.id,
+          userRole: user.role,
+        })
+
     return NextResponse.json(projects)
   } catch (error) {
+    console.error('Error fetching projects:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
