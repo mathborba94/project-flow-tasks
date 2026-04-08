@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
         _sum: { minutes: true, costSnapshot: true },
       })
 
-      type TimeSum = { minutes: number | null; costSnapshot: number | null } | null
+      type TimeSum = { minutes: number | null; costSnapshot: unknown } | null
       const timeMap = new Map<string, TimeSum>(timeEntries.map(t => [t.projectId, t._sum as TimeSum]))
 
       const overdueTasks = await prisma.task.groupBy({
