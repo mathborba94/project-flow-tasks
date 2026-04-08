@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
         _sum: { minutes: true, costSnapshot: true },
       })
 
-      const timeMap = new Map(timeEntries.map(t => [t.projectId, t._sum]))
+      const timeMap = new Map(timeEntries.map(t => [t.projectId, t._sum as { minutes: number | null; costSnapshot: number | null } | null]))
 
       const overdueTasks = await prisma.task.groupBy({
         by: ['projectId'],
