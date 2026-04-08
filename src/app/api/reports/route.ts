@@ -111,7 +111,8 @@ export async function GET(request: NextRequest) {
         _sum: { minutes: true, costSnapshot: true },
       })
 
-      const timeMap = new Map(timeEntries.map(t => [t.projectId, t._sum as { minutes: number | null; costSnapshot: number | null } | null]))
+      type TimeSum = { minutes: number | null; costSnapshot: number | null } | null
+      const timeMap = new Map<string, TimeSum>(timeEntries.map(t => [t.projectId, t._sum as TimeSum]))
 
       const overdueTasks = await prisma.task.groupBy({
         by: ['projectId'],
@@ -136,8 +137,9 @@ export async function GET(request: NextRequest) {
         const totalTasks = p._count.tasks
         const doneTasks = statusAgg.filter(s => s.projectId === p.id && s.status === 'DONE').reduce((a, s) => a + s._count, 0)
         const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0
-        const totalMinutes = timeMap.get(p.id)?.minutes || 0
-        const totalCost = Number(timeMap.get(p.id)?.costSnapshot || 0)
+        const timeSum = timeMap.get(p.id)
+        const totalMinutes = timeSum?.minutes || 0
+        const totalCost = Number(timeSum?.costSnapshot || 0)
 
         return {
           ...p,
