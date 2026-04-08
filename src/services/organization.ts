@@ -68,21 +68,60 @@ export async function inviteUser(organizationId: string, data: { email: string; 
   })
 }
 
-export async function acceptInvitation(token: string, userId: string, email: string) {
+export async function acceptInvitation(token: string, supabaseUserId: string) {
   const invitation = await prisma.invitation.findUnique({
     where: { token },
+    include: { organization: true },
   })
 
-  if (!invitation || invitation.expiresAt < new Date()) {
-    throw new Error('Invalid or expired invitation')
+  if (!invitation) throw new Error('Convite não encontrado')
+  if (invitation.expiresAt < new Date()) throw new Error('Convite expirado')
+  if (invitation.acceptedAt) throw new Error('Convite já foi aceito')
+
+  await prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { supabaseUserId },
+      data: {
+        organizationId: invitation.organizationId,
+        role: invitation.role,
+      },
+    })
+
+    await tx.invitation.update({
+      where: { token },
+      data: { acceptedAt: new Date() },
+    })
+  })
+
+  return invitation
+}
+
+export async function getInvitationByToken(token: string) {
+  return prisma.invitation.findUnique({
+    where: { token },
+    include: {
+      organization: { select: { name: true, slug: true } },
+    },
+  })
+}
+
+export async function revokeInvitation(token: string, organizationId: string) {
+  const invitation = await prisma.invitation.findUnique({ where: { token } })
+
+  if (!invitation || invitation.organizationId !== organizationId) {
+    throw new Error('Convite não encontrado')
+  }
+  if (invitation.acceptedAt) {
+    throw new Error('Convite já aceito — não pode ser revogado')
   }
 
-  return prisma.user.update({
-    where: { supabaseUserId: userId },
-    data: {
-      organizationId: invitation.organizationId,
-      email,
-    },
+  return prisma.invitation.delete({ where: { token } })
+}
+
+export async function getPendingInvitations(organizationId: string) {
+  return prisma.invitation.findMany({
+    where: { organizationId, acceptedAt: null },
+    orderBy: { createdAt: 'desc' },
   })
 }
 

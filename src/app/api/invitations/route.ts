@@ -2,13 +2,14 @@ import { NextResponse } from 'next/server'
 import { getCurrentUserWithOrg } from '@/services/auth'
 import prisma from '@/lib/prisma'
 import { randomUUID } from 'crypto'
+import { sendInvitationEmail } from '@/lib/email'
 
 export async function GET() {
   try {
     const { organizationId } = await getCurrentUserWithOrg()
 
     const invitations = await prisma.invitation.findMany({
-      where: { organizationId },
+      where: { organizationId, acceptedAt: null },
       orderBy: { createdAt: 'desc' },
     })
 
@@ -25,7 +26,6 @@ export async function POST(request: Request) {
   try {
     const { user, organizationId } = await getCurrentUserWithOrg()
 
-    // Only admins and owners can invite
     if (user.role !== 'ADMIN' && user.role !== 'OWNER') {
       return NextResponse.json(
         { error: 'Sem permissão para enviar convites' },
@@ -43,11 +43,10 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check if user already exists
+    // Check if user already belongs to org
     const existingUser = await prisma.user.findFirst({
       where: { email, organizationId },
     })
-
     if (existingUser) {
       return NextResponse.json(
         { error: 'Usuário já pertence à organização' },
@@ -55,26 +54,33 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create invitation
-    const expiresAt = new Date()
-    expiresAt.setHours(expiresAt.getHours() + 48) // 48h expiry
+    // Upsert invitation (reset token/expiry if re-inviting same email)
+    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000)
+    const token = randomUUID()
 
-    const invitation = await prisma.invitation.create({
-      data: {
-        organizationId,
-        email,
-        role,
-        token: randomUUID(),
-        expiresAt,
-      },
+    const invitation = await prisma.invitation.upsert({
+      where: { organizationId_email: { organizationId, email } },
+      update: { token, expiresAt, acceptedAt: null, role },
+      create: { organizationId, email, role, token, expiresAt },
+    })
+
+    const org = await prisma.organization.findUnique({
+      where: { id: organizationId },
+      select: { name: true },
+    })
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+    // Fire-and-forget
+    sendInvitationEmail({
+      email,
+      orgName: org?.name ?? 'ProjectFlow',
+      role,
+      inviteUrl: `${appUrl}/join/${invitation.token}`,
     })
 
     return NextResponse.json(invitation, { status: 201 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Erro interno do servidor'
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

@@ -80,6 +80,52 @@ function button(text: string, href: string, color = '#7c3aed') {
   return `<a href="${href}" style="display:inline-block;margin-top:24px;padding:11px 24px;background:${color};color:#ffffff;font-size:13px;font-weight:600;text-decoration:none;border-radius:9px;letter-spacing:-0.01em;">${text}</a>`
 }
 
+// ─── Email: Invitation ───────────────────────────────────────────────────────
+
+export async function sendInvitationEmail({
+  email,
+  orgName,
+  role,
+  inviteUrl,
+}: {
+  email: string
+  orgName: string
+  role: string
+  inviteUrl: string
+}) {
+  const roleLabel: Record<string, string> = {
+    OWNER: 'Proprietário', ADMIN: 'Admin', MEMBER: 'Membro', VIEWER: 'Visualizador',
+  }
+  const label = roleLabel[role] ?? role
+
+  const html = base(
+    `Você foi convidado para ${orgName}`,
+    `Junte-se a ${orgName} como ${label} no ProjectFlow.`,
+    `<h1 style="margin:0 0 6px;font-size:20px;font-weight:700;color:#f4f4f5;letter-spacing:-0.02em;">Convite para colaborar</h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#a1a1aa;line-height:1.6;">
+      Você foi convidado para participar de <strong style="color:#d4d4d8;">${orgName}</strong> no ProjectFlow como <strong style="color:#d4d4d8;">${label}</strong>.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
+      ${field('Organização', orgName)}
+      ${field('Papel', `<span style="color:#a78bfa;font-weight:600;">${label}</span>`)}
+      ${field('Válido por', '48 horas')}
+    </table>
+    <p style="font-size:12px;color:#52525b;margin:16px 0 0;line-height:1.6;">Clique no botão abaixo para aceitar o convite. Você precisará criar uma conta ou fazer login caso ainda não tenha.</p>
+    ${button('Aceitar convite', inviteUrl)}`
+  )
+
+  try {
+    await resend.emails.send({
+      from: `${orgName} via ProjectFlow <${FROM}>`,
+      to: email,
+      subject: `Convite para ${orgName} no ProjectFlow`,
+      html,
+    })
+  } catch (err) {
+    console.error('[email] sendInvitationEmail:', err)
+  }
+}
+
 // ─── Email: Task created (to requester) ──────────────────────────────────────
 
 export async function sendTaskCreatedEmail({

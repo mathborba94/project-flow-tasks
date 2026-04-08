@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { getCurrentUserWithOrg } from '@/services/auth'
-import { listOrganizationMembers } from '@/services/organization'
+import { listOrganizationMembers, getPendingInvitations } from '@/services/organization'
 import { getUserTimeStats } from '@/services/time-entry'
 import { InviteUserDialog } from './invite-user-dialog'
 import { EditUserDialog } from '@/components/team/edit-user-dialog'
+import { PendingInvitations } from '@/components/team/pending-invitations'
 import { Users, UserPlus, Lock } from 'lucide-react'
 
 const roleConfig: Record<string, { label: string; dot: string }> = {
@@ -49,7 +49,10 @@ export default async function TeamPage() {
 
   const isViewer = userRole !== 'OWNER' && userRole !== 'ADMIN'
 
-  const members = await listOrganizationMembers(organizationId)
+  const [members, pendingInvitations] = await Promise.all([
+    listOrganizationMembers(organizationId),
+    isViewer ? Promise.resolve([]) : getPendingInvitations(organizationId),
+  ])
 
   const membersWithStats = await Promise.all(
     members.map(async (member) => {
@@ -139,6 +142,13 @@ export default async function TeamPage() {
           </div>
           <p className="text-sm text-zinc-500">Nenhum membro na equipe</p>
           <p className="text-xs text-zinc-700 mt-1">Convide alguém para começar</p>
+        </div>
+      )}
+
+      {!isViewer && pendingInvitations.length > 0 && (
+        <div className="mt-8 animate-fade-in">
+          <h2 className="text-sm font-medium text-zinc-400 mb-3">Convites pendentes</h2>
+          <PendingInvitations invitations={pendingInvitations} />
         </div>
       )}
     </div>
