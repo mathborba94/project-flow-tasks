@@ -19,11 +19,13 @@ export default function KnowledgeManager({
   articles: initialArticles,
   publicKnowledgeBase,
   orgSlug,
+  userRole = 'MEMBER',
 }: {
   categories: any[]
   articles: any[]
   publicKnowledgeBase: boolean
   orgSlug: string
+  userRole?: string
 }) {
   const [categories, setCategories] = useState(initialCategories)
   const [articles, setArticles] = useState(initialArticles)
@@ -49,6 +51,10 @@ export default function KnowledgeManager({
   const [viewingArticle, setViewingArticle] = useState<any>(null)
 
   const [saving, setSaving] = useState(false)
+
+  const canEdit = userRole === 'OWNER' || userRole === 'ADMIN' || userRole === 'MEMBER'
+  const canManageSettings = userRole === 'OWNER' || userRole === 'ADMIN'
+  const canManageCategories = userRole === 'OWNER' || userRole === 'ADMIN'
 
   const openNewCategory = () => {
     setEditingCategory(null)
@@ -239,8 +245,8 @@ export default function KnowledgeManager({
         </div>
       </div>
 
-      {/* Settings */}
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 mb-4 animate-fade-in">
+      {/* Settings — apenas admin/owner */}
+      {canManageSettings && <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 mb-4 animate-fade-in">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Settings className="w-4 h-4 text-zinc-500" />
@@ -256,7 +262,7 @@ export default function KnowledgeManager({
             <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${isPublic ? 'translate-x-5' : 'translate-x-0.5'}`} />
           </button>
         </div>
-      </div>
+      </div>}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Categories */}
@@ -266,13 +272,15 @@ export default function KnowledgeManager({
               <FolderOpen className="w-4 h-4 text-zinc-500" />
               <h2 className="text-sm font-medium text-zinc-300">Categorias</h2>
             </div>
-            <button
-              onClick={openNewCategory}
-              className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Nova
-            </button>
+            {canManageCategories && (
+              <button
+                onClick={openNewCategory}
+                className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Nova
+              </button>
+            )}
           </div>
           <div className="space-y-2">
             {categories.map(cat => (
@@ -285,14 +293,16 @@ export default function KnowledgeManager({
                       <p className="text-[11px] text-zinc-500">{cat._count?.articles || 0} artigos</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => openEditCategory(cat)} className="p-1 text-zinc-600 hover:text-zinc-400">
-                      <Edit2 className="w-3 h-3" />
-                    </button>
-                    <button onClick={() => deleteCategory(cat.id)} className="p-1 text-zinc-600 hover:text-red-400">
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
+                  {canManageCategories && (
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => openEditCategory(cat)} className="p-1 text-zinc-600 hover:text-zinc-400">
+                        <Edit2 className="w-3 h-3" />
+                      </button>
+                      <button onClick={() => deleteCategory(cat.id)} className="p-1 text-zinc-600 hover:text-red-400">
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 {cat.description && (
                   <p className="text-[11px] text-zinc-500 mt-1">{cat.description}</p>
@@ -319,13 +329,15 @@ export default function KnowledgeManager({
               <BookOpen className="w-4 h-4 text-zinc-500" />
               <h2 className="text-sm font-medium text-zinc-300">Artigos</h2>
             </div>
-            <button
-              onClick={openNewArticle}
-              className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Novo
-            </button>
+            {canEdit && (
+              <button
+                onClick={openNewArticle}
+                className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Novo
+              </button>
+            )}
           </div>
           <div className="space-y-2">
             {articles.map(article => (
@@ -349,14 +361,16 @@ export default function KnowledgeManager({
                       </p>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
-                    <button onClick={() => openEditArticle(article)} className="p-1 text-zinc-600 hover:text-zinc-400">
-                      <Edit2 className="w-3 h-3" />
-                    </button>
-                    <button onClick={() => deleteArticle(article.id)} className="p-1 text-zinc-600 hover:text-red-400">
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
+                  {canEdit && (
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                      <button onClick={() => openEditArticle(article)} className="p-1 text-zinc-600 hover:text-zinc-400">
+                        <Edit2 className="w-3 h-3" />
+                      </button>
+                      <button onClick={() => deleteArticle(article.id)} className="p-1 text-zinc-600 hover:text-red-400">
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

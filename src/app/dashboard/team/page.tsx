@@ -5,7 +5,7 @@ import { getUserTimeStats } from '@/services/time-entry'
 import { InviteUserDialog } from './invite-user-dialog'
 import { EditUserDialog } from '@/components/team/edit-user-dialog'
 import { PendingInvitations } from '@/components/team/pending-invitations'
-import { Users, UserPlus, Lock } from 'lucide-react'
+import { Users, UserPlus } from 'lucide-react'
 
 const roleConfig: Record<string, { label: string; dot: string }> = {
   OWNER: { label: 'Proprietário', dot: 'bg-purple-500' },
@@ -34,18 +34,6 @@ export default async function TeamPage() {
     organizationId = orgId
     userRole = user.role
   } catch {}
-
-  // VIEWERs can't see team page
-  if (userRole === 'VIEWER') {
-    return (
-      <div className="p-6 max-w-6xl">
-        <div className="flex flex-col items-center justify-center py-20">
-          <Lock className="w-8 h-8 text-zinc-700 mb-3" />
-          <p className="text-sm text-zinc-500">Você não tem acesso a esta página</p>
-        </div>
-      </div>
-    )
-  }
 
   const isViewer = userRole !== 'OWNER' && userRole !== 'ADMIN'
 

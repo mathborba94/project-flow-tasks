@@ -4,9 +4,11 @@ import KnowledgeManager from './knowledge-manager'
 
 export default async function KnowledgePage() {
   let organizationId = ''
+  let userRole = 'MEMBER'
   try {
-    const { organizationId: orgId } = await getCurrentUserWithOrg()
+    const { organizationId: orgId, user } = await getCurrentUserWithOrg()
     organizationId = orgId
+    userRole = user.role
   } catch {
     return (
       <div className="p-6">
@@ -38,6 +40,7 @@ export default async function KnowledgePage() {
       articles={JSON.parse(JSON.stringify(articles))}
       publicKnowledgeBase={org?.publicKnowledgeBase || false}
       orgSlug={org?.slug || ''}
+      userRole={userRole}
     />
   )
 }

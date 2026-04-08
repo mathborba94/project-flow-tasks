@@ -36,19 +36,20 @@ function getNavItems(role?: UserRole) {
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   ]
 
-  if (role === 'VIEWER') {
-    // Viewers only see linked projects (shown via projects page) and public KB link
-    return [
-      ...baseItems,
-      { href: '/dashboard/projects', label: 'Projetos', icon: FolderKanban },
-    ]
-  }
-
   if (role === 'MEMBER') {
     return [
       ...baseItems,
       { href: '/dashboard/my-tasks', label: 'Minhas Tarefas', icon: CheckSquare },
       { href: '/dashboard/my-hours', label: 'Minhas Horas', icon: Clock },
+      { href: '/dashboard/projects', label: 'Projetos', icon: FolderKanban },
+      { href: '/dashboard/knowledge', label: 'Base de Conhecimento', icon: BookOpen },
+      { href: '/dashboard/team', label: 'Equipe', icon: Users },
+    ]
+  }
+
+  if (role === 'VIEWER') {
+    return [
+      ...baseItems,
       { href: '/dashboard/projects', label: 'Projetos', icon: FolderKanban },
       { href: '/dashboard/team', label: 'Equipe', icon: Users },
     ]
