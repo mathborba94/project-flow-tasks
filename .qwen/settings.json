@@ -3,7 +3,17 @@
     "allow": [
       "Bash(npm run *)",
       "Bash(npm install *)",
-      "Bash(npx *)"
+      "Bash(npx *)",
+      "Bash(sed *)",
+      "Bash(do)",
+      "Bash(then)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(perl *)",
+      "Bash(pkill *)",
+      "Bash(sleep *)"
     ]
   },
   "$version": 3

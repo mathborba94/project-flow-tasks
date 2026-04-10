@@ -7,14 +7,15 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import DashboardCharts from '@/components/dashboard/charts'
+import DashboardMonthSelector from '@/components/dashboard/month-selector'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function PageHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="mb-6 animate-fade-in">
-      <h1 className="text-base font-semibold text-zinc-100 tracking-tight">{title}</h1>
-      <p className="text-sm text-zinc-500 mt-0.5">{subtitle}</p>
+      <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight">{title}</h1>
+      <p className="text-sm dark:text-zinc-500 text-zinc-500 mt-0.5">{subtitle}</p>
     </div>
   )
 }
@@ -26,12 +27,12 @@ function StatCard({ label, value, icon: Icon, accent }: {
   accent?: string
 }) {
   return (
-    <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 hover:border-zinc-700/60 transition-colors">
+    <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4 dark:hover:border-zinc-700/60 hover:border-zinc-300 transition-colors">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-zinc-500">{label}</span>
-        <Icon className={`w-3.5 h-3.5 ${accent || 'text-zinc-600'}`} />
+        <span className="text-xs font-medium dark:text-zinc-500 text-zinc-500">{label}</span>
+        <Icon className={`w-3.5 h-3.5 ${accent || 'dark:text-zinc-600 text-zinc-400'}`} />
       </div>
-      <p className="text-2xl font-semibold text-zinc-100 tracking-tight tabular-nums">{value}</p>
+      <p className="text-2xl font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight tabular-nums">{value}</p>
     </div>
   )
 }
@@ -41,14 +42,14 @@ const statusLabels: Record<string, string> = {
   DONE: 'Concluído', CANCELLED: 'Cancelado',
 }
 const statusColors: Record<string, string> = {
-  TODO: 'bg-zinc-800 text-zinc-400',
+  TODO: 'dark:bg-zinc-800 bg-zinc-200 dark:text-zinc-400 text-zinc-600',
   IN_PROGRESS: 'bg-blue-500/10 text-blue-400',
   IN_REVIEW: 'bg-amber-500/10 text-amber-400',
   DONE: 'bg-emerald-500/10 text-emerald-400',
   CANCELLED: 'bg-red-500/10 text-red-400',
 }
 const priorityColors: Record<string, string> = {
-  LOW: 'bg-zinc-800/60 text-zinc-500',
+  LOW: 'dark:bg-zinc-800/60 bg-zinc-200 dark:text-zinc-500 text-zinc-500',
   MEDIUM: 'bg-blue-500/10 text-blue-400',
   HIGH: 'bg-orange-500/10 text-orange-400',
   URGENT: 'bg-red-500/10 text-red-400',
@@ -61,14 +62,14 @@ function TaskRow({ task }: { task: { id: string; title: string; status: string; 
   return (
     <Link
       href={`/dashboard/tasks/${task.id}`}
-      className="flex items-center gap-3 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+      className="flex items-center gap-3 py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors group"
     >
       <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${priorityColors[task.priority] || priorityColors.MEDIUM}`}>
         {priorityLabels[task.priority] || task.priority}
       </span>
-      <span className="text-xs text-zinc-400 group-hover:text-zinc-200 transition-colors flex-1 truncate">{task.title}</span>
+      <span className="text-xs dark:text-zinc-400 text-zinc-600 group-dark:hover:text-zinc-200 group-hover:text-zinc-900 transition-colors flex-1 truncate">{task.title}</span>
       {task.project && (
-        <span className="text-[10px] text-zinc-600 truncate max-w-[80px]">{task.project.name}</span>
+        <span className="text-[10px] dark:text-zinc-600 text-zinc-400 truncate max-w-[80px]">{task.project.name}</span>
       )}
     </Link>
   )
@@ -82,13 +83,13 @@ function SectionCard({ title, icon: Icon, children, empty, emptyText }: {
   emptyText?: string
 }) {
   return (
-    <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4">
+    <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4">
       <div className="flex items-center gap-2 mb-3">
-        <Icon className="w-3.5 h-3.5 text-zinc-600" />
-        <h2 className="text-sm font-medium text-zinc-300">{title}</h2>
+        <Icon className="w-3.5 h-3.5 dark:text-zinc-600 text-zinc-400" />
+        <h2 className="text-sm font-medium dark:text-zinc-300 text-zinc-700">{title}</h2>
       </div>
       {empty ? (
-        <p className="text-xs text-zinc-600 text-center py-5">{emptyText || 'Nenhuma tarefa'}</p>
+        <p className="text-xs dark:text-zinc-600 text-zinc-400 text-center py-5">{emptyText || 'Nenhuma tarefa'}</p>
       ) : children}
     </div>
   )
@@ -183,8 +184,8 @@ async function MemberDashboard({ userId, organizationId, userName }: {
   return (
     <div className="p-6 max-w-7xl">
       <div className="mb-6 animate-fade-in">
-        <h1 className="text-base font-semibold text-zinc-100 tracking-tight">{greeting}, {firstName} 👋</h1>
-        <p className="text-sm text-zinc-500 mt-0.5">
+        <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight">{greeting}, {firstName} 👋</h1>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500 mt-0.5">
           {now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
         </p>
       </div>
@@ -198,7 +199,7 @@ async function MemberDashboard({ userId, organizationId, userName }: {
           <StatCard label="Em andamento" value={inProgress.length} icon={Timer} accent="text-blue-500" />
         </div>
         <div className="animate-fade-in-delay-2">
-          <StatCard label="Em atraso" value={overdue.length} icon={AlertCircle} accent={overdue.length > 0 ? 'text-red-400' : 'text-zinc-600'} />
+          <StatCard label="Em atraso" value={overdue.length} icon={AlertCircle} accent={overdue.length > 0 ? 'text-red-400' : 'dark:text-zinc-600 text-zinc-400'} />
         </div>
         <div className="animate-fade-in-delay-3">
           <StatCard label={`Horas em ${now.toLocaleDateString('pt-BR', { month: 'short' })}`} value={`${totalHours.toFixed(1)}h`} icon={Clock} accent="text-violet-400" />
@@ -207,38 +208,38 @@ async function MemberDashboard({ userId, organizationId, userName }: {
 
       {/* Resumo de horas do mês */}
       {totalMinutes > 0 && (
-        <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 mb-6 animate-fade-in">
+        <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4 mb-6 animate-fade-in">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="w-3.5 h-3.5 text-violet-400" />
-              <span className="text-sm font-medium text-zinc-300">
+              <span className="text-sm font-medium dark:text-zinc-300 text-zinc-700">
                 Resumo de Horas — {now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
               </span>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-base font-semibold text-zinc-100 tabular-nums">{totalHours.toFixed(1)}h</p>
-                <p className="text-[11px] text-zinc-600">executadas</p>
+                <p className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tabular-nums">{totalHours.toFixed(1)}h</p>
+                <p className="text-[11px] dark:text-zinc-600 text-zinc-400">executadas</p>
               </div>
               {totalCost > 0 && (
-                <div className="text-right border-l border-zinc-800 pl-4">
-                  <p className="text-base font-semibold text-zinc-100 tabular-nums">
+                <div className="text-right border-l dark:border-zinc-800 border-zinc-200 pl-4">
+                  <p className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tabular-nums">
                     R$ {totalCost.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
                   </p>
-                  <p className="text-[11px] text-zinc-600">custo total</p>
+                  <p className="text-[11px] dark:text-zinc-600 text-zinc-400">custo total</p>
                 </div>
               )}
             </div>
           </div>
           <div className="mt-3">
-            <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="h-1.5 dark:bg-zinc-800 bg-zinc-200 rounded-full overflow-hidden">
               {/* Progress vs meta de 160h mensais */}
               <div
                 className="h-full bg-violet-500 rounded-full transition-all"
                 style={{ width: `${Math.min((totalHours / 160) * 100, 100)}%` }}
               />
             </div>
-            <p className="text-[11px] text-zinc-600 mt-1 text-right">
+            <p className="text-[11px] dark:text-zinc-600 text-zinc-400 mt-1 text-right">
               {((totalHours / 160) * 100).toFixed(0)}% de 160h
             </p>
           </div>
@@ -281,12 +282,12 @@ async function MemberDashboard({ userId, organizationId, userName }: {
                 <Link
                   key={t.id}
                   href={`/dashboard/tasks/${t.id}`}
-                  className="flex items-center gap-3 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+                  className="flex items-center gap-3 py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors group"
                 >
                   <CircleCheck className="w-3 h-3 text-emerald-500 shrink-0" />
-                  <span className="text-xs text-zinc-500 group-hover:text-zinc-300 flex-1 truncate transition-colors">{t.title}</span>
+                  <span className="text-xs dark:text-zinc-500 text-zinc-500 group-dark:hover:text-zinc-300 group-hover:text-zinc-700 flex-1 truncate transition-colors">{t.title}</span>
                   {t.completedAt && (
-                    <span className="text-[10px] text-zinc-700">
+                    <span className="text-[10px] dark:text-zinc-700 text-zinc-300">
                       {new Date(t.completedAt).toLocaleDateString('pt-BR')}
                     </span>
                   )}
@@ -296,10 +297,10 @@ async function MemberDashboard({ userId, organizationId, userName }: {
           </SectionCard>
 
           {/* Frase motivacional */}
-          <div className="bg-violet-500/5 border border-violet-500/15 rounded-lg px-4 py-3">
-            <p className="text-xs text-zinc-400 italic leading-relaxed">"{phrase.text}"</p>
+          <div className="dark:bg-violet-500/5 bg-violet-50 dark:border-violet-500/15 border-violet-200 rounded-lg px-4 py-3 border">
+            <p className="text-xs dark:text-zinc-400 text-zinc-600 italic leading-relaxed">"{phrase.text}"</p>
             {phrase.author !== 'Anônimo' && (
-              <p className="text-[11px] text-zinc-600 mt-1.5">— {phrase.author}</p>
+              <p className="text-[11px] dark:text-zinc-600 text-zinc-400 mt-1.5">— {phrase.author}</p>
             )}
           </div>
         </div>
@@ -311,12 +312,12 @@ async function MemberDashboard({ userId, organizationId, userName }: {
                 <Link
                   key={t.id}
                   href={`/dashboard/tasks/${t.id}`}
-                  className="flex items-center gap-3 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+                  className="flex items-center gap-3 py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors group"
                 >
                   <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-500/10 text-red-400">
                     {t.dueDate ? new Date(t.dueDate).toLocaleDateString('pt-BR') : '—'}
                   </span>
-                  <span className="text-xs text-zinc-400 group-hover:text-zinc-200 flex-1 truncate transition-colors">{t.title}</span>
+                  <span className="text-xs dark:text-zinc-400 text-zinc-600 group-dark:hover:text-zinc-200 group-hover:text-zinc-900 flex-1 truncate transition-colors">{t.title}</span>
                 </Link>
               ))}
             </div>
@@ -329,12 +330,17 @@ async function MemberDashboard({ userId, organizationId, userName }: {
 
 // ─── Admin/Owner Dashboard ────────────────────────────────────────────────────
 
-async function AdminDashboard({ organizationId, orgName }: {
+async function AdminDashboard({ organizationId, orgName, referenceMonth }: {
   organizationId: string
   orgName: string
+  referenceMonth: Date
 }) {
   const now = new Date()
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const monthStart = new Date(referenceMonth.getFullYear(), referenceMonth.getMonth(), 1)
+  const monthEnd = new Date(referenceMonth.getFullYear(), referenceMonth.getMonth() + 1, 0, 23, 59, 59)
+
+  const monthLabel = referenceMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
 
   const [dashboard, tasksAssignedToday, inProgress, lastCompleted] = await Promise.all([
     getOrganizationDashboard(organizationId),
@@ -375,6 +381,38 @@ async function AdminDashboard({ organizationId, orgName }: {
     }),
   ])
 
+  // KPIs filtrados por mês
+  const [activeProjects, backlogTasks, inProgressCount, monthHours, monthCost] = await Promise.all([
+    // Projetos apenas ativos
+    prisma.project.count({
+      where: { organizationId, status: 'ACTIVE', archived: false },
+    }),
+    // Tarefas em backlog (TODO) + em andamento
+    prisma.task.count({
+      where: { organizationId, status: { in: ['TODO', 'IN_PROGRESS'] } },
+    }),
+    // Apenas em andamento
+    prisma.task.count({
+      where: { organizationId, status: 'IN_PROGRESS' },
+    }),
+    // Horas do mês selecionado
+    prisma.timeEntry.aggregate({
+      where: {
+        organizationId,
+        createdAt: { gte: monthStart, lte: monthEnd },
+      },
+      _sum: { minutes: true },
+    }),
+    // Custo do mês selecionado
+    prisma.timeEntry.aggregate({
+      where: {
+        organizationId,
+        createdAt: { gte: monthStart, lte: monthEnd },
+      },
+      _sum: { costSnapshot: true },
+    }),
+  ])
+
   const hasData = (dashboard?.totalProjects || 0) > 0 || (dashboard?.totalTasks || 0) > 0
 
   return (
@@ -382,31 +420,31 @@ async function AdminDashboard({ organizationId, orgName }: {
       <PageHeader title="Dashboard" subtitle="Visão geral da sua operação" />
 
       {!hasData && (
-        <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-8 mb-6 animate-fade-in">
+        <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-xl p-8 mb-6 animate-fade-in">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center">
                 <FolderKanban className="w-5 h-5 text-brand" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-zinc-100">Bem-vindo ao ProjectFlow!</h2>
-                <p className="text-sm text-zinc-500">{orgName ? `Organização: ${orgName}` : 'Comece a usar agora'}</p>
+                <h2 className="text-lg font-semibold dark:text-zinc-100 text-zinc-900">Bem-vindo ao ProjectFlow!</h2>
+                <p className="text-sm dark:text-zinc-500 text-zinc-500">{orgName ? `Organização: ${orgName}` : 'Comece a usar agora'}</p>
               </div>
             </div>
-            <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
+            <p className="text-sm dark:text-zinc-400 text-zinc-600 mb-6 leading-relaxed">
               Sua organização está pronta. Crie seu primeiro projeto e adicione tarefas para acompanhar tempo, custos e progresso.
             </p>
             <div className="flex items-center gap-3">
               <Link
                 href="/dashboard/projects"
-                className="inline-flex items-center gap-2 text-xs font-medium bg-white text-black px-4 py-2 rounded-lg hover:bg-zinc-200 transition-colors"
+                className="inline-flex items-center gap-2 text-xs font-medium bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white px-4 py-2 rounded-lg dark:hover:bg-zinc-200 hover:bg-zinc-800 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Criar Primeiro Projeto
               </Link>
               <Link
                 href="/dashboard/team"
-                className="inline-flex items-center gap-2 text-xs font-medium text-zinc-400 border border-zinc-800 px-4 py-2 rounded-lg hover:bg-zinc-900 hover:text-zinc-300 transition-colors"
+                className="inline-flex items-center gap-2 text-xs font-medium dark:text-zinc-400 text-zinc-600 dark:border-zinc-800 border-zinc-300 px-4 py-2 rounded-lg dark:hover:bg-zinc-900 hover:bg-zinc-100 dark:hover:text-zinc-300 hover:text-zinc-700 hover:text-zinc-800 transition-colors"
               >
                 <Users className="w-3.5 h-3.5" />
                 Convidar Equipe
@@ -419,22 +457,28 @@ async function AdminDashboard({ organizationId, orgName }: {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <div className="animate-fade-in">
-          <StatCard label="Projetos" value={dashboard?.totalProjects || 0} icon={FolderKanban} />
+          <StatCard label="Projetos ativos" value={activeProjects} icon={FolderKanban} />
         </div>
         <div className="animate-fade-in-delay">
-          <StatCard label="Tarefas" value={dashboard?.totalTasks || 0} icon={CheckSquare} />
+          <StatCard label="Backlog + Andamento" value={backlogTasks} icon={CheckSquare} />
         </div>
         <div className="animate-fade-in-delay-2">
-          <StatCard label="Horas" value={`${Math.round(dashboard?.totalHours || 0)}h`} icon={Clock} />
+          <StatCard label={`Horas em ${monthLabel}`} value={`${(Math.round(monthHours._sum.minutes || 0) / 60).toFixed(2)}h`} icon={Clock} />
         </div>
         <div className="animate-fade-in-delay-3">
-          <StatCard label="Custo" value={`R$ ${Math.round(dashboard?.totalCost || 0).toLocaleString('pt-BR')}`} icon={DollarSign} />
+          <StatCard label={`Custo em ${monthLabel}`} value={`R$ ${Math.round(Number(monthCost._sum.costSnapshot || 0)).toLocaleString('pt-BR')}`} icon={DollarSign} />
         </div>
+      </div>
+
+      {/* Month Selector + Charts */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-medium dark:text-zinc-400 text-zinc-600">Análise — {monthLabel}</h2>
+        <DashboardMonthSelector />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <DashboardCharts />
+        <DashboardCharts referenceMonth={referenceMonth} />
       </div>
 
       {/* Tarefas operacionais */}
@@ -451,14 +495,14 @@ async function AdminDashboard({ organizationId, orgName }: {
               <Link
                 key={t.id}
                 href={`/dashboard/tasks/${t.id}`}
-                className="flex items-center gap-2 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+                className="flex items-center gap-2 py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors group"
               >
                 <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${statusColors[t.status] || statusColors.TODO}`}>
                   {statusLabels[t.status]}
                 </span>
-                <span className="text-xs text-zinc-400 group-hover:text-zinc-200 flex-1 truncate transition-colors">{t.title}</span>
+                <span className="text-xs dark:text-zinc-400 text-zinc-600 group-dark:hover:text-zinc-200 group-hover:text-zinc-900 flex-1 truncate transition-colors">{t.title}</span>
                 {t.assignedTo && (
-                  <span className="text-[10px] text-zinc-700 shrink-0">{t.assignedTo.name.split(' ')[0]}</span>
+                  <span className="text-[10px] dark:text-zinc-700 text-zinc-400 shrink-0">{t.assignedTo.name.split(' ')[0]}</span>
                 )}
               </Link>
             ))}
@@ -477,11 +521,11 @@ async function AdminDashboard({ organizationId, orgName }: {
               <Link
                 key={t.id}
                 href={`/dashboard/tasks/${t.id}`}
-                className="flex items-center gap-2 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+                className="flex items-center gap-2 py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors group"
               >
-                <span className="text-xs text-zinc-400 group-hover:text-zinc-200 flex-1 truncate transition-colors">{t.title}</span>
+                <span className="text-xs dark:text-zinc-400 text-zinc-600 group-dark:hover:text-zinc-200 group-hover:text-zinc-900 flex-1 truncate transition-colors">{t.title}</span>
                 {t.assignedTo && (
-                  <span className="text-[10px] text-zinc-600 shrink-0">{t.assignedTo.name.split(' ')[0]}</span>
+                  <span className="text-[10px] dark:text-zinc-600 text-zinc-400 shrink-0">{t.assignedTo.name.split(' ')[0]}</span>
                 )}
               </Link>
             ))}
@@ -500,12 +544,12 @@ async function AdminDashboard({ organizationId, orgName }: {
               <Link
                 key={t.id}
                 href={`/dashboard/tasks/${t.id}`}
-                className="flex items-center gap-2 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+                className="flex items-center gap-2 py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors group"
               >
                 <CircleCheck className="w-3 h-3 text-emerald-500 shrink-0" />
-                <span className="text-xs text-zinc-500 group-hover:text-zinc-300 flex-1 truncate transition-colors">{t.title}</span>
+                <span className="text-xs dark:text-zinc-500 text-zinc-500 group-dark:hover:text-zinc-300 group-hover:text-zinc-700 flex-1 truncate transition-colors">{t.title}</span>
                 {t.completedAt && (
-                  <span className="text-[10px] text-zinc-700 shrink-0">
+                  <span className="text-[10px] dark:text-zinc-700 text-zinc-400 shrink-0">
                     {new Date(t.completedAt).toLocaleDateString('pt-BR')}
                   </span>
                 )}
@@ -518,37 +562,37 @@ async function AdminDashboard({ organizationId, orgName }: {
       {/* Tarefas por status + Projetos ativos */}
       {hasData && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 animate-fade-in-delay">
-            <h2 className="text-sm font-medium text-zinc-200 mb-4">Tarefas por status</h2>
+          <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4 animate-fade-in-delay">
+            <h2 className="text-sm font-medium dark:text-zinc-200 text-zinc-800 mb-4">Tarefas por status</h2>
             <div className="space-y-px">
               {Object.entries(dashboard?.tasksByStatus || {}).map(([status, count]) => (
-                <div key={status} className="flex items-center justify-between py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[status] || 'bg-zinc-800 text-zinc-400'}`}>
+                <div key={status} className="flex items-center justify-between py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors">
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[status] || 'dark:bg-zinc-800 bg-zinc-200 dark:text-zinc-400 text-zinc-600'}`}>
                     {statusLabels[status] || status}
                   </span>
-                  <span className="text-sm font-medium text-zinc-300 tabular-nums">{count as number}</span>
+                  <span className="text-sm font-medium dark:text-zinc-300 text-zinc-700 tabular-nums">{count as number}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 animate-fade-in-delay-2">
-            <h2 className="text-sm font-medium text-zinc-200 mb-4">Projetos ativos</h2>
+          <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4 animate-fade-in-delay-2">
+            <h2 className="text-sm font-medium dark:text-zinc-200 text-zinc-800 mb-4">Projetos ativos</h2>
             {dashboard?.activeProjects?.length ? (
               <div className="space-y-px">
                 {dashboard.activeProjects.map((p: { id: string; name: string }) => (
                   <Link
                     key={p.id}
                     href={`/dashboard/projects/${p.id}`}
-                    className="flex items-center gap-2 py-2 px-2 rounded hover:bg-zinc-900/40 transition-colors group"
+                    className="flex items-center gap-2 py-2 px-2 rounded dark:hover:bg-zinc-900/40 hover:bg-zinc-100 transition-colors group"
                   >
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-xs text-zinc-400 group-hover:text-zinc-200 transition-colors">{p.name}</span>
+                    <span className="text-xs dark:text-zinc-400 text-zinc-600 group-dark:hover:text-zinc-200 group-hover:text-zinc-900 transition-colors">{p.name}</span>
                   </Link>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-zinc-600 text-center py-6">Nenhum projeto ativo</p>
+              <p className="text-xs dark:text-zinc-600 text-zinc-400 text-center py-6">Nenhum projeto ativo</p>
             )}
           </div>
         </div>
@@ -559,9 +603,24 @@ async function AdminDashboard({ organizationId, orgName }: {
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string }>
+}) {
   try {
     const { user, organizationId } = await getCurrentUserWithOrg()
+    const { month } = await searchParams
+
+    // Parse reference month from URL
+    let referenceMonth: Date
+    if (month) {
+      const [year, monthNum] = month.split('-').map(Number)
+      referenceMonth = new Date(year, monthNum - 1, 1)
+    } else {
+      const now = new Date()
+      referenceMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    }
 
     if (user.role === 'MEMBER' || user.role === 'VIEWER') {
       return (
@@ -582,12 +641,13 @@ export default async function DashboardPage() {
       <AdminDashboard
         organizationId={organizationId}
         orgName={org?.name || ''}
+        referenceMonth={referenceMonth}
       />
     )
   } catch {
     return (
       <div className="p-6">
-        <p className="text-sm text-zinc-500">Erro ao carregar dashboard.</p>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500">Erro ao carregar dashboard.</p>
       </div>
     )
   }

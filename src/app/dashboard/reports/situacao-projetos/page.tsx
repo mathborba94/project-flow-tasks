@@ -52,7 +52,7 @@ export default function SituacaoProjetosPage() {
   const statusColors: Record<string, string> = {
     ACTIVE: 'bg-emerald-500/10 text-emerald-400',
     PAUSED: 'bg-amber-500/10 text-amber-400',
-    COMPLETED: 'bg-zinc-800 text-zinc-400',
+    COMPLETED: 'dark:bg-zinc-800 bg-zinc-100 dark:text-zinc-400 text-zinc-400',
   }
 
   const hasFilters = statusFilter || typeFilter || startDate || endDate
@@ -66,32 +66,32 @@ export default function SituacaoProjetosPage() {
   return (
     <div className="p-6 max-w-6xl">
       <div className="mb-6 animate-fade-in">
-        <Link href="/dashboard/reports" className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 mb-2 transition-colors">
+        <Link href="/dashboard/reports" className="inline-flex items-center gap-1.5 text-xs dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 hover:text-zinc-700 mb-2 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
           Voltar aos relatórios
         </Link>
-        <h1 className="text-base font-semibold text-zinc-100 tracking-tight">Situação de Projetos</h1>
-        <p className="text-sm text-zinc-500 mt-0.5">Saúde dos projetos: progresso, orçamento e atrasos</p>
+        <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight">Situação de Projetos</h1>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500 mt-0.5">Saúde dos projetos: progresso, orçamento e atrasos</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 mb-5 animate-fade-in">
+      <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-lg p-4 mb-5 animate-fade-in">
         <div className="flex items-center gap-2 mb-3">
-          <Filter className="w-3.5 h-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">Filtros</span>
+          <Filter className="w-3.5 h-3.5 dark:text-zinc-500 text-zinc-500" />
+          <span className="text-xs font-medium dark:text-zinc-400 text-zinc-400">Filtros</span>
           {hasFilters && (
-            <button onClick={clearFilters} className="ml-auto text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors">
+            <button onClick={clearFilters} className="ml-auto text-[11px] dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 hover:text-zinc-700 transition-colors">
               Limpar filtros
             </button>
           )}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
-            <label className="text-[11px] text-zinc-500 mb-1 block">Status</label>
+            <label className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1 block">Status</label>
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+              className="w-full dark:bg-zinc-900 bg-zinc-100 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-1.5 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
             >
               <option value="">Todos</option>
               <option value="ACTIVE">Ativo</option>
@@ -100,11 +100,11 @@ export default function SituacaoProjetosPage() {
             </select>
           </div>
           <div>
-            <label className="text-[11px] text-zinc-500 mb-1 block">Tipo</label>
+            <label className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1 block">Tipo</label>
             <select
               value={typeFilter}
               onChange={e => setTypeFilter(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+              className="w-full dark:bg-zinc-900 bg-zinc-100 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-1.5 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
             >
               <option value="">Todos os tipos</option>
               <option value="SCOPE_FIXED">Escopo Fechado</option>
@@ -112,56 +112,56 @@ export default function SituacaoProjetosPage() {
             </select>
           </div>
           <div>
-            <label className="text-[11px] text-zinc-500 mb-1 block">Criado a partir de</label>
+            <label className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1 block">Criado a partir de</label>
             <input
               type="date"
               value={startDate}
               onChange={e => setStartDate(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+              className="w-full dark:bg-zinc-900 bg-zinc-100 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-1.5 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
             />
           </div>
           <div>
-            <label className="text-[11px] text-zinc-500 mb-1 block">Criado até</label>
+            <label className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1 block">Criado até</label>
             <input
               type="date"
               value={endDate}
               onChange={e => setEndDate(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+              className="w-full dark:bg-zinc-900 bg-zinc-100 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-1.5 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
             />
           </div>
         </div>
       </div>
 
       {loading ? (
-        <div className="p-8 text-center"><p className="text-sm text-zinc-500">Carregando...</p></div>
+        <div className="p-8 text-center"><p className="text-sm dark:text-zinc-500 text-zinc-500">Carregando...</p></div>
       ) : projects.length === 0 ? (
         <div className="p-8 text-center">
-          <FolderKanban className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-          <p className="text-sm text-zinc-500">Nenhum projeto encontrado com os filtros selecionados</p>
+          <FolderKanban className="w-8 h-8 dark:text-zinc-700 text-zinc-700 mx-auto mb-2" />
+          <p className="text-sm dark:text-zinc-500 text-zinc-500">Nenhum projeto encontrado com os filtros selecionados</p>
         </div>
       ) : (
         <div className="space-y-4">
           {projects.map((project, i) => (
             <div
               key={project.id}
-              className={`bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-5 animate-fade-in`}
+              className={`dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-lg p-5 animate-fade-in`}
               style={{ animationDelay: `${i * 50}ms` }}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color || '#5c6ac4' }} />
-                  <h3 className="text-sm font-medium text-zinc-200">{project.name}</h3>
+                  <h3 className="text-sm font-medium dark:text-zinc-200 text-zinc-800">{project.name}</h3>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full ${statusColors[project.status] || statusColors.ACTIVE}`}>
                     {statusLabels[project.status] || project.status}
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800/60 text-zinc-500">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-500 text-zinc-500">
                     {project.type === 'SCOPE_FIXED' ? 'Escopo Fechado' : 'Contínuo'}
                   </span>
                 </div>
                 <div className="text-right">
-                  <p className="text-[11px] text-zinc-500">Responsável</p>
-                  <p className="text-xs text-zinc-400">{project.owner?.name || '-'}</p>
+                  <p className="text-[11px] dark:text-zinc-500 text-zinc-500">Responsável</p>
+                  <p className="text-xs dark:text-zinc-400 text-zinc-400">{project.owner?.name || '-'}</p>
                 </div>
               </div>
 
@@ -169,9 +169,9 @@ export default function SituacaoProjetosPage() {
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
                 {project.type === 'SCOPE_FIXED' ? (
                   <div>
-                    <p className="text-[11px] text-zinc-500 mb-1">Progresso</p>
+                    <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1">Progresso</p>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-zinc-800/40 rounded-full h-1.5">
+                      <div className="flex-1 dark:bg-zinc-800/40 bg-zinc-100 rounded-full h-1.5">
                         <div
                           className={`h-1.5 rounded-full transition-all ${getProgressBg(project.progress)}`}
                           style={{ width: `${project.progress}%` }}
@@ -184,23 +184,23 @@ export default function SituacaoProjetosPage() {
                   </div>
                 ) : (
                   <div>
-                    <p className="text-[11px] text-zinc-500 mb-1">Tipo</p>
-                    <p className="text-xs text-zinc-400">Contínuo</p>
+                    <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1">Tipo</p>
+                    <p className="text-xs dark:text-zinc-400 text-zinc-400">Contínuo</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-[11px] text-zinc-500 mb-1">Horas</p>
-                  <p className="text-sm text-zinc-300 tabular-nums">{Math.round(project.totalHours || 0)}h</p>
+                  <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1">Horas</p>
+                  <p className="text-sm dark:text-zinc-300 text-zinc-700 tabular-nums">{Math.round(project.totalHours || 0)}h</p>
                 </div>
                 <div>
-                  <p className="text-[11px] text-zinc-500 mb-1">Custo</p>
-                  <p className="text-sm text-zinc-300 tabular-nums">R$ {Math.round(project.totalCost || 0).toLocaleString('pt-BR')}</p>
+                  <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1">Custo</p>
+                  <p className="text-sm dark:text-zinc-300 text-zinc-700 tabular-nums">R$ {Math.round(project.totalCost || 0).toLocaleString('pt-BR')}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] text-zinc-500 mb-1">Orçamento</p>
+                  <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1">Orçamento</p>
                   {project.budget ? (
                     <div>
-                      <p className="text-sm text-zinc-300 tabular-nums">
+                      <p className="text-sm dark:text-zinc-300 text-zinc-700 tabular-nums">
                         R$ {Number(project.budget).toLocaleString('pt-BR')}
                       </p>
                       {project.totalCost > 0 && (
@@ -210,11 +210,11 @@ export default function SituacaoProjetosPage() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-[11px] text-zinc-600">Não definido</p>
+                    <p className="text-[11px] dark:text-zinc-600 text-zinc-400">Não definido</p>
                   )}
                 </div>
                 <div>
-                  <p className="text-[11px] text-zinc-500 mb-1">Tarefas Atrasadas</p>
+                  <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mb-1">Tarefas Atrasadas</p>
                   {project.overdueTasks > 0 ? (
                     <div className="flex items-center gap-1">
                       <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
@@ -231,14 +231,14 @@ export default function SituacaoProjetosPage() {
 
               {/* Budget vs actual bar */}
               {project.budget && Number(project.budget) > 0 && (
-                <div className="bg-zinc-900/40 rounded p-3">
+                <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded p-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] text-zinc-500">Orçamento vs Realizado</span>
-                    <span className="text-[11px] text-zinc-400 tabular-nums">
+                    <span className="text-[11px] dark:text-zinc-500 text-zinc-500">Orçamento vs Realizado</span>
+                    <span className="text-[11px] dark:text-zinc-400 text-zinc-400 tabular-nums">
                       R$ {Math.round(project.totalCost || 0).toLocaleString('pt-BR')} / R$ {Number(project.budget).toLocaleString('pt-BR')}
                     </span>
                   </div>
-                  <div className="w-full bg-zinc-800/40 rounded-full h-2">
+                  <div className="w-full dark:bg-zinc-800/40 bg-zinc-100 rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all ${
                         Number(project.totalCost) > Number(project.budget)

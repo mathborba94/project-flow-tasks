@@ -313,7 +313,7 @@ const sections: Section[] = [
     icon: Settings,
     title: 'Configurações',
     subtitle: 'Organização, integrações e personalizações',
-    color: 'text-zinc-400',
+    color: 'dark:text-zinc-400 text-zinc-400',
     bg: 'bg-zinc-700/30',
     content: {
       intro: 'As configurações centralizam dados da organização, tipos de tarefa padrão e aparência.',
@@ -335,44 +335,44 @@ function SectionCard({ section, isOpen, onToggle }: { section: Section; isOpen: 
   const Icon = section.icon
 
   return (
-    <div className={`border rounded-xl overflow-hidden transition-all ${isOpen ? 'border-zinc-700/60' : 'border-zinc-800/60'}`}>
+    <div className={`border rounded-xl overflow-hidden transition-all ${isOpen ? 'dark:border-zinc-700/60 border-zinc-200' : 'dark:border-zinc-800/60 border-zinc-200'}`}>
       {/* Header */}
       <button
         onClick={onToggle}
-        className="w-full flex items-center gap-4 p-5 text-left hover:bg-zinc-900/40 transition-colors"
+        className="w-full flex items-center gap-4 p-5 text-left dark:hover:bg-zinc-900/40 hover:bg-zinc-50 transition-colors"
       >
         <div className={`w-10 h-10 ${section.bg} rounded-lg flex items-center justify-center flex-shrink-0`}>
           <Icon className={`w-5 h-5 ${section.color}`} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-zinc-200">{section.title}</h3>
-          <p className="text-xs text-zinc-500 mt-0.5">{section.subtitle}</p>
+          <h3 className="text-sm font-semibold dark:text-zinc-200 text-zinc-800">{section.title}</h3>
+          <p className="text-xs dark:text-zinc-500 text-zinc-500 mt-0.5">{section.subtitle}</p>
         </div>
         {isOpen
-          ? <ChevronDown className="w-4 h-4 text-zinc-500 flex-shrink-0" />
-          : <ChevronRight className="w-4 h-4 text-zinc-500 flex-shrink-0" />
+          ? <ChevronDown className="w-4 h-4 dark:text-zinc-500 text-zinc-500 flex-shrink-0" />
+          : <ChevronRight className="w-4 h-4 dark:text-zinc-500 text-zinc-500 flex-shrink-0" />
         }
       </button>
 
       {/* Content */}
       {isOpen && (
-        <div className="px-5 pb-5 border-t border-zinc-800/40">
+        <div className="px-5 pb-5 border-t dark:border-zinc-800/40 border-zinc-200">
           {/* Intro */}
-          <p className="text-sm text-zinc-400 leading-relaxed mt-4 mb-4">{section.content.intro}</p>
+          <p className="text-sm dark:text-zinc-400 text-zinc-400 leading-relaxed mt-4 mb-4">{section.content.intro}</p>
 
           {/* Steps */}
           {section.content.steps && (
             <div className="space-y-2 mb-4">
               {section.content.steps.map((step, i) => (
-                <div key={i} className="flex gap-3 p-3 bg-zinc-900/40 rounded-lg">
+                <div key={i} className="flex gap-3 p-3 dark:bg-zinc-900/40 bg-zinc-100 rounded-lg">
                   <div className="flex-shrink-0 mt-0.5">
                     <div className={`w-5 h-5 ${section.bg} rounded-md flex items-center justify-center`}>
                       <span className={`text-[9px] font-bold ${section.color}`}>{String(i + 1).padStart(2, '0')}</span>
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-zinc-300 mb-0.5">{step.title}</p>
-                    <p className="text-xs text-zinc-500 leading-relaxed">{step.desc}</p>
+                    <p className="text-xs font-semibold dark:text-zinc-300 text-zinc-300 mb-0.5">{step.title}</p>
+                    <p className="text-xs dark:text-zinc-500 text-zinc-500 leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -383,14 +383,14 @@ function SectionCard({ section, isOpen, onToggle }: { section: Section; isOpen: 
           {section.content.roles && (
             <div className="mb-4">
               <div className="flex items-center gap-1.5 mb-2">
-                <Shield className="w-3.5 h-3.5 text-zinc-500" />
-                <span className="text-xs font-semibold text-zinc-400">Papéis e Permissões</span>
+                <Shield className="w-3.5 h-3.5 dark:text-zinc-500 text-zinc-500" />
+                <span className="text-xs font-semibold dark:text-zinc-400 text-zinc-400">Papéis e Permissões</span>
               </div>
               <div className="space-y-1.5">
                 {section.content.roles.map((r, i) => (
-                  <div key={i} className="flex gap-3 items-start p-3 bg-zinc-900/40 rounded-lg">
-                    <span className="text-[10px] font-bold text-zinc-300 bg-zinc-800 px-2 py-0.5 rounded flex-shrink-0">{r.role}</span>
-                    <p className="text-xs text-zinc-500">{r.access}</p>
+                  <div key={i} className="flex gap-3 items-start p-3 dark:bg-zinc-900/40 bg-zinc-100 rounded-lg">
+                    <span className="text-[10px] font-bold dark:text-zinc-300 text-zinc-300 dark:bg-zinc-800 bg-zinc-100 px-2 py-0.5 rounded flex-shrink-0">{r.role}</span>
+                    <p className="text-xs dark:text-zinc-500 text-zinc-500">{r.access}</p>
                   </div>
                 ))}
               </div>
@@ -401,15 +401,15 @@ function SectionCard({ section, isOpen, onToggle }: { section: Section; isOpen: 
           {section.content.scenarios && (
             <div className="space-y-3 mb-4">
               {section.content.scenarios.map((sc, i) => (
-                <div key={i} className="border border-zinc-800/60 rounded-lg p-4">
+                <div key={i} className="border dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4">
                   <div className="flex items-center gap-1.5 mb-3">
                     <Star className="w-3.5 h-3.5 text-amber-400" />
-                    <p className="text-xs font-semibold text-zinc-300">{sc.title}</p>
+                    <p className="text-xs font-semibold dark:text-zinc-300 text-zinc-300">{sc.title}</p>
                   </div>
                   <ol className="space-y-1.5">
                     {sc.steps.map((step, j) => (
-                      <li key={j} className="flex gap-2 text-xs text-zinc-400">
-                        <span className="text-zinc-600 flex-shrink-0 tabular-nums">{j + 1}.</span>
+                      <li key={j} className="flex gap-2 text-xs dark:text-zinc-400 text-zinc-400">
+                        <span className="dark:text-zinc-600 text-zinc-400 flex-shrink-0 tabular-nums">{j + 1}.</span>
                         <span className="leading-relaxed">{step}</span>
                       </li>
                     ))}
@@ -435,13 +435,13 @@ function SectionCard({ section, isOpen, onToggle }: { section: Section; isOpen: 
           {section.content.tips && (
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 mb-1">
-                <Lightbulb className="w-3.5 h-3.5 text-zinc-500" />
-                <span className="text-xs font-semibold text-zinc-500">Dicas</span>
+                <Lightbulb className="w-3.5 h-3.5 dark:text-zinc-500 text-zinc-500" />
+                <span className="text-xs font-semibold dark:text-zinc-500 text-zinc-500">Dicas</span>
               </div>
               {section.content.tips.map((tip, i) => (
-                <div key={i} className="flex gap-2 p-2.5 bg-zinc-900/40 rounded-lg">
-                  <ArrowRight className="w-3 h-3 text-zinc-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-zinc-500 leading-relaxed">{tip}</p>
+                <div key={i} className="flex gap-2 p-2.5 dark:bg-zinc-900/40 bg-zinc-100 rounded-lg">
+                  <ArrowRight className="w-3 h-3 dark:text-zinc-600 text-zinc-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs dark:text-zinc-500 text-zinc-500 leading-relaxed">{tip}</p>
                 </div>
               ))}
             </div>
@@ -468,8 +468,8 @@ export default function HelpPage() {
             <BookOpen className="w-5 h-5 text-violet-400" />
           </div>
           <div>
-            <h1 className="text-base font-semibold text-zinc-100 tracking-tight">Manual do Sistema</h1>
-            <p className="text-sm text-zinc-500">Documentação completa de todos os módulos do ProjectFlow</p>
+            <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight">Manual do Sistema</h1>
+            <p className="text-sm dark:text-zinc-500 text-zinc-500">Documentação completa de todos os módulos do ProjectFlow</p>
           </div>
         </div>
       </div>
@@ -484,8 +484,8 @@ export default function HelpPage() {
               onClick={() => setOpenSection(s.id)}
               className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all ${
                 openSection === s.id
-                  ? 'border-zinc-600 bg-zinc-800/60 text-zinc-200'
-                  : 'border-zinc-800/60 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700/60'
+                  ? 'border-zinc-600 dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-200 text-zinc-800'
+                  : 'dark:border-zinc-800/60 border-zinc-200 dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-700 text-zinc-300 dark:hover:border-zinc-700/60 border-zinc-200'
               }`}
             >
               <Icon className="w-3 h-3" />
@@ -509,11 +509,11 @@ export default function HelpPage() {
       </div>
 
       {/* Footer note */}
-      <div className="mt-8 p-4 bg-zinc-900/40 border border-zinc-800/40 rounded-xl flex items-start gap-3">
-        <Info className="w-4 h-4 text-zinc-500 flex-shrink-0 mt-0.5" />
+      <div className="mt-8 p-4 dark:bg-zinc-900/40 bg-zinc-100 border dark:border-zinc-800/40 border-zinc-200 rounded-xl flex items-start gap-3">
+        <Info className="w-4 h-4 dark:text-zinc-500 text-zinc-500 flex-shrink-0 mt-0.5" />
         <div>
-          <p className="text-xs font-medium text-zinc-400 mb-0.5">Sobre o ProjectFlow</p>
-          <p className="text-xs text-zinc-600 leading-relaxed">
+          <p className="text-xs font-medium dark:text-zinc-400 text-zinc-400 mb-0.5">Sobre o ProjectFlow</p>
+          <p className="text-xs dark:text-zinc-600 text-zinc-400 leading-relaxed">
             ProjectFlow é uma ferramenta de inteligência operacional para equipes de tecnologia. Stack: Next.js + React + TypeScript + Prisma + Supabase Auth + OpenAI + Resend.
             Para suporte técnico, consulte a documentação do código ou entre em contato com o administrador do sistema.
           </p>

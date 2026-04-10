@@ -598,7 +598,7 @@ export default function TaskDetailModal({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="!max-w-[95vw] !w-[95vw] !max-h-[92vh] !h-[92vh] !p-0 !flex !flex-col !overflow-hidden" showCloseButton={false}>
         {/* Top bar */}
-        <div className="flex items-center justify-between px-6 py-3 border-b border-zinc-800/40 bg-zinc-900/50 flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-3 border-b dark:border-zinc-800 border-zinc-300/40 border-zinc-200 dark:bg-zinc-900/50 bg-zinc-50 flex-shrink-0">
           <div className="flex items-center gap-2">
             {hasPrevTask && (
               <Button size="sm" variant="ghost" onClick={handlePrevTask} className="h-7 px-2 text-xs">
@@ -615,7 +615,7 @@ export default function TaskDetailModal({
                 size="sm"
                 variant="ghost"
                 onClick={handleNextStageClick}
-                className={`h-7 px-2 text-xs ${nextStageIsCompletion ? 'text-emerald-400 hover:text-emerald-300' : 'text-zinc-400 hover:text-zinc-200'}`}
+                className={`h-7 px-2 text-xs ${nextStageIsCompletion ? 'text-emerald-400 hover:text-emerald-300' : 'dark:text-zinc-400 text-zinc-400 dark:hover:text-zinc-200 text-zinc-800'}`}
               >
                 {nextStageIsCompletion
                   ? <><CheckCircle2 className="w-3 h-3 mr-1" /> Concluir Tarefa</>
@@ -655,7 +655,7 @@ export default function TaskDetailModal({
                 <Trash2 className="w-3 h-3" />
               </Button>
             )}
-            <Button size="sm" variant="ghost" onClick={handleClose} className="h-7 w-7 p-0 text-zinc-500 hover:text-zinc-300">
+            <Button size="sm" variant="ghost" onClick={handleClose} className="h-7 w-7 p-0 dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400">
               <X className="w-4 h-4" />
             </Button>
           </div>
@@ -669,21 +669,21 @@ export default function TaskDetailModal({
                 <Input
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="bg-zinc-900/60 border-zinc-700 text-lg font-semibold"
+                  className="dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-700 border-zinc-300 border-zinc-300 text-lg font-semibold"
                   placeholder="Título da tarefa"
                   autoFocus
                 />
               ) : (
-                <DialogTitle className="text-lg font-semibold text-zinc-100">
+                <DialogTitle className="text-lg font-semibold dark:text-zinc-100 text-zinc-900">
                   {task?.title || 'Carregando...'}
                 </DialogTitle>
               )}
               <div className="flex items-center gap-3 mt-1">
                 {task?.project && (
-                  <p className="text-xs text-zinc-500">{task.project.name}</p>
+                  <p className="text-xs dark:text-zinc-500 text-zinc-500">{task.project.name}</p>
                 )}
                 {task?.requesterName && (
-                  <div className="flex items-center gap-1 text-xs text-zinc-600">
+                  <div className="flex items-center gap-1 text-xs dark:text-zinc-600 text-zinc-400">
                     <User className="w-3 h-3" />
                     <span>{task.requesterName}</span>
                     {task.requesterEmail && (
@@ -708,14 +708,14 @@ export default function TaskDetailModal({
                   {task.dueDate && (() => {
                     const isOverdue = new Date(task.dueDate!) < new Date() && task.status !== 'DONE' && task.status !== 'CANCELLED'
                     return (
-                      <Badge variant="outline" className={`text-xs px-2.5 py-1 ${isOverdue ? 'bg-red-500/10 text-red-400 border-red-500/30' : 'bg-zinc-800/60 text-zinc-400 border-zinc-700/40'}`}>
+                      <Badge variant="outline" className={`text-xs px-2.5 py-1 ${isOverdue ? 'bg-red-500/10 text-red-400 border-red-500/30' : 'dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-400 text-zinc-400 dark:border-zinc-700 border-zinc-300/40 border-zinc-200'}`}>
                         <Calendar className="w-3 h-3 mr-1" />
                         {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                         {isOverdue && ' (Atrasada)'}
                       </Badge>
                     )
                   })()}
-                  <div className="flex items-center gap-1 px-2.5 py-1 bg-zinc-800/60 rounded text-xs text-zinc-400">
+                  <div className="flex items-center gap-1 px-2.5 py-1 dark:bg-zinc-800/60 bg-zinc-100 rounded text-xs dark:text-zinc-400 text-zinc-400">
                     <Clock className="w-3 h-3" />
                     <span className="tabular-nums">
                       {elapsedTime.hours > 0 ? `${elapsedTime.hours}h` : ''}{elapsedTime.minutes}m
@@ -731,32 +731,32 @@ export default function TaskDetailModal({
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <Loader2 className="w-6 h-6 text-zinc-600 mx-auto mb-2 animate-spin" />
-              <p className="text-sm text-zinc-600">Carregando...</p>
+              <Loader2 className="w-6 h-6 dark:text-zinc-600 text-zinc-400 mx-auto mb-2 animate-spin" />
+              <p className="text-sm dark:text-zinc-600 text-zinc-400">Carregando...</p>
             </div>
           </div>
         ) : task ? (
           <div className="flex-1 overflow-hidden flex flex-col">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
               <div className="px-6 flex-shrink-0">
-                <TabsList className="bg-transparent border-0 border-b border-zinc-800/40 p-0 gap-0 h-9 rounded-none w-full justify-start">
-                  <TabsTrigger value="details" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-sm h-9 px-3">
+                <TabsList className="bg-transparent border-0 border-b dark:border-zinc-800 border-zinc-300/40 border-zinc-200 p-0 gap-0 h-9 rounded-none w-full justify-start">
+                  <TabsTrigger value="details" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-sm h-9 px-3">
                     <Hash className="w-3.5 h-3.5 mr-1.5" />
                     Detalhes
                   </TabsTrigger>
-                  <TabsTrigger value="time" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-sm h-9 px-3">
+                  <TabsTrigger value="time" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-sm h-9 px-3">
                     <Timer className="w-3.5 h-3.5 mr-1.5" />
                     Horas ({timeEntries.length})
                   </TabsTrigger>
-                  <TabsTrigger value="comments" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-sm h-9 px-3">
+                  <TabsTrigger value="comments" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-sm h-9 px-3">
                     <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
                     Comentários ({comments.length})
                   </TabsTrigger>
-                  <TabsTrigger value="attachments" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-sm h-9 px-3">
+                  <TabsTrigger value="attachments" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-sm h-9 px-3">
                     <Paperclip className="w-3.5 h-3.5 mr-1.5" />
                     Anexos ({attachments.length})
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-sm h-9 px-3">
+                  <TabsTrigger value="history" className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-sm h-9 px-3">
                     <History className="w-3.5 h-3.5 mr-1.5" />
                     Histórico
                   </TabsTrigger>
@@ -769,38 +769,38 @@ export default function TaskDetailModal({
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-6">
                       <div>
-                        <h3 className="text-sm font-medium text-zinc-400 mb-2">Descrição</h3>
+                        <h3 className="text-sm font-medium dark:text-zinc-400 text-zinc-400 mb-2">Descrição</h3>
                         {editMode ? (
-                          <textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-600 resize-none min-h-[200px]" placeholder="Descreva os detalhes da tarefa..." />
+                          <textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-lg px-4 py-3 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-600 resize-none min-h-[200px]" placeholder="Descreva os detalhes da tarefa..." />
                         ) : task.description ? (
-                          <div className="bg-zinc-900/30 border border-zinc-800/40 rounded-lg px-4 py-3">
-                            <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">{task.description}</p>
+                          <div className="dark:bg-zinc-900/30 bg-zinc-200/50 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200 rounded-lg px-4 py-3">
+                            <p className="text-sm dark:text-zinc-300 text-zinc-300 whitespace-pre-wrap leading-relaxed">{task.description}</p>
                           </div>
                         ) : (
-                          <p className="text-sm text-zinc-600 italic bg-zinc-900/20 rounded-lg px-4 py-3">Nenhuma descrição</p>
+                          <p className="text-sm dark:text-zinc-600 text-zinc-400 italic dark:bg-zinc-900/20 bg-zinc-100/50 rounded-lg px-4 py-3">Nenhuma descrição</p>
                         )}
                       </div>
                     </div>
 
                     <div className="space-y-4">
                       {editMode ? (
-                        <div className="bg-zinc-900/40 rounded-lg p-4 space-y-4 border border-zinc-800/40">
-                          <h3 className="text-sm font-medium text-zinc-300">Editar Informações</h3>
+                        <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 space-y-4 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+                          <h3 className="text-sm font-medium dark:text-zinc-300 text-zinc-300">Editar Informações</h3>
                           <div>
-                            <Label className="text-xs text-zinc-400">Status</Label>
-                            <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="mt-1 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600">
+                            <Label className="text-xs dark:text-zinc-400 text-zinc-400">Status</Label>
+                            <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600">
                               {Object.entries(statusConfig).map(([key, val]) => (<option key={key} value={key}>{val.label}</option>))}
                             </select>
                           </div>
                           <div>
-                            <Label className="text-xs text-zinc-400">Prioridade</Label>
-                            <select value={editPriority} onChange={(e) => setEditPriority(e.target.value)} className="mt-1 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600">
+                            <Label className="text-xs dark:text-zinc-400 text-zinc-400">Prioridade</Label>
+                            <select value={editPriority} onChange={(e) => setEditPriority(e.target.value)} className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600">
                               {Object.entries(priorityConfig).map(([key, val]) => (<option key={key} value={key}>{val.label}</option>))}
                             </select>
                           </div>
                           <div>
-                            <Label className="text-xs text-zinc-400">Responsável</Label>
-                            <select value={editAssignedToId || ''} onChange={(e) => setEditAssignedToId(e.target.value || null)} className="mt-1 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600">
+                            <Label className="text-xs dark:text-zinc-400 text-zinc-400">Responsável</Label>
+                            <select value={editAssignedToId || ''} onChange={(e) => setEditAssignedToId(e.target.value || null)} className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600">
                               <option value="">Sem responsável</option>
                               {projectMembers.length > 0
                                 ? projectMembers.map(m => (
@@ -817,12 +817,12 @@ export default function TaskDetailModal({
                             </select>
                           </div>
                           <div>
-                            <Label className="text-xs text-zinc-400">Data de Vencimento</Label>
+                            <Label className="text-xs dark:text-zinc-400 text-zinc-400">Data de Vencimento</Label>
                             <input
                               type="date"
                               value={editDueDate || ''}
                               onChange={(e) => setEditDueDate(e.target.value)}
-                              className="mt-1 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                              className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600"
                             />
                           </div>
                           <div className="flex gap-2 pt-2">
@@ -832,32 +832,32 @@ export default function TaskDetailModal({
                         </div>
                       ) : (
                         <>
-                          <div className="bg-zinc-900/40 rounded-lg p-4 space-y-3 border border-zinc-800/40">
-                            <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Informações</h3>
+                          <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 space-y-3 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+                            <h3 className="text-xs font-medium dark:text-zinc-500 text-zinc-500 uppercase tracking-wider">Informações</h3>
                             <div className="flex items-center justify-between">
-                              <span className="text-xs text-zinc-500">Status</span>
+                              <span className="text-xs dark:text-zinc-500 text-zinc-500">Status</span>
                               <Badge variant="outline" className={`text-xs ${statusConfig[task.status]?.className}`}>{statusConfig[task.status]?.label}</Badge>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-xs text-zinc-500">Prioridade</span>
+                              <span className="text-xs dark:text-zinc-500 text-zinc-500">Prioridade</span>
                               <Badge variant="outline" className={`text-xs ${priorityConfig[task.priority]?.className}`}>{priorityConfig[task.priority]?.label}</Badge>
                             </div>
                             {task.taskType && (
                               <div className="flex items-center justify-between">
-                                <span className="text-xs text-zinc-500">Tipo</span>
-                                <Badge variant="outline" className="text-xs bg-zinc-800/60 text-zinc-400 border-zinc-700/40">{task.taskType.name}</Badge>
+                                <span className="text-xs dark:text-zinc-500 text-zinc-500">Tipo</span>
+                                <Badge variant="outline" className="text-xs dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-400 text-zinc-400 dark:border-zinc-700 border-zinc-300/40 border-zinc-200">{task.taskType.name}</Badge>
                               </div>
                             )}
                             {task.assignedTo && (
                               <div className="flex items-center justify-between">
-                                <span className="text-xs text-zinc-500">Responsável</span>
-                                <span className="text-xs text-zinc-300">{task.assignedTo.name}</span>
+                                <span className="text-xs dark:text-zinc-500 text-zinc-500">Responsável</span>
+                                <span className="text-xs dark:text-zinc-300 text-zinc-300">{task.assignedTo.name}</span>
                               </div>
                             )}
                           </div>
-                          <div className="bg-zinc-900/40 rounded-lg p-4 space-y-3 border border-zinc-800/40">
-                            <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Datas</h3>
-                            <div className="flex items-center gap-2 text-xs text-zinc-500">
+                          <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 space-y-3 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+                            <h3 className="text-xs font-medium dark:text-zinc-500 text-zinc-500 uppercase tracking-wider">Datas</h3>
+                            <div className="flex items-center gap-2 text-xs dark:text-zinc-500 text-zinc-500">
                               <Calendar className="w-3.5 h-3.5" />
                               <span>Criado em {new Date(task.createdAt).toLocaleDateString('pt-BR')}</span>
                             </div>
@@ -866,7 +866,7 @@ export default function TaskDetailModal({
                               return (
                                 <div className="flex items-center gap-2 text-xs">
                                   <Calendar className="w-3.5 h-3.5" />
-                                  <span className={isOverdue ? 'text-red-400 font-medium' : 'text-zinc-500'}>
+                                  <span className={isOverdue ? 'text-red-400 font-medium' : 'dark:text-zinc-500 text-zinc-500'}>
                                     Vencimento: {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                                     {isOverdue && ' (Atrasada)'}
                                   </span>
@@ -874,7 +874,7 @@ export default function TaskDetailModal({
                               )
                             })()}
                             {task.completedAt && (
-                              <div className="flex items-center gap-2 text-xs text-zinc-500">
+                              <div className="flex items-center gap-2 text-xs dark:text-zinc-500 text-zinc-500">
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                                 <span>Concluído em {new Date(task.completedAt).toLocaleDateString('pt-BR')}</span>
                               </div>
@@ -890,22 +890,22 @@ export default function TaskDetailModal({
                 <TabsContent value="time" className="mt-0 h-full">
                   <div className="max-w-3xl space-y-4">
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40 text-center">
-                        <p className="text-xs text-zinc-500 mb-1">Tempo registrado</p>
-                        <p className="text-xl font-bold text-zinc-200">{formatTime(timeEntries.reduce((sum, e) => sum + e.minutes, 0))}</p>
+                      <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200 text-center">
+                        <p className="text-xs dark:text-zinc-500 text-zinc-500 mb-1">Tempo registrado</p>
+                        <p className="text-xl font-bold dark:text-zinc-200 text-zinc-800">{formatTime(timeEntries.reduce((sum, e) => sum + e.minutes, 0))}</p>
                       </div>
-                      <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40 text-center">
-                        <p className="text-xs text-zinc-500 mb-1">Tempo decorrido</p>
-                        <p className="text-xl font-bold text-zinc-200">{elapsedTime.hours > 0 ? `${elapsedTime.hours}h` : ''}{elapsedTime.minutes > 0 ? `${elapsedTime.minutes}m` : '0m'}</p>
+                      <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200 text-center">
+                        <p className="text-xs dark:text-zinc-500 text-zinc-500 mb-1">Tempo decorrido</p>
+                        <p className="text-xl font-bold dark:text-zinc-200 text-zinc-800">{elapsedTime.hours > 0 ? `${elapsedTime.hours}h` : ''}{elapsedTime.minutes > 0 ? `${elapsedTime.minutes}m` : '0m'}</p>
                       </div>
-                      <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40 text-center">
-                        <p className="text-xs text-zinc-500 mb-1">Registros</p>
-                        <p className="text-xl font-bold text-zinc-200">{timeEntries.length}</p>
+                      <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200 text-center">
+                        <p className="text-xs dark:text-zinc-500 text-zinc-500 mb-1">Registros</p>
+                        <p className="text-xl font-bold dark:text-zinc-200 text-zinc-800">{timeEntries.length}</p>
                       </div>
                     </div>
 
-                    <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40">
-                      <h3 className="text-sm font-medium text-zinc-300 mb-3">Registrar tempo</h3>
+                    <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+                      <h3 className="text-sm font-medium dark:text-zinc-300 text-zinc-300 mb-3">Registrar tempo</h3>
                       {/* Shortcuts */}
                       <div className="flex flex-wrap gap-1.5 mb-3">
                         {timeShortcuts.map(sc => (
@@ -914,8 +914,8 @@ export default function TaskDetailModal({
                             onClick={() => setTimeMinutes(sc.value.toString())}
                             className={`px-2.5 py-1 rounded text-xs font-medium border transition-all ${
                               timeMinutes === sc.value.toString()
-                                ? 'bg-zinc-700 border-zinc-600 text-zinc-200'
-                                : 'bg-zinc-800/40 border-zinc-700/40 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300'
+                                ? 'bg-zinc-700 border-zinc-600 dark:text-zinc-200 text-zinc-800'
+                                : 'dark:bg-zinc-800/40 bg-zinc-100 dark:border-zinc-700 border-zinc-300/40 border-zinc-200 dark:text-zinc-400 text-zinc-400 dark:hover:bg-zinc-800 bg-zinc-100 bg-zinc-100 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400'
                             }`}
                           >
                             {sc.label}
@@ -924,8 +924,8 @@ export default function TaskDetailModal({
                       </div>
                       <div className="flex gap-3">
                         <div className="flex gap-2 flex-1">
-                          <Input type="number" value={timeMinutes} onChange={(e) => setTimeMinutes(e.target.value)} placeholder="Minutos" className="w-28 bg-zinc-900/60 border-zinc-700" />
-                          <Input value={timeDesc} onChange={(e) => setTimeDesc(e.target.value)} placeholder="Descrição (opcional)" className="flex-1 bg-zinc-900/60 border-zinc-700" />
+                          <Input type="number" value={timeMinutes} onChange={(e) => setTimeMinutes(e.target.value)} placeholder="Minutos" className="w-28 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-700 border-zinc-300" />
+                          <Input value={timeDesc} onChange={(e) => setTimeDesc(e.target.value)} placeholder="Descrição (opcional)" className="flex-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-700 border-zinc-300" />
                         </div>
                         <Button onClick={handleAddTimeEntry} disabled={submittingTime || !timeMinutes}><Plus className="w-4 h-4 mr-1" />Registrar</Button>
                       </div>
@@ -934,26 +934,26 @@ export default function TaskDetailModal({
                     {timeEntries.length > 0 ? (
                       <div className="space-y-2">
                         {timeEntries.map((entry) => (
-                          <div key={entry.id} className="flex items-start gap-3 px-4 py-3 bg-zinc-900/30 rounded-lg border border-zinc-800/30">
-                            <div className="w-9 h-9 bg-zinc-800/60 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><Clock className="w-4 h-4 text-zinc-500" /></div>
+                          <div key={entry.id} className="flex items-start gap-3 px-4 py-3 dark:bg-zinc-900/30 bg-zinc-200/50 rounded-lg border dark:border-zinc-800 border-zinc-300/30">
+                            <div className="w-9 h-9 dark:bg-zinc-800/60 bg-zinc-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><Clock className="w-4 h-4 dark:text-zinc-500 text-zinc-500" /></div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <span className="text-base font-semibold text-zinc-200">{formatTime(entry.minutes)}</span>
+                                <span className="text-base font-semibold dark:text-zinc-200 text-zinc-800">{formatTime(entry.minutes)}</span>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs text-zinc-600">{new Date(entry.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
-                                  <button onClick={() => handleDeleteTimeEntry(entry.id)} className="text-zinc-700 hover:text-red-400 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                  <span className="text-xs dark:text-zinc-600 text-zinc-400">{new Date(entry.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                                  <button onClick={() => handleDeleteTimeEntry(entry.id)} className="dark:text-zinc-600 text-zinc-400 hover:text-red-400 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                                 </div>
                               </div>
-                              {entry.description && <p className="text-sm text-zinc-400 mt-1">{entry.description}</p>}
-                              {entry.user && <p className="text-xs text-zinc-600 mt-1">{entry.user.name}</p>}
+                              {entry.description && <p className="text-sm dark:text-zinc-400 text-zinc-400 mt-1">{entry.description}</p>}
+                              {entry.user && <p className="text-xs dark:text-zinc-600 text-zinc-400 mt-1">{entry.user.name}</p>}
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-12 bg-zinc-900/20 rounded-lg border border-zinc-800/30">
-                        <Timer className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-                        <p className="text-sm text-zinc-600">Nenhum registro de tempo</p>
+                      <div className="text-center py-12 dark:bg-zinc-900/20 bg-zinc-100/50 rounded-lg border dark:border-zinc-800 border-zinc-300/30">
+                        <Timer className="w-8 h-8 dark:text-zinc-600 text-zinc-400 mx-auto mb-2" />
+                        <p className="text-sm dark:text-zinc-600 text-zinc-400">Nenhum registro de tempo</p>
                       </div>
                     )}
                   </div>
@@ -962,9 +962,9 @@ export default function TaskDetailModal({
                 {/* Comments Tab */}
                 <TabsContent value="comments" className="mt-0 h-full">
                   <div className="max-w-3xl space-y-4">
-                    <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40">
-                      <h3 className="text-sm font-medium text-zinc-300 mb-3">Adicionar comentário</h3>
-                      <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAddComment() } }} placeholder="Escreva um comentário..." className="w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 resize-none min-h-[80px]" />
+                    <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+                      <h3 className="text-sm font-medium dark:text-zinc-300 text-zinc-300 mb-3">Adicionar comentário</h3>
+                      <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAddComment() } }} placeholder="Escreva um comentário..." className="w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-lg px-4 py-3 text-sm dark:text-zinc-200 text-zinc-800 dark:placeholder-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-600 resize-none min-h-[80px]" />
                       <div className="flex justify-end mt-2">
                         <Button onClick={handleAddComment} disabled={submittingComment || !newComment.trim()}><Send className="w-4 h-4 mr-1" />Enviar</Button>
                       </div>
@@ -973,22 +973,22 @@ export default function TaskDetailModal({
                     {comments.length > 0 ? (
                       <div className="space-y-2">
                         {comments.map((comment) => (
-                          <div key={comment.id} className="flex items-start gap-3 px-4 py-3 bg-zinc-900/30 rounded-lg border border-zinc-800/30">
-                            <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center flex-shrink-0"><User className="w-4 h-4 text-zinc-400" /></div>
+                          <div key={comment.id} className="flex items-start gap-3 px-4 py-3 dark:bg-zinc-900/30 bg-zinc-200/50 rounded-lg border dark:border-zinc-800 border-zinc-300/30">
+                            <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center flex-shrink-0"><User className="w-4 h-4 dark:text-zinc-400 text-zinc-400" /></div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-zinc-300">{comment.author?.name || 'Anônimo'}</span>
-                                <span className="text-xs text-zinc-600">{new Date(comment.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                                <span className="text-xs font-medium dark:text-zinc-300 text-zinc-300">{comment.author?.name || 'Anônimo'}</span>
+                                <span className="text-xs dark:text-zinc-600 text-zinc-400">{new Date(comment.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                               </div>
-                              <p className="text-sm text-zinc-400 whitespace-pre-wrap mt-1.5">{comment.content}</p>
+                              <p className="text-sm dark:text-zinc-400 text-zinc-400 whitespace-pre-wrap mt-1.5">{comment.content}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-12 bg-zinc-900/20 rounded-lg border border-zinc-800/30">
-                        <MessageSquare className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-                        <p className="text-sm text-zinc-600">Nenhum comentário ainda</p>
+                      <div className="text-center py-12 dark:bg-zinc-900/20 bg-zinc-100/50 rounded-lg border dark:border-zinc-800 border-zinc-300/30">
+                        <MessageSquare className="w-8 h-8 dark:text-zinc-600 text-zinc-400 mx-auto mb-2" />
+                        <p className="text-sm dark:text-zinc-600 text-zinc-400">Nenhum comentário ainda</p>
                       </div>
                     )}
                   </div>
@@ -997,14 +997,14 @@ export default function TaskDetailModal({
                 {/* Attachments Tab */}
                 <TabsContent value="attachments" className="mt-0 h-full">
                   <div className="max-w-3xl space-y-4">
-                    <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40">
-                      <h3 className="text-sm font-medium text-zinc-300 mb-3">Anexar arquivo</h3>
+                    <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 border dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+                      <h3 className="text-sm font-medium dark:text-zinc-300 text-zinc-300 mb-3">Anexar arquivo</h3>
                       <input ref={fileInputRef} type="file" onChange={handleAttachmentUpload} className="hidden" />
-                      <button onClick={() => fileInputRef.current?.click()} disabled={uploadingAttachment} className="w-full border-2 border-dashed border-zinc-700 rounded-lg p-6 text-center hover:border-zinc-600 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                      <button onClick={() => fileInputRef.current?.click()} disabled={uploadingAttachment} className="w-full border-2 border-dashed dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-lg p-6 text-center hover:border-zinc-600 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                         {uploadingAttachment ? (
-                          <div className="flex flex-col items-center gap-2"><Loader2 className="w-5 h-5 text-zinc-400 animate-spin" /><p className="text-sm text-zinc-400">Enviando...</p></div>
+                          <div className="flex flex-col items-center gap-2"><Loader2 className="w-5 h-5 dark:text-zinc-400 text-zinc-400 animate-spin" /><p className="text-sm dark:text-zinc-400 text-zinc-400">Enviando...</p></div>
                         ) : (
-                          <div className="flex flex-col items-center gap-2"><Paperclip className="w-5 h-5 text-zinc-500" /><p className="text-sm text-zinc-400">Clique para selecionar um arquivo</p></div>
+                          <div className="flex flex-col items-center gap-2"><Paperclip className="w-5 h-5 dark:text-zinc-500 text-zinc-500" /><p className="text-sm dark:text-zinc-400 text-zinc-400">Clique para selecionar um arquivo</p></div>
                         )}
                       </button>
                     </div>
@@ -1012,20 +1012,20 @@ export default function TaskDetailModal({
                     {attachments.length > 0 ? (
                       <div className="space-y-2">
                         {attachments.map((att) => (
-                          <div key={att.id} className="flex items-center gap-3 px-4 py-3 bg-zinc-900/30 rounded-lg border border-zinc-800/30">
-                            <div className="w-9 h-9 bg-zinc-800/60 rounded-full flex items-center justify-center flex-shrink-0"><FileText className="w-4 h-4 text-zinc-500" /></div>
+                          <div key={att.id} className="flex items-center gap-3 px-4 py-3 dark:bg-zinc-900/30 bg-zinc-200/50 rounded-lg border dark:border-zinc-800 border-zinc-300/30">
+                            <div className="w-9 h-9 dark:bg-zinc-800/60 bg-zinc-100 rounded-full flex items-center justify-center flex-shrink-0"><FileText className="w-4 h-4 dark:text-zinc-500 text-zinc-500" /></div>
                             <div className="flex-1 min-w-0">
-                              <a href={att.fileUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-zinc-200 hover:text-zinc-100 truncate block">{att.name}</a>
-                              <span className="text-xs text-zinc-600">{formatFileSize(att.fileSize)} • {new Date(att.createdAt).toLocaleDateString('pt-BR')}</span>
+                              <a href={att.fileUrl} target="_blank" rel="noopener noreferrer" className="text-sm dark:text-zinc-200 text-zinc-800 dark:hover:text-zinc-100 text-zinc-900 truncate block">{att.name}</a>
+                              <span className="text-xs dark:text-zinc-600 text-zinc-400">{formatFileSize(att.fileSize)} • {new Date(att.createdAt).toLocaleDateString('pt-BR')}</span>
                             </div>
-                            <button onClick={() => handleDeleteAttachment(att.id)} className="text-zinc-700 hover:text-red-400 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                            <button onClick={() => handleDeleteAttachment(att.id)} className="dark:text-zinc-600 text-zinc-400 hover:text-red-400 transition-colors"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-12 bg-zinc-900/20 rounded-lg border border-zinc-800/30">
-                        <Paperclip className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-                        <p className="text-sm text-zinc-600">Nenhum anexo</p>
+                      <div className="text-center py-12 dark:bg-zinc-900/20 bg-zinc-100/50 rounded-lg border dark:border-zinc-800 border-zinc-300/30">
+                        <Paperclip className="w-8 h-8 dark:text-zinc-600 text-zinc-400 mx-auto mb-2" />
+                        <p className="text-sm dark:text-zinc-600 text-zinc-400">Nenhum anexo</p>
                       </div>
                     )}
                   </div>
@@ -1042,7 +1042,7 @@ export default function TaskDetailModal({
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center">
-            <p className="text-sm text-zinc-600">Tarefa não encontrada</p>
+            <p className="text-sm dark:text-zinc-600 text-zinc-400">Tarefa não encontrada</p>
           </div>
         )}
       </DialogContent>
@@ -1060,26 +1060,26 @@ export default function TaskDetailModal({
           </DialogHeader>
           {nextStage?.id === completionStageId ? (
             <div className="py-2 space-y-4">
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm dark:text-zinc-400 text-zinc-400">
                 Esta tarefa será movida para{' '}
-                <span className="font-medium text-zinc-200">"{nextStage?.name}"</span>{' '}
+                <span className="font-medium dark:text-zinc-200 text-zinc-800">"{nextStage?.name}"</span>{' '}
                 e marcada como concluída. A data registrada será usada no relatório de assertividade de SLA.
               </p>
               <div>
-                <Label className="text-xs text-zinc-400">Data de conclusão</Label>
+                <Label className="text-xs dark:text-zinc-400 text-zinc-400">Data de conclusão</Label>
                 <input
                   type="date"
                   value={completionDate}
                   onChange={(e) => setCompletionDate(e.target.value)}
-                  className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                  className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600"
                 />
               </div>
             </div>
           ) : (
             <div className="py-4">
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm dark:text-zinc-400 text-zinc-400">
                 Deseja mover esta tarefa para a etapa{' '}
-                <span className="font-medium text-zinc-200">"{nextStage?.name}"</span>?
+                <span className="font-medium dark:text-zinc-200 text-zinc-800">"{nextStage?.name}"</span>?
               </p>
             </div>
           )}
@@ -1104,10 +1104,10 @@ export default function TaskDetailModal({
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-sm text-zinc-300 mb-2">
-              Tem certeza que deseja excluir a tarefa <strong className="text-zinc-100">"{task?.title}"</strong>?
+            <p className="text-sm dark:text-zinc-300 text-zinc-300 mb-2">
+              Tem certeza que deseja excluir a tarefa <strong className="dark:text-zinc-100 text-zinc-900">"{task?.title}"</strong>?
             </p>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs dark:text-zinc-500 text-zinc-500">
               Esta ação não pode ser desfeita. Todas as horas registradas, comentários e anexos serão removidos permanentemente.
             </p>
           </div>
@@ -1137,24 +1137,24 @@ export default function TaskDetailModal({
               <BookOpen className="w-4 h-4 text-violet-400" />
               Artigo Gerado por IA
             </DialogTitle>
-            <p className="text-xs text-zinc-500 mt-1">Revise e edite o conteúdo antes de salvar na base de conhecimento.</p>
+            <p className="text-xs dark:text-zinc-500 text-zinc-500 mt-1">Revise e edite o conteúdo antes de salvar na base de conhecimento.</p>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto py-4 space-y-4">
             <div>
-              <Label className="text-xs text-zinc-400">Título</Label>
+              <Label className="text-xs dark:text-zinc-400 text-zinc-400">Título</Label>
               <input
                 type="text"
                 value={kbDraft?.title || ''}
                 onChange={(e) => setKbDraft(prev => prev ? { ...prev, title: e.target.value } : null)}
-                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600"
               />
             </div>
             <div>
-              <Label className="text-xs text-zinc-400">Categoria</Label>
+              <Label className="text-xs dark:text-zinc-400 text-zinc-400">Categoria</Label>
               <select
                 value={kbCategoryId || ''}
                 onChange={(e) => setKbCategoryId(e.target.value || null)}
-                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600"
               >
                 <option value="">Sem categoria</option>
                 {kbDraft?.categories.map(cat => (
@@ -1169,16 +1169,16 @@ export default function TaskDetailModal({
               )}
             </div>
             <div>
-              <Label className="text-xs text-zinc-400">Conteúdo (Markdown)</Label>
+              <Label className="text-xs dark:text-zinc-400 text-zinc-400">Conteúdo (Markdown)</Label>
               <textarea
                 value={kbDraft?.content || ''}
                 onChange={(e) => setKbDraft(prev => prev ? { ...prev, content: e.target.value } : null)}
-                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600 resize-none min-h-[280px] font-mono text-xs leading-relaxed"
+                className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-lg px-4 py-3 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600 resize-none min-h-[280px] font-mono text-xs leading-relaxed"
               />
             </div>
           </div>
-          <div className="flex justify-between items-center pt-4 border-t border-zinc-800/40 flex-shrink-0">
-            <Button variant="ghost" onClick={() => setShowKbDialog(false)} className="text-zinc-400">
+          <div className="flex justify-between items-center pt-4 border-t dark:border-zinc-800 border-zinc-300/40 border-zinc-200 flex-shrink-0">
+            <Button variant="ghost" onClick={() => setShowKbDialog(false)} className="dark:text-zinc-400 text-zinc-400">
               Cancelar
             </Button>
             <div className="flex gap-2">

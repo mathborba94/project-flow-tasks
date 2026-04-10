@@ -12,7 +12,7 @@ export default async function KnowledgePage() {
   } catch {
     return (
       <div className="p-6">
-        <p className="text-sm text-zinc-500">Não autenticado.</p>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500">Não autenticado.</p>
       </div>
     )
   }

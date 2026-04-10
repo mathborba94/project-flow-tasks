@@ -8,22 +8,22 @@ function TaskCard({ task, statusLabels, priorityColors, priorityLabels, isOverdu
   return (
     <div
       onClick={() => onClick(task.id)}
-      className={`bg-zinc-950/50 border rounded-lg p-3 hover:border-zinc-700/60 transition-colors cursor-pointer group ${
-        isOverdue ? 'border-red-500/30 hover:border-red-500/50' : 'border-zinc-800/60'
+      className={`dark:bg-zinc-950/50 bg-white border rounded-lg p-3 dark:hover:border-zinc-700/60 hover:border-zinc-300 transition-colors cursor-pointer group ${
+        isOverdue ? 'dark:border-red-500/30 border-red-300 dark:hover:border-red-500/50 hover:border-red-400' : 'dark:border-zinc-800/60 border-zinc-200'
       }`}
     >
       <div className="flex items-start justify-between gap-2 mb-2">
-        <p className="text-xs text-zinc-300 group-hover:text-zinc-100 transition-colors line-clamp-2 flex-1">
+        <p className="text-xs dark:text-zinc-300 text-zinc-700 group-dark:hover:text-zinc-100 group-hover:text-zinc-900 transition-colors line-clamp-2 flex-1">
           {task.title}
         </p>
-        <span className={`text-[10px] px-1.5 py-0.5 rounded-full shrink-0 ${priorityColors[task.priority] || 'bg-zinc-800 text-zinc-400'}`}>
+        <span className={`text-[10px] px-1.5 py-0.5 rounded-full shrink-0 ${priorityColors[task.priority] || 'dark:bg-zinc-800 bg-zinc-200 dark:text-zinc-400 text-zinc-600'}`}>
           {priorityLabels[task.priority]}
         </span>
       </div>
-      <div className="flex items-center gap-3 text-[10px] text-zinc-500">
+      <div className="flex items-center gap-3 text-[10px] dark:text-zinc-500 text-zinc-500">
         {task.project && (
           <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" />
+            <span className="w-1.5 h-1.5 rounded-full dark:bg-zinc-600 bg-zinc-400" />
             {task.project.name}
           </span>
         )}
@@ -57,8 +57,8 @@ export default function TaskClientView({
   return (
     <div className="p-6 max-w-6xl">
       <div className="mb-6 animate-fade-in">
-        <h1 className="text-base font-semibold text-zinc-100 tracking-tight">Minhas Tarefas</h1>
-        <p className="text-sm text-zinc-500 mt-0.5">Tarefas atribuídas a você</p>
+        <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight">Minhas Tarefas</h1>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500 mt-0.5">Tarefas atribuídas a você</p>
       </div>
 
       {overdueTasks.length > 0 && (
@@ -85,8 +85,8 @@ export default function TaskClientView({
 
       <div className="mb-6 animate-fade-in-delay">
         <div className="flex items-center gap-2 mb-3">
-          <Clock className="w-4 h-4 text-zinc-500" />
-          <h2 className="text-sm font-medium text-zinc-300">Tarefas em Aberto ({openTasks.length})</h2>
+          <Clock className="w-4 h-4 dark:text-zinc-500 text-zinc-400" />
+          <h2 className="text-sm font-medium dark:text-zinc-300 text-zinc-700">Tarefas em Aberto ({openTasks.length})</h2>
         </div>
         {openTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -106,9 +106,9 @@ export default function TaskClientView({
             })}
           </div>
         ) : (
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-8 text-center">
-            <CheckCircle2 className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-            <p className="text-sm text-zinc-500">Nenhuma tarefa em aberto</p>
+          <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg p-8 text-center">
+            <CheckCircle2 className="w-8 h-8 dark:text-zinc-700 text-zinc-300 mx-auto mb-2" />
+            <p className="text-sm dark:text-zinc-500 text-zinc-500">Nenhuma tarefa em aberto</p>
           </div>
         )}
       </div>
@@ -116,7 +116,7 @@ export default function TaskClientView({
       <div className="animate-fade-in-delay-2">
         <div className="flex items-center gap-2 mb-3">
           <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-          <h2 className="text-sm font-medium text-zinc-300">Últimas Concluídas ({completedTasks.length})</h2>
+          <h2 className="text-sm font-medium dark:text-zinc-300 text-zinc-700">Últimas Concluídas ({completedTasks.length})</h2>
         </div>
         {completedTasks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -133,8 +133,8 @@ export default function TaskClientView({
             ))}
           </div>
         ) : (
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-8 text-center">
-            <p className="text-sm text-zinc-500">Nenhuma tarefa concluída ainda</p>
+          <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg p-8 text-center">
+            <p className="text-sm dark:text-zinc-500 text-zinc-500">Nenhuma tarefa concluída ainda</p>
           </div>
         )}
       </div>

@@ -89,7 +89,7 @@ export function InviteUserDialog({ children }: InviteUserDialogProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="email" className="text-xs text-zinc-400">Email</Label>
+            <Label htmlFor="email" className="text-xs dark:text-zinc-400 text-zinc-600">Email</Label>
             <Input
               id="email"
               type="email"
@@ -101,7 +101,7 @@ export function InviteUserDialog({ children }: InviteUserDialogProps) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="role" className="text-xs text-zinc-400">Função</Label>
+            <Label htmlFor="role" className="text-xs dark:text-zinc-400 text-zinc-600">Função</Label>
             <Select
               value={formData.role}
               onValueChange={(value) => setFormData({ ...formData, role: value || 'MEMBER' })}
@@ -118,7 +118,7 @@ export function InviteUserDialog({ children }: InviteUserDialogProps) {
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
           {success && <p className="text-xs text-emerald-400">Convite enviado com sucesso!</p>}
-          <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800/60">
+          <div className="flex justify-end gap-2 pt-2 border-t dark:border-zinc-800/60 border-zinc-200">
             <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
               Cancelar
             </Button>

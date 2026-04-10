@@ -146,7 +146,7 @@ export default function TaskTypesManager({ taskTypes: initialTaskTypes, defaultT
     <div className="space-y-4">
       {/* Default task type selector */}
       <div className="flex items-center gap-3">
-        <Label className="text-xs text-zinc-400 whitespace-nowrap">Tipo padrao:</Label>
+        <Label className="text-xs dark:text-zinc-400 text-zinc-600 whitespace-nowrap">Tipo padrão:</Label>
         <Select
           value={defaultTaskTypeId || '__none__'}
           onValueChange={handleDefaultChange}
@@ -168,7 +168,7 @@ export default function TaskTypesManager({ taskTypes: initialTaskTypes, defaultT
       {/* Task types list */}
       <div className="space-y-2">
         {taskTypes.length === 0 && !showForm && (
-          <p className="text-sm text-zinc-600 py-4 text-center">
+          <p className="text-sm dark:text-zinc-600 text-zinc-400 py-4 text-center">
             Nenhum tipo de tarefa criado ainda.
           </p>
         )}
@@ -176,35 +176,35 @@ export default function TaskTypesManager({ taskTypes: initialTaskTypes, defaultT
         {taskTypes.map((tt) => (
           <div
             key={tt.id}
-            className="flex items-center gap-3 bg-zinc-900/40 border border-zinc-800/50 rounded-lg px-4 py-3"
+            className="flex items-center gap-3 dark:bg-zinc-900/40 bg-zinc-50 dark:border-zinc-800 border-zinc-200 rounded-lg px-4 py-3"
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-zinc-200 truncate">{tt.name}</span>
+                <span className="text-sm font-medium dark:text-zinc-200 text-zinc-800 truncate">{tt.name}</span>
                 {defaultTaskTypeId === tt.id && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    padrao
+                    padrão
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-3 mt-0.5">
-                <span className="text-xs text-zinc-500">SLA: {tt.slaMinutes}min</span>
+                <span className="text-xs dark:text-zinc-500 text-zinc-500">SLA: {tt.slaMinutes}min</span>
                 {tt.description && (
-                  <span className="text-xs text-zinc-600 truncate">{tt.description}</span>
+                  <span className="text-xs dark:text-zinc-600 text-zinc-400 truncate">{tt.description}</span>
                 )}
               </div>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
                 onClick={() => startEdit(tt)}
-                className="p-1.5 rounded text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/60 transition-colors"
+                className="p-1.5 rounded dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-300 hover:text-zinc-700 dark:hover:bg-zinc-800/60 hover:bg-zinc-100 transition-colors"
                 title="Editar"
               >
                 <Pencil className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => handleDelete(tt.id)}
-                className="p-1.5 rounded text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                className="p-1.5 rounded dark:text-zinc-600 text-zinc-400 hover:text-red-400 dark:hover:bg-red-500/10 hover:bg-red-500/5 transition-colors"
                 title="Excluir"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -216,13 +216,13 @@ export default function TaskTypesManager({ taskTypes: initialTaskTypes, defaultT
 
       {/* Add/Edit form */}
       {showForm && (
-        <div className="bg-zinc-950/60 border border-zinc-800/60 rounded-lg p-4 space-y-3">
-          <h4 className="text-sm font-medium text-zinc-300">
+        <div className="dark:bg-zinc-950/60 bg-zinc-50 dark:border-zinc-800 border-zinc-200 rounded-lg p-4 space-y-3">
+          <h4 className="text-sm font-medium dark:text-zinc-300 text-zinc-700">
             {editingId ? 'Editar tipo de tarefa' : 'Novo tipo de tarefa'}
           </h4>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="tt-name" className="text-xs text-zinc-400">Nome</Label>
+              <Label htmlFor="tt-name" className="text-xs dark:text-zinc-400 text-zinc-600">Nome</Label>
               <Input
                 id="tt-name"
                 value={formName}
@@ -233,7 +233,7 @@ export default function TaskTypesManager({ taskTypes: initialTaskTypes, defaultT
               />
             </div>
             <div>
-              <Label htmlFor="tt-sla" className="text-xs text-zinc-400">SLA (minutos)</Label>
+              <Label htmlFor="tt-sla" className="text-xs dark:text-zinc-400 text-zinc-600">SLA (minutos)</Label>
               <Input
                 id="tt-sla"
                 type="number"
@@ -245,13 +245,13 @@ export default function TaskTypesManager({ taskTypes: initialTaskTypes, defaultT
             </div>
           </div>
           <div>
-            <Label htmlFor="tt-desc" className="text-xs text-zinc-400">Descricao</Label>
-            <Input
+            <Label htmlFor="tt-desc" className="text-xs dark:text-zinc-400 text-zinc-600">Descrição</Label>
+            <textarea
               id="tt-desc"
               value={formDescription}
               onChange={(e) => setFormDescription(e.target.value)}
-              className="h-8 text-sm mt-1"
-              placeholder="Descricao opcional..."
+              className="mt-1 w-full h-16 bg-transparent dark:border-zinc-800 border-zinc-300 border rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-900 dark:placeholder:text-zinc-600 placeholder:text-zinc-400 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400 resize-none"
+              placeholder="Descrição opcional..."
             />
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}

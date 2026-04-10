@@ -143,15 +143,15 @@ export default function AgentForm({
     <div className="p-6 max-w-3xl animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/dashboard/support-agents" className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/60 rounded-md transition-colors">
+        <Link href="/dashboard/support-agents" className="p-1.5 text-zinc-500 dark:hover:text-zinc-300 text-zinc-700 hover:text-zinc-700 hover:bg-zinc-800/60 rounded-md transition-colors">
           <ArrowLeft className="w-4 h-4" />
         </Link>
         <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600/20 to-blue-600/20 border border-violet-500/20 flex items-center justify-center">
           <Bot className="w-4 h-4 text-violet-400" />
         </div>
         <div className="flex-1">
-          <h1 className="text-base font-semibold text-zinc-100">{isNew ? 'Novo Agente' : name}</h1>
-          <p className="text-xs text-zinc-500">{isNew ? 'Configure seu agente de suporte com IA' : 'Configurações do agente'}</p>
+          <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900">{isNew ? 'Novo Agente' : name}</h1>
+          <p className="text-xs dark:text-zinc-500 text-zinc-500">{isNew ? 'Configure seu agente de suporte com IA' : 'Configurações do agente'}</p>
         </div>
         {!isNew && (
           <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ export default function AgentForm({
               href={shareUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/60 rounded-md transition-colors"
+              className="p-1.5 text-zinc-500 dark:hover:text-zinc-300 text-zinc-700 hover:text-zinc-700 hover:bg-zinc-800/60 rounded-md transition-colors"
               title="Abrir chat"
             >
               <ExternalLink className="w-4 h-4" />
@@ -170,7 +170,7 @@ export default function AgentForm({
 
       {/* Tabs */}
       {!isNew && (
-        <div className="flex gap-1 mb-6 bg-zinc-900/60 border border-zinc-800 rounded-lg p-1 w-fit">
+        <div className="flex gap-1 mb-6 dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg p-1 w-fit">
           {[
             { id: 'config', label: 'Configuração' },
             { id: 'share', label: 'Compartilhar' },
@@ -181,8 +181,8 @@ export default function AgentForm({
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-zinc-800 text-zinc-100'
-                  : 'text-zinc-500 hover:text-zinc-300'
+                  ? 'bg-zinc-800 dark:text-zinc-100 text-zinc-900'
+                  : 'text-zinc-500 dark:hover:text-zinc-300 text-zinc-700 hover:text-zinc-700'
               }`}
             >
               {tab.label}
@@ -195,25 +195,25 @@ export default function AgentForm({
       {(isNew || activeTab === 'config') && (
         <div className="space-y-5">
           {/* Name + status */}
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-5 space-y-4">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Identidade</h2>
+          <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-xl p-5 space-y-4">
+            <h2 className="text-xs font-semibold dark:text-zinc-400 text-zinc-600 uppercase tracking-wider">Identidade</h2>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Nome do agente *</label>
+              <label className="block text-xs font-medium dark:text-zinc-400 text-zinc-600 mb-1.5">Nome do agente *</label>
               <input
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full h-9 px-3 bg-zinc-900/60 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/30 focus:border-zinc-700"
+                className="w-full h-9 px-3 dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg text-sm dark:text-zinc-100 text-zinc-900 dark:placeholder-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-violet-500/30 dark:focus:border-zinc-700 focus:border-zinc-400"
                 placeholder="Ex: Ana, Suporte TI, Help Desk..."
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Personalidade</label>
+              <label className="block text-xs font-medium dark:text-zinc-400 text-zinc-600 mb-1.5">Personalidade</label>
               <input
                 value={personality}
                 onChange={e => setPersonality(e.target.value)}
-                className="w-full h-9 px-3 bg-zinc-900/60 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/30 focus:border-zinc-700"
+                className="w-full h-9 px-3 dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg text-sm dark:text-zinc-100 text-zinc-900 dark:placeholder-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-violet-500/30 dark:focus:border-zinc-700 focus:border-zinc-400"
                 placeholder="Descreva como o agente deve se comportar..."
               />
               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -225,7 +225,7 @@ export default function AgentForm({
                     className={`text-[10px] px-2 py-1 rounded-md border transition-colors ${
                       personality === s
                         ? 'bg-violet-500/20 text-violet-300 border-violet-500/30'
-                        : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+                        : 'dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-500 text-zinc-500 dark:border-zinc-700 border-zinc-300 dark:hover:text-zinc-300 hover:text-zinc-700'
                     }`}
                   >
                     {s}
@@ -235,11 +235,11 @@ export default function AgentForm({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Tom de voz</label>
+              <label className="block text-xs font-medium dark:text-zinc-400 text-zinc-600 mb-1.5">Tom de voz</label>
               <input
                 value={voiceTone}
                 onChange={e => setVoiceTone(e.target.value)}
-                className="w-full h-9 px-3 bg-zinc-900/60 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/30 focus:border-zinc-700"
+                className="w-full h-9 px-3 dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg text-sm dark:text-zinc-100 text-zinc-900 dark:placeholder-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-violet-500/30 dark:focus:border-zinc-700 focus:border-zinc-400"
                 placeholder="Como o agente se comunica..."
               />
               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -251,7 +251,7 @@ export default function AgentForm({
                     className={`text-[10px] px-2 py-1 rounded-md border transition-colors ${
                       voiceTone === s
                         ? 'bg-violet-500/20 text-violet-300 border-violet-500/30'
-                        : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+                        : 'dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-500 text-zinc-500 dark:border-zinc-700 border-zinc-300 dark:hover:text-zinc-300 hover:text-zinc-700'
                     }`}
                   >
                     {s}
@@ -262,9 +262,9 @@ export default function AgentForm({
           </div>
 
           {/* Conduct prompt */}
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-5 space-y-3">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Forma de condução</h2>
-            <p className="text-xs text-zinc-500">Instruções adicionais de comportamento e contexto para o agente.</p>
+          <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-xl p-5 space-y-3">
+            <h2 className="text-xs font-semibold dark:text-zinc-400 text-zinc-600 uppercase tracking-wider">Forma de condução</h2>
+            <p className="text-xs dark:text-zinc-500 text-zinc-500">Instruções adicionais de comportamento e contexto para o agente.</p>
 
             <div className="flex flex-wrap gap-1.5 mb-2">
               {CONDUCT_TEMPLATES.map(t => (
@@ -272,7 +272,7 @@ export default function AgentForm({
                   key={t.label}
                   type="button"
                   onClick={() => setConductPrompt(t.text)}
-                  className="text-[10px] px-2 py-1 rounded-md border bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-300 hover:border-zinc-700 transition-colors"
+                  className="text-[10px] px-2 py-1 rounded-md border dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-500 text-zinc-500 dark:border-zinc-700 border-zinc-300 dark:hover:text-zinc-300 hover:text-zinc-700 hover:border-zinc-700 transition-colors"
                 >
                   {t.label}
                 </button>
@@ -283,53 +283,53 @@ export default function AgentForm({
               value={conductPrompt}
               onChange={e => setConductPrompt(e.target.value)}
               rows={5}
-              className="w-full px-3 py-2 bg-zinc-900/60 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-violet-500/30 focus:border-zinc-700 resize-none"
+              className="w-full px-3 py-2 dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg text-sm dark:text-zinc-100 text-zinc-900 dark:placeholder-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-violet-500/30 dark:focus:border-zinc-700 focus:border-zinc-400 resize-none"
               placeholder="Descreva como o agente deve conduzir o atendimento, quais informações coletar, quando escalar, etc..."
             />
           </div>
 
           {/* Project + flags */}
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-5 space-y-4">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Integração</h2>
+          <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-xl p-5 space-y-4">
+            <h2 className="text-xs font-semibold dark:text-zinc-400 text-zinc-600 uppercase tracking-wider">Integração</h2>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Projeto para criar tarefas</label>
+              <label className="block text-xs font-medium dark:text-zinc-400 text-zinc-600 mb-1.5">Projeto para criar tarefas</label>
               <select
                 value={projectId}
                 onChange={e => setProjectId(e.target.value)}
-                className="w-full h-9 px-3 bg-zinc-900/60 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-violet-500/30"
+                className="w-full h-9 px-3 dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-violet-500/30"
               >
                 <option value="">Nenhum projeto vinculado</option>
                 {projects.map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
-              <p className="text-[10px] text-zinc-600 mt-1">O agente usará este projeto para criar tarefas e consultar status.</p>
+              <p className="text-[10px] dark:text-zinc-600 text-zinc-600 mt-1">O agente usará este projeto para criar tarefas e consultar status.</p>
             </div>
 
-            <div className="flex items-center justify-between py-2 border-t border-zinc-800/40">
+            <div className="flex items-center justify-between py-2 border-t dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
               <div>
-                <p className="text-xs font-medium text-zinc-300">Agente ativo</p>
-                <p className="text-[10px] text-zinc-600">Desative para pausar o atendimento sem excluir o agente</p>
+                <p className="text-xs font-medium dark:text-zinc-300 text-zinc-700">Agente ativo</p>
+                <p className="text-[10px] dark:text-zinc-600 text-zinc-600">Desative para pausar o atendimento sem excluir o agente</p>
               </div>
               <button
                 type="button"
                 onClick={() => setActive(!active)}
-                className={`transition-colors ${active ? 'text-emerald-400' : 'text-zinc-600'}`}
+                className={`transition-colors ${active ? 'text-emerald-400' : 'dark:text-zinc-600 text-zinc-600'}`}
               >
                 {active ? <ToggleRight className="w-7 h-7" /> : <ToggleLeft className="w-7 h-7" />}
               </button>
             </div>
 
-            <div className="flex items-center justify-between py-2 border-t border-zinc-800/40">
+            <div className="flex items-center justify-between py-2 border-t dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
               <div>
-                <p className="text-xs font-medium text-zinc-300">Mostrar na Base de Conhecimento pública</p>
-                <p className="text-[10px] text-zinc-600">Exibe um botão de chat flutuante na KB pública da organização</p>
+                <p className="text-xs font-medium dark:text-zinc-300 text-zinc-700">Mostrar na Base de Conhecimento pública</p>
+                <p className="text-[10px] dark:text-zinc-600 text-zinc-600">Exibe um botão de chat flutuante na KB pública da organização</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowOnPublicKB(!showOnPublicKB)}
-                className={`transition-colors ${showOnPublicKB ? 'text-violet-400' : 'text-zinc-600'}`}
+                className={`transition-colors ${showOnPublicKB ? 'text-violet-400' : 'dark:text-zinc-600 text-zinc-600'}`}
               >
                 {showOnPublicKB ? <ToggleRight className="w-7 h-7" /> : <ToggleLeft className="w-7 h-7" />}
               </button>
@@ -370,18 +370,18 @@ export default function AgentForm({
       {!isNew && activeTab === 'share' && agent && (
         <div className="space-y-4">
           {/* Direct link */}
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-5 space-y-3">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Link de compartilhamento</h2>
-            <p className="text-xs text-zinc-500">Compartilhe este link diretamente com seus clientes ou incorpore no seu site.</p>
+          <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-xl p-5 space-y-3">
+            <h2 className="text-xs font-semibold dark:text-zinc-400 text-zinc-600 uppercase tracking-wider">Link de compartilhamento</h2>
+            <p className="text-xs dark:text-zinc-500 text-zinc-500">Compartilhe este link diretamente com seus clientes ou incorpore no seu site.</p>
             <div className="flex gap-2">
               <input
                 readOnly
                 value={shareUrl}
-                className="flex-1 h-9 px-3 bg-zinc-900/40 border border-zinc-800 rounded-lg text-xs text-zinc-400 font-mono"
+                className="flex-1 h-9 px-3 dark:bg-zinc-900/40 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg text-xs dark:text-zinc-400 text-zinc-600 font-mono"
               />
               <button
                 onClick={() => handleCopy('link')}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-xs text-zinc-300 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 dark:bg-zinc-800 bg-zinc-100 hover:bg-zinc-700 rounded-lg text-xs dark:text-zinc-300 text-zinc-700 transition-colors"
               >
                 {copied === 'link' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 {copied === 'link' ? 'Copiado!' : 'Copiar'}
@@ -390,7 +390,7 @@ export default function AgentForm({
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-xs text-zinc-300 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 dark:bg-zinc-800 bg-zinc-100 hover:bg-zinc-700 rounded-lg text-xs dark:text-zinc-300 text-zinc-700 transition-colors"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 Abrir
@@ -399,32 +399,32 @@ export default function AgentForm({
           </div>
 
           {/* Embed script */}
-          <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-5 space-y-3">
+          <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-xl p-5 space-y-3">
             <div className="flex items-center gap-2">
               <Code2 className="w-4 h-4 text-violet-400" />
-              <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Widget para incorporar</h2>
+              <h2 className="text-xs font-semibold dark:text-zinc-400 text-zinc-600 uppercase tracking-wider">Widget para incorporar</h2>
             </div>
-            <p className="text-xs text-zinc-500">
-              Cole este script antes de <code className="text-violet-300 bg-zinc-900 px-1 rounded">&lt;/head&gt;</code> no seu site.
+            <p className="text-xs dark:text-zinc-500 text-zinc-500">
+              Cole este script antes de <code className="text-violet-300 dark:bg-zinc-900 bg-zinc-100 px-1 rounded">&lt;/head&gt;</code> no seu site.
               Um botão flutuante aparecerá no canto inferior direito.
             </p>
             <div className="relative">
-              <pre className="bg-zinc-900/80 border border-zinc-800 rounded-lg p-4 text-[11px] text-zinc-400 font-mono overflow-x-auto whitespace-pre-wrap">
+              <pre className="dark:bg-zinc-900/80 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-lg p-4 text-[11px] dark:text-zinc-400 text-zinc-600 font-mono overflow-x-auto whitespace-pre-wrap">
                 {embedScript}
               </pre>
               <button
                 onClick={() => handleCopy('script')}
-                className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 rounded text-[10px] text-zinc-300 transition-colors"
+                className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 dark:bg-zinc-800 bg-zinc-100 hover:bg-zinc-700 rounded text-[10px] dark:text-zinc-300 text-zinc-700 transition-colors"
               >
                 {copied === 'script' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                 {copied === 'script' ? 'Copiado!' : 'Copiar'}
               </button>
             </div>
-            <div className="bg-zinc-900/40 border border-zinc-800/40 rounded-lg p-3 text-[11px] text-zinc-500 space-y-1">
-              <p><span className="text-zinc-400">data-agent</span>: token do agente</p>
-              <p><span className="text-zinc-400">data-origin</span>: URL base da aplicação</p>
-              <p>Adicione <span className="text-zinc-400">data-position="left"</span> para mover o widget para o lado esquerdo.</p>
-              <p>Adicione <span className="text-zinc-400">data-label="Fale conosco"</span> para personalizar o texto do botão.</p>
+            <div className="dark:bg-zinc-900/40 bg-zinc-50 border dark:border-zinc-800 border-zinc-300/40 rounded-lg p-3 text-[11px] dark:text-zinc-500 text-zinc-500 space-y-1">
+              <p><span className="dark:text-zinc-400 text-zinc-600">data-agent</span>: token do agente</p>
+              <p><span className="dark:text-zinc-400 text-zinc-600">data-origin</span>: URL base da aplicação</p>
+              <p>Adicione <span className="dark:text-zinc-400 text-zinc-600">data-position="left"</span> para mover o widget para o lado esquerdo.</p>
+              <p>Adicione <span className="dark:text-zinc-400 text-zinc-600">data-label="Fale conosco"</span> para personalizar o texto do botão.</p>
             </div>
           </div>
         </div>
@@ -434,19 +434,19 @@ export default function AgentForm({
       {!isNew && activeTab === 'sessions' && agent && (
         <div className="space-y-3">
           {agent.sessions.length === 0 ? (
-            <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-10 text-center">
+            <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-xl p-10 text-center">
               <MessageSquare className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
-              <p className="text-sm text-zinc-500">Nenhuma conversa ainda</p>
+              <p className="text-sm dark:text-zinc-500 text-zinc-500">Nenhuma conversa ainda</p>
             </div>
           ) : (
             agent.sessions.map(s => (
-              <div key={s.sessionToken} className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-4 flex items-center gap-3">
-                <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center flex-shrink-0">
-                  <MessageSquare className="w-3.5 h-3.5 text-zinc-500" />
+              <div key={s.sessionToken} className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-200 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-7 h-7 rounded-full dark:bg-zinc-800 bg-zinc-100 flex items-center justify-center flex-shrink-0">
+                  <MessageSquare className="w-3.5 h-3.5 dark:text-zinc-500 text-zinc-500" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-zinc-300">{s.visitorName || 'Visitante anônimo'}</p>
-                  <p className="text-[10px] text-zinc-600">{s._count.messages} mensagens · {new Date(s.updatedAt).toLocaleString('pt-BR')}</p>
+                  <p className="text-xs font-medium dark:text-zinc-300 text-zinc-700">{s.visitorName || 'Visitante anônimo'}</p>
+                  <p className="text-[10px] dark:text-zinc-600 text-zinc-600">{s._count.messages} mensagens · {new Date(s.updatedAt).toLocaleString('pt-BR')}</p>
                 </div>
               </div>
             ))

@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/layout/sidebar'
 import DashboardSidebarClient from '@/components/layout/sidebar-wrapper'
+import ThemeToggle from '@/components/layout/theme-toggle'
 import { getSession } from '@/services/auth'
 import prisma from '@/lib/prisma'
 
@@ -40,7 +41,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex h-screen bg-[#09090b]">
+    <div className="flex h-screen bg-[hsl(var(--sidebar-bg))] transition-colors">
       <DashboardSidebarClient
         userName={userName}
         userEmail={userEmail}
@@ -49,7 +50,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         orgLogoShape={orgLogoShape}
         orgName={orgName}
       />
-      <main className="flex-1 overflow-auto pt-12 md:pt-0 bg-[#0b0b0e]">{children}</main>
+      <main className="flex-1 overflow-auto pt-12 md:pt-0 bg-[hsl(var(--background))] text-[hsl(var(--foreground))] transition-colors">
+        {children}
+      </main>
     </div>
   )
 }

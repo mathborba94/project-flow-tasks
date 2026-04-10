@@ -197,7 +197,7 @@ export default function LoginPage() {
 
           {/* Email confirmation state */}
           {emailConfirmation ? (
-            <div className="bg-zinc-950/70 border border-zinc-800/70 rounded-2xl p-8 text-center">
+            <div className="dark:bg-zinc-950 bg-white/70 border border-zinc-800/70 rounded-2xl p-8 text-center">
               <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-5 h-5 text-emerald-400" />
               </div>
@@ -216,7 +216,7 @@ export default function LoginPage() {
             </div>
           ) : (
             /* Form card */
-            <div className="bg-zinc-950/70 border border-zinc-800/70 rounded-2xl p-6 backdrop-blur-sm shadow-2xl shadow-black/40">
+            <div className="dark:bg-zinc-950 bg-white/70 border border-zinc-800/70 rounded-2xl p-6 backdrop-blur-sm shadow-2xl shadow-black/40">
               <form onSubmit={handleSubmit} className="space-y-4">
 
                 {/* Name (register only) */}

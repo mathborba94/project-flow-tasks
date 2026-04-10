@@ -123,11 +123,11 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Logo */}
       <div className="space-y-2">
-        <Label className="text-xs text-zinc-400">Logo da Organização</Label>
+        <Label className="text-xs dark:text-zinc-400 text-zinc-600">Logo da Organização</Label>
         <div className="flex items-center gap-4">
           {formData.logoUrl ? (
             <div className="relative">
-              <img src={formData.logoUrl} alt="Logo" className="w-12 h-12 rounded-lg object-cover border border-zinc-700" />
+              <img src={formData.logoUrl} alt="Logo" className="w-12 h-12 rounded-lg object-cover dark:border-zinc-700 border-zinc-300" />
               <button
                 type="button"
                 onClick={removeLogo}
@@ -137,8 +137,8 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
               </button>
             </div>
           ) : (
-            <div className="w-12 h-12 rounded-lg border border-dashed border-zinc-700 flex items-center justify-center">
-              <ImageIcon className="w-5 h-5 text-zinc-600" />
+            <div className="w-12 h-12 rounded-lg border border-dashed dark:border-zinc-700 border-zinc-300 flex items-center justify-center">
+              <ImageIcon className="w-5 h-5 dark:text-zinc-600 text-zinc-400" />
             </div>
           )}
           <div>
@@ -164,13 +164,13 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
               )}
               {uploadingLogo ? 'Enviando...' : formData.logoUrl ? 'Trocar logo' : 'Enviar logo'}
             </Button>
-            <p className="text-[10px] text-zinc-600 mt-1">PNG, JPG até 2MB</p>
+            <p className="text-[10px] dark:text-zinc-600 text-zinc-400 mt-1">PNG, JPG até 2MB</p>
           </div>
         </div>
         {/* Logo shape */}
         {formData.logoUrl && (
           <div className="flex items-center gap-4 mt-3">
-            <p className="text-xs text-zinc-500">Formato do logo:</p>
+            <p className="text-xs dark:text-zinc-500 text-zinc-500">Formato do logo:</p>
             <div className="flex items-center gap-3">
               {[
                 { value: 'square', label: 'Quadrado' },
@@ -185,7 +185,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
                     onChange={() => setFormData(prev => ({ ...prev, logoShape: opt.value }))}
                     className="accent-violet-500"
                   />
-                  <span className="text-xs text-zinc-400">{opt.label}</span>
+                  <span className="text-xs dark:text-zinc-400 text-zinc-600">{opt.label}</span>
                 </label>
               ))}
             </div>
@@ -195,7 +195,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label htmlFor="name" className="text-xs text-zinc-400">Nome da Organização</Label>
+          <Label htmlFor="name" className="text-xs dark:text-zinc-400 text-zinc-600">Nome da Organização</Label>
           <Input
             id="name"
             value={formData.name}
@@ -205,7 +205,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="slug" className="text-xs text-zinc-400">Slug</Label>
+          <Label htmlFor="slug" className="text-xs dark:text-zinc-400 text-zinc-600">Slug</Label>
           <Input
             id="slug"
             value={formData.slug}
@@ -217,7 +217,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="description" className="text-xs text-zinc-400">Descrição</Label>
+        <Label htmlFor="description" className="text-xs dark:text-zinc-400 text-zinc-600">Descrição</Label>
         <Textarea
           id="description"
           value={formData.description}
@@ -230,7 +230,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label htmlFor="website" className="text-xs text-zinc-400">Website</Label>
+          <Label htmlFor="website" className="text-xs dark:text-zinc-400 text-zinc-600">Website</Label>
           <Input
             id="website"
             type="url"
@@ -241,7 +241,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="timezone" className="text-xs text-zinc-400">Fuso Horário</Label>
+          <Label htmlFor="timezone" className="text-xs dark:text-zinc-400 text-zinc-600">Fuso Horário</Label>
           <Select
             value={formData.timezone}
             onValueChange={(value) => setFormData({ ...formData, timezone: value })}
@@ -258,23 +258,23 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
         </div>
       </div>
 
-      <div className="border-t border-zinc-800/40 pt-4 space-y-3">
-        <h3 className="text-sm font-medium text-zinc-300">Público</h3>
+      <div className="border-t dark:border-zinc-800/40 border-zinc-200 pt-4 space-y-3">
+        <h3 className="text-sm font-medium dark:text-zinc-300 text-zinc-700">Público</h3>
         <div className="flex items-center gap-3">
           <input
             type="checkbox"
             id="publicKB"
             checked={formData.publicKnowledgeBase}
             onChange={(e) => setFormData(prev => ({ ...prev, publicKnowledgeBase: e.target.checked }))}
-            className="w-4 h-4 rounded bg-zinc-800 border-zinc-700 text-brand focus:ring-brand"
+            className="w-4 h-4 rounded dark:bg-zinc-800 bg-zinc-100 dark:border-zinc-700 border-zinc-300 text-brand focus:ring-brand"
           />
-          <Label htmlFor="publicKB" className="text-sm text-zinc-300 cursor-pointer">
+          <Label htmlFor="publicKB" className="text-sm dark:text-zinc-300 text-zinc-700 cursor-pointer">
             Base de Conhecimento pública
           </Label>
         </div>
         {formData.publicKnowledgeBase && (
-          <p className="text-[11px] text-zinc-600">
-            Link público: <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-400">/public/knowledge/{formData.slug}</code>
+          <p className="text-[11px] dark:text-zinc-600 text-zinc-500">
+            Link público: <code className="dark:bg-zinc-800 bg-zinc-100 dark:text-zinc-400 text-zinc-600 px-1.5 py-0.5 rounded">/public/knowledge/{formData.slug}</code>
           </p>
         )}
       </div>
@@ -287,7 +287,7 @@ export default function OrganizationForm({ org }: { org: OrgData }) {
         </p>
       )}
 
-      <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800/60">
+      <div className="flex justify-end gap-2 pt-2 border-t dark:border-zinc-800/60 border-zinc-200">
         <Button type="submit" size="sm" disabled={loading}>
           {loading ? (
             <><Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> Salvando...</>

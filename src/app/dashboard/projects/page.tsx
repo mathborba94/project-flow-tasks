@@ -34,7 +34,7 @@ export default async function ProjectsPage() {
       createButton={
         canCreateProject ? (
           <CreateProjectDialog members={ownerMembers} currentUserId={userId} userRole={userRole}>
-            <button className="inline-flex items-center gap-1.5 text-xs font-medium bg-white text-black px-3 py-1.5 rounded-md hover:bg-zinc-200 transition-colors">
+            <button className="inline-flex items-center gap-1.5 text-xs font-medium dark:bg-white dark:text-black bg-zinc-900 text-white px-3 py-1.5 rounded-md hover:bg-zinc-200 transition-colors">
               <Plus className="w-3.5 h-3.5" />
               Novo Projeto
             </button>

@@ -47,18 +47,18 @@ export function PendingInvitations({ invitations }: { invitations: Invitation[] 
         return (
           <div
             key={inv.id}
-            className="flex items-center justify-between bg-zinc-950/50 border border-zinc-800/60 rounded-lg px-4 py-3"
+            className="flex items-center justify-between dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg px-4 py-3"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-7 h-7 bg-zinc-900 border border-zinc-800 rounded-md flex items-center justify-center shrink-0">
-                <Mail className="w-3.5 h-3.5 text-zinc-600" />
+              <div className="w-7 h-7 dark:bg-zinc-900 bg-zinc-100 border dark:border-zinc-800 border-zinc-300 rounded-md flex items-center justify-center shrink-0">
+                <Mail className="w-3.5 h-3.5 dark:text-zinc-600 text-zinc-400" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm text-zinc-300 truncate">{inv.email}</p>
+                <p className="text-sm dark:text-zinc-300 text-zinc-700 truncate">{inv.email}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-[11px] text-violet-400">{roleLabel[inv.role] ?? inv.role}</span>
                   <span className="text-zinc-700">·</span>
-                  <span className={`text-[11px] flex items-center gap-1 ${expired ? 'text-red-500' : 'text-zinc-600'}`}>
+                  <span className={`text-[11px] flex items-center gap-1 ${expired ? 'text-red-500' : 'dark:text-zinc-600 text-zinc-400'}`}>
                     <Clock className="w-3 h-3" />
                     {expired
                       ? 'Expirado'
@@ -72,7 +72,7 @@ export function PendingInvitations({ invitations }: { invitations: Invitation[] 
               onClick={() => handleRevoke(inv.id, inv.token)}
               disabled={revoking === inv.id}
               title="Revogar convite"
-              className="ml-3 p-1.5 text-zinc-600 hover:text-red-400 transition-colors disabled:opacity-50"
+              className="ml-3 p-1.5 dark:text-zinc-600 text-zinc-400 hover:text-red-400 transition-colors disabled:opacity-50"
             >
               {revoking === inv.id
                 ? <Loader2 className="w-3.5 h-3.5 animate-spin" />

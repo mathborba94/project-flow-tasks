@@ -70,7 +70,7 @@ const eventTypeConfig: Record<TaskHistoryEventType, {
   },
   title_changed: {
     icon: Clock,
-    iconColor: 'text-zinc-400',
+    iconColor: 'dark:text-zinc-400 text-zinc-400',
     bgColor: 'bg-zinc-500/10',
     defaultLabel: 'Titulo alterado',
   },
@@ -190,17 +190,17 @@ export default function TaskHistoryLog({ taskId, entries }: TaskHistoryLogProps)
 
   if (loading) {
     return (
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg">
-        <div className="px-4 py-3 border-b border-zinc-800/40">
-          <h3 className="text-sm font-medium text-zinc-200">Historico</h3>
+      <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg">
+        <div className="px-4 py-3 border-b dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+          <h3 className="text-sm font-medium dark:text-zinc-200 text-zinc-800">Historico</h3>
         </div>
         <div className="px-4 py-8 space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex gap-3 animate-pulse">
-              <div className="w-8 h-8 bg-zinc-800 rounded-full" />
+              <div className="w-8 h-8 dark:bg-zinc-800 bg-zinc-100 rounded-full" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-zinc-800 rounded w-3/4" />
-                <div className="h-3 bg-zinc-800 rounded w-1/2" />
+                <div className="h-4 dark:bg-zinc-800 bg-zinc-100 rounded w-3/4" />
+                <div className="h-3 dark:bg-zinc-800 bg-zinc-100 rounded w-1/2" />
               </div>
             </div>
           ))}
@@ -211,28 +211,28 @@ export default function TaskHistoryLog({ taskId, entries }: TaskHistoryLogProps)
 
   if (history.length === 0) {
     return (
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg">
-        <div className="px-4 py-3 border-b border-zinc-800/40">
-          <h3 className="text-sm font-medium text-zinc-200">Historico</h3>
+      <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg">
+        <div className="px-4 py-3 border-b dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+          <h3 className="text-sm font-medium dark:text-zinc-200 text-zinc-800">Historico</h3>
         </div>
         <div className="px-4 py-12 text-center">
-          <Clock className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-          <p className="text-sm text-zinc-500">Nenhum registro ainda</p>
+          <Clock className="w-8 h-8 dark:text-zinc-600 text-zinc-400 mx-auto mb-2" />
+          <p className="text-sm dark:text-zinc-500 text-zinc-500">Nenhum registro ainda</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg">
-      <div className="px-4 py-3 border-b border-zinc-800/40">
-        <h3 className="text-sm font-medium text-zinc-200">Historico</h3>
+    <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg">
+      <div className="px-4 py-3 border-b dark:border-zinc-800 border-zinc-300/40 border-zinc-200">
+        <h3 className="text-sm font-medium dark:text-zinc-200 text-zinc-800">Historico</h3>
       </div>
 
       <div className="px-4 py-4">
         <div className="relative">
           {/* Vertical timeline line */}
-          <div className="absolute left-4 top-2 bottom-2 w-px bg-zinc-800" />
+          <div className="absolute left-4 top-2 bottom-2 w-px dark:bg-zinc-800 bg-zinc-100" />
 
           <div className="space-y-4">
             {history.map((entry, index) => {
@@ -252,11 +252,11 @@ export default function TaskHistoryLog({ taskId, entries }: TaskHistoryLogProps)
                   <div className="flex-1 min-w-0 pt-1">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm text-zinc-300 truncate">
+                        <p className="text-sm dark:text-zinc-300 text-zinc-300 truncate">
                           {entry.description}
                         </p>
                         {entry.createdBy && (
-                          <p className="text-xs text-zinc-500 mt-0.5">
+                          <p className="text-xs dark:text-zinc-500 text-zinc-500 mt-0.5">
                             por {entry.createdBy.name}
                           </p>
                         )}
@@ -264,7 +264,7 @@ export default function TaskHistoryLog({ taskId, entries }: TaskHistoryLogProps)
 
                       {/* Date tooltip */}
                       <div
-                        className="flex-shrink-0 text-[11px] text-zinc-600 group-hover:text-zinc-400 transition-colors cursor-default"
+                        className="flex-shrink-0 text-[11px] dark:text-zinc-600 text-zinc-400 group-dark:hover:text-zinc-400 dark:text-zinc-600 text-zinc-400 transition-colors cursor-default"
                         title={formatFullDate(entry.createdAt)}
                       >
                         {formatRelativeDate(entry.createdAt)}
@@ -276,11 +276,11 @@ export default function TaskHistoryLog({ taskId, entries }: TaskHistoryLogProps)
                       <div className="mt-1.5 flex flex-wrap gap-1.5">
                         {entry.metadata.from && entry.metadata.to && (
                           <>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] bg-zinc-800 text-zinc-400">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] dark:bg-zinc-800 bg-zinc-100 dark:text-zinc-400 text-zinc-400">
                               {String(entry.metadata.from)}
                             </span>
-                            <ArrowRight className="w-3 h-3 text-zinc-600" />
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] bg-zinc-800 text-zinc-300">
+                            <ArrowRight className="w-3 h-3 dark:text-zinc-600 text-zinc-400" />
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] dark:bg-zinc-800 bg-zinc-100 dark:text-zinc-300 text-zinc-300">
                               {String(entry.metadata.to)}
                             </span>
                           </>

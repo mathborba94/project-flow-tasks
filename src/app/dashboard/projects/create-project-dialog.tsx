@@ -100,7 +100,7 @@ export function CreateProjectDialog({ members, children, currentUserId, userRole
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="name" className="text-xs text-zinc-400">Nome do Projeto</Label>
+            <Label htmlFor="name" className="text-xs dark:text-zinc-400 text-zinc-600">Nome do Projeto</Label>
             <Input
               id="name"
               value={formData.name}
@@ -111,7 +111,7 @@ export function CreateProjectDialog({ members, children, currentUserId, userRole
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="description" className="text-xs text-zinc-400">Descrição</Label>
+            <Label htmlFor="description" className="text-xs dark:text-zinc-400 text-zinc-600">Descrição</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -123,7 +123,7 @@ export function CreateProjectDialog({ members, children, currentUserId, userRole
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="owner" className="text-xs text-zinc-400">Responsável</Label>
+              <Label htmlFor="owner" className="text-xs dark:text-zinc-400 text-zinc-600">Responsável</Label>
               {isMember ? (
                 <p className="text-sm text-zinc-400 h-8 flex items-center">
                   {members.find(m => m.id === currentUserId)?.name || 'Você'}
@@ -147,7 +147,7 @@ export function CreateProjectDialog({ members, children, currentUserId, userRole
               )}
             </div>
             <div className="space-y-1">
-              <Label htmlFor="status" className="text-xs text-zinc-400">Status</Label>
+              <Label htmlFor="status" className="text-xs dark:text-zinc-400 text-zinc-600">Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => setFormData({ ...formData, status: value || 'ACTIVE' })}
@@ -165,7 +165,7 @@ export function CreateProjectDialog({ members, children, currentUserId, userRole
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="budget" className="text-xs text-zinc-400">Orçamento (opcional)</Label>
+              <Label htmlFor="budget" className="text-xs dark:text-zinc-400 text-zinc-600">Orçamento (opcional)</Label>
               <Input
                 id="budget"
                 type="number"
@@ -176,7 +176,7 @@ export function CreateProjectDialog({ members, children, currentUserId, userRole
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="hourlyRate" className="text-xs text-zinc-400">Valor/hora</Label>
+              <Label htmlFor="hourlyRate" className="text-xs dark:text-zinc-400 text-zinc-600">Valor/hora</Label>
               <Input
                 id="hourlyRate"
                 type="number"
@@ -188,7 +188,7 @@ export function CreateProjectDialog({ members, children, currentUserId, userRole
             </div>
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
-          <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800/60">
+          <div className="flex justify-end gap-2 pt-2 border-t dark:border-zinc-800/60 border-zinc-200">
             <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
               Cancelar
             </Button>

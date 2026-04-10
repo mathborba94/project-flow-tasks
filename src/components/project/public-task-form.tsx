@@ -179,7 +179,7 @@ export default function PublicTaskForm({
   const formUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/public/projects/${projectId}/new-task`
 
   const priorityOptions = [
-    { value: 'LOW', label: 'Baixa', className: 'bg-zinc-500/10 text-zinc-400 border-zinc-700/40' },
+    { value: 'LOW', label: 'Baixa', className: 'bg-zinc-500/10 text-zinc-400 dark:border-zinc-700 border-zinc-300/40' },
     { value: 'MEDIUM', label: 'Média', className: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
     { value: 'HIGH', label: 'Alta', className: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
     { value: 'URGENT', label: 'Urgente', className: 'bg-red-500/10 text-red-400 border-red-500/20' },
@@ -189,10 +189,10 @@ export default function PublicTaskForm({
 
   if (submitted) {
     return (
-      <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl p-8 text-center">
+      <div className="dark:bg-zinc-900/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-xl p-8 text-center">
         <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
-        <h2 className="text-lg font-semibold text-zinc-100 mb-2">Tarefa criada com sucesso!</h2>
-        <p className="text-sm text-zinc-500 mb-6">
+        <h2 className="text-lg font-semibold dark:text-zinc-100 text-zinc-900 mb-2">Tarefa criada com sucesso!</h2>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500 mb-6">
           Sua solicitação foi recebida e será analisada pela equipe.
         </p>
         <Button
@@ -217,14 +217,14 @@ export default function PublicTaskForm({
   }
 
   return (
-    <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl overflow-hidden">
+    <div className="dark:bg-zinc-900/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-xl overflow-hidden">
       {/* Form header */}
-      <div className="px-6 py-4 border-b border-zinc-800/40 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-zinc-200">Solicitar Tarefa</h2>
+      <div className="px-6 py-4 border-b dark:border-zinc-800 border-zinc-300/40 flex items-center justify-between">
+        <h2 className="text-sm font-medium dark:text-zinc-200 text-zinc-800">Solicitar Tarefa</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigator.clipboard.writeText(formUrl)}
-            className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 rounded hover:bg-zinc-800/40"
+            className="inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-700 text-zinc-300 transition-colors px-2 py-1 rounded hover:bg-zinc-800/40"
             title="Copiar link do formulário"
           >
             <Copy className="w-3.5 h-3.5" />
@@ -245,7 +245,7 @@ export default function PublicTaskForm({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Descreva brevemente o que precisa ser feito"
-              className="bg-zinc-900/60 border-zinc-800 pr-8"
+              className="dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300 pr-8"
               required
             />
             {kbLoading && (
@@ -269,7 +269,7 @@ export default function PublicTaskForm({
                 <button
                   type="button"
                   onClick={() => setKbDismissed(true)}
-                  className="text-zinc-600 hover:text-zinc-400 transition-colors"
+                  className="dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-400 dark:text-zinc-600 text-zinc-400 transition-colors"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -277,7 +277,7 @@ export default function PublicTaskForm({
 
               {/* Speed tip */}
               <div className="px-3.5 pt-2.5 pb-1">
-                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                <p className="text-[11px] dark:text-zinc-400 text-zinc-400 leading-relaxed">
                   <span className="text-emerald-400 font-medium">Dica:</span>{' '}
                   Resolver pela base de conhecimento é bem mais rápido do que abrir uma tarefa. Confira se sua dúvida já está respondida:
                 </p>
@@ -285,7 +285,7 @@ export default function PublicTaskForm({
 
               {/* Articles */}
               {kbLoading && kbArticles.length === 0 ? (
-                <div className="px-3.5 py-3 flex items-center gap-2 text-xs text-zinc-500">
+                <div className="px-3.5 py-3 flex items-center gap-2 text-xs dark:text-zinc-500 text-zinc-500">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   Buscando artigos relacionados...
                 </div>
@@ -302,29 +302,29 @@ export default function PublicTaskForm({
                         >
                           <BookOpen className="w-3.5 h-3.5 text-violet-400 flex-shrink-0 mt-0.5" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-zinc-200 group-hover:text-violet-200 transition-colors truncate">
+                            <p className="text-xs font-medium dark:text-zinc-200 text-zinc-800 group-hover:text-violet-200 transition-colors truncate">
                               {article.title}
                             </p>
                             {article.excerpt && (
-                              <p className="text-[10px] text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">
+                              <p className="text-[10px] dark:text-zinc-500 text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">
                                 {article.excerpt}
                               </p>
                             )}
                             {article.categoryName && (
-                              <span className="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded bg-zinc-800/60 text-zinc-500 border border-zinc-700/30">
+                              <span className="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-500 text-zinc-500 border dark:border-zinc-700 border-zinc-300/30">
                                 {article.categoryName}
                               </span>
                             )}
                           </div>
-                          <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-violet-400 flex-shrink-0 mt-0.5 transition-colors" />
+                          <ChevronRight className="w-3.5 h-3.5 dark:text-zinc-600 text-zinc-400 group-hover:text-violet-400 flex-shrink-0 mt-0.5 transition-colors" />
                         </a>
                       ) : (
                         <div className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg">
                           <BookOpen className="w-3.5 h-3.5 text-violet-400 flex-shrink-0 mt-0.5" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-zinc-200 truncate">{article.title}</p>
+                            <p className="text-xs font-medium dark:text-zinc-200 text-zinc-800 truncate">{article.title}</p>
                             {article.excerpt && (
-                              <p className="text-[10px] text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">
+                              <p className="text-[10px] dark:text-zinc-500 text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">
                                 {article.excerpt}
                               </p>
                             )}
@@ -351,7 +351,7 @@ export default function PublicTaskForm({
                   <button
                     type="button"
                     onClick={() => setKbDismissed(true)}
-                    className="text-[11px] text-zinc-600 hover:text-zinc-400 transition-colors"
+                    className="text-[11px] dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-400 dark:text-zinc-600 text-zinc-400 transition-colors"
                   >
                     Já sei o que preciso
                   </button>
@@ -371,7 +371,7 @@ export default function PublicTaskForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Detalhe sua solicitação com informações relevantes..."
-            className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-700 resize-none min-h-[100px]"
+            className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 dark:placeholder-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400 resize-none min-h-[100px]"
           />
         </div>
 
@@ -383,7 +383,7 @@ export default function PublicTaskForm({
               id="taskType"
               value={taskTypeId}
               onChange={(e) => setTaskTypeId(e.target.value)}
-              className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+              className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
             >
               <option value="">Selecione...</option>
               {taskTypes.map(tt => (
@@ -422,7 +422,7 @@ export default function PublicTaskForm({
               id="assignee"
               value={assigneeId}
               onChange={(e) => setAssigneeId(e.target.value)}
-              className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+              className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
             >
               <option value="">Automático</option>
               {members.map(m => (
@@ -433,8 +433,8 @@ export default function PublicTaskForm({
         )}
 
         {/* Requester info */}
-        <div className="border-t border-zinc-800/40 pt-4 space-y-3">
-          <h3 className="text-sm font-medium text-zinc-400">Seus dados</h3>
+        <div className="border-t dark:border-zinc-800 border-zinc-300/40 pt-4 space-y-3">
+          <h3 className="text-sm font-medium dark:text-zinc-400 text-zinc-400">Seus dados</h3>
           <div>
             <Label htmlFor="requesterName" className="text-sm">Nome</Label>
             <Input
@@ -442,7 +442,7 @@ export default function PublicTaskForm({
               value={requesterName}
               onChange={(e) => setRequesterName(e.target.value)}
               placeholder="Seu nome"
-              className="mt-1.5 bg-zinc-900/60 border-zinc-800"
+              className="mt-1.5 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300"
             />
           </div>
           <div>
@@ -453,7 +453,7 @@ export default function PublicTaskForm({
               value={requesterEmail}
               onChange={(e) => setRequesterEmail(e.target.value)}
               placeholder="seu@email.com"
-              className="mt-1.5 bg-zinc-900/60 border-zinc-800"
+              className="mt-1.5 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300"
             />
           </div>
         </div>
@@ -469,13 +469,13 @@ export default function PublicTaskForm({
             className="hidden"
           />
           {attachedFile ? (
-            <div className="mt-1.5 flex items-center gap-2 bg-zinc-800/40 border border-zinc-700/40 rounded-md px-3 py-2">
-              <Paperclip className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
-              <span className="text-sm text-zinc-300 truncate flex-1">{attachedFile.name}</span>
+            <div className="mt-1.5 flex items-center gap-2 bg-zinc-800/40 border dark:border-zinc-700 border-zinc-300/40 rounded-md px-3 py-2">
+              <Paperclip className="w-3.5 h-3.5 dark:text-zinc-500 text-zinc-500 flex-shrink-0" />
+              <span className="text-sm dark:text-zinc-300 text-zinc-300 truncate flex-1">{attachedFile.name}</span>
               <button
                 type="button"
                 onClick={removeFile}
-                className="text-zinc-500 hover:text-red-400 transition-colors flex-shrink-0"
+                className="dark:text-zinc-500 text-zinc-500 hover:text-red-400 transition-colors flex-shrink-0"
                 title="Remover arquivo"
               >
                 <X className="w-3.5 h-3.5" />
@@ -485,7 +485,7 @@ export default function PublicTaskForm({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="mt-1.5 w-full flex items-center justify-center gap-2 border-2 border-dashed border-zinc-700 rounded-md py-2.5 text-sm text-zinc-500 hover:text-zinc-400 hover:border-zinc-600 transition-colors cursor-pointer"
+              className="mt-1.5 w-full flex items-center justify-center gap-2 border-2 border-dashed dark:border-zinc-700 border-zinc-300 rounded-md py-2.5 text-sm dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-400 dark:text-zinc-600 text-zinc-400 hover:border-zinc-600 transition-colors cursor-pointer"
             >
               <Paperclip className="w-4 h-4" />
               Anexar arquivo (opcional)

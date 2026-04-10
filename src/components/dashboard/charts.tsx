@@ -13,14 +13,19 @@ import {
   Bar,
 } from 'recharts'
 
-function DashboardCharts() {
+function DashboardCharts({ referenceMonth }: { referenceMonth?: Date }) {
   const [hoursData, setHoursData] = useState<Array<{ day: string; hours: number }>>([])
   const [tasksData, setTasksData] = useState<Array<{ day: string; opened: number; closed: number }>>([])
   const [weeklyAvg, setWeeklyAvg] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/dashboard/stats')
+    const params = new URLSearchParams()
+    if (referenceMonth) {
+      params.set('month', `${referenceMonth.getFullYear()}-${String(referenceMonth.getMonth() + 1).padStart(2, '0')}`)
+    }
+    const queryString = params.toString()
+    fetch(`/api/dashboard/stats${queryString ? `?${queryString}` : ''}`)
       .then(r => r.json())
       .then(data => {
         setHoursData(data.hoursByDay || [])
@@ -29,7 +34,7 @@ function DashboardCharts() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [])
+  }, [referenceMonth])
 
   if (loading) return null
   if (hoursData.length === 0 && tasksData.length === 0) return null
@@ -45,8 +50,8 @@ function DashboardCharts() {
   return (
     <>
       {/* Hours Chart */}
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 animate-fade-in-delay">
-        <h2 className="text-sm font-medium text-zinc-200 mb-4">Horas alocadas (últimos 14 dias)</h2>
+      <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4 animate-fade-in-delay">
+        <h2 className="text-sm font-medium dark:text-zinc-200 text-zinc-800 mb-4">Horas alocadas (últimos 14 dias)</h2>
         {hoursData.length > 0 ? (
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={hoursData}>
@@ -87,13 +92,13 @@ function DashboardCharts() {
             </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[200px] flex items-center justify-center text-xs text-zinc-700">Sem dados de horas</div>
+          <div className="h-[200px] flex items-center justify-center text-xs dark:text-zinc-600 text-zinc-400">Sem dados de horas</div>
         )}
       </div>
 
       {/* Opened vs Closed */}
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 animate-fade-in-delay-2">
-        <h2 className="text-sm font-medium text-zinc-200 mb-4">Tarefas abertas vs encerradas</h2>
+      <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4 animate-fade-in-delay-2">
+        <h2 className="text-sm font-medium dark:text-zinc-200 text-zinc-800 mb-4">Tarefas abertas vs encerradas</h2>
         {tasksData.length > 0 ? (
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={tasksData}>
@@ -123,20 +128,20 @@ function DashboardCharts() {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[200px] flex items-center justify-center text-xs text-zinc-700">Sem dados de tarefas</div>
+          <div className="h-[200px] flex items-center justify-center text-xs dark:text-zinc-600 text-zinc-400">Sem dados de tarefas</div>
         )}
       </div>
 
       {/* Weekly Average */}
-      <div className="col-span-1 lg:col-span-2 bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 animate-fade-in-delay-3">
+      <div className="col-span-1 lg:col-span-2 dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg p-4 animate-fade-in-delay-3">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-medium text-zinc-200">Média de produção semanal</h2>
-            <p className="text-xs text-zinc-500 mt-1">Tarefas concluídas por semana (últimas 4 semanas)</p>
+            <h2 className="text-sm font-medium dark:text-zinc-200 text-zinc-800">Média de produção semanal</h2>
+            <p className="text-xs dark:text-zinc-500 text-zinc-500 mt-1">Tarefas concluídas por semana (últimas 4 semanas)</p>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-bold text-zinc-100 tabular-nums">{weeklyAvg}</p>
-            <p className="text-xs text-zinc-500">tarefas/semana</p>
+            <p className="text-3xl font-bold dark:text-zinc-100 text-zinc-900 tabular-nums">{weeklyAvg}</p>
+            <p className="text-xs dark:text-zinc-500 text-zinc-500">tarefas/semana</p>
           </div>
         </div>
       </div>

@@ -102,25 +102,25 @@ export default function ProjectDetailClient({
   }
 
   return (
-    <div className="flex flex-col h-full md:h-screen bg-[#09090b]">
+    <div className="flex flex-col h-full md:h-screen dark:bg-zinc-950 bg-white">
       {/* Top bar */}
-      <div className="flex-shrink-0 border-b border-zinc-800/60 bg-[#09090b]">
+      <div className="flex-shrink-0 border-b dark:border-zinc-800/60 border-zinc-200 dark:bg-zinc-950 bg-white">
         <div className="px-3 md:px-4 py-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <Link href="/dashboard/projects" className="text-zinc-500 hover:text-zinc-300 transition-colors flex-shrink-0">
+            <Link href="/dashboard/projects" className="text-zinc-500 dark:hover:text-zinc-300 hover:text-zinc-700 transition-colors flex-shrink-0">
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div className="flex items-center gap-1.5 min-w-0">
               <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full flex-shrink-0" style={{ backgroundColor: projectData.color || '#5c6ac4' }} />
-              <h1 className="text-xs md:text-sm font-semibold text-zinc-100 truncate">{projectData.name}</h1>
+              <h1 className="text-xs md:text-sm font-semibold dark:text-zinc-100 text-zinc-900 truncate">{projectData.name}</h1>
               <span className={`hidden md:inline text-[10px] font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${status.className}`}>
                 {status.label}
               </span>
-              <span className="text-[10px] text-zinc-600 bg-zinc-800/60 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] dark:text-zinc-500 text-zinc-500 dark:bg-zinc-800/60 bg-zinc-100 px-2 py-0.5 rounded-full">
                 {typeLabels[projectData.type] || 'Escopo Fechado'}
               </span>
               {projectData.archived && (
-                <span className="text-[10px] text-zinc-600 bg-zinc-800/60 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] dark:text-zinc-500 text-zinc-500 dark:bg-zinc-800/60 bg-zinc-100 px-2 py-0.5 rounded-full">
                   Arquivado
                 </span>
               )}
@@ -128,7 +128,7 @@ export default function ProjectDetailClient({
           </div>
 
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-            <div className="hidden md:flex items-center gap-4 text-xs text-zinc-500">
+            <div className="hidden md:flex items-center gap-4 text-xs dark:text-zinc-500 text-zinc-500">
               {showProgress && (
                 <span className="tabular-nums">{progress}% progresso</span>
               )}
@@ -143,7 +143,7 @@ export default function ProjectDetailClient({
                 <Link
                   href={`/public/projects/${projectId}`}
                   target="_blank"
-                  className="hidden md:flex items-center gap-1.5 px-2 py-1 text-[11px] text-zinc-500 hover:text-zinc-300 border border-zinc-800/60 hover:border-zinc-700/60 rounded transition-colors"
+                  className="hidden md:flex items-center gap-1.5 px-2 py-1 text-[11px] text-zinc-500 dark:hover:text-zinc-300 hover:text-zinc-700 border dark:border-zinc-800/60 border-zinc-300 dark:hover:border-zinc-700/60 hover:border-zinc-400 rounded transition-colors"
                   title="Página pública do projeto"
                 >
                   <Share2 className="w-3 h-3" />
@@ -156,14 +156,14 @@ export default function ProjectDetailClient({
                   <Link
                     href={`/public/projects/${projectId}/new-task`}
                     target="_blank"
-                    className="p-1 md:p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors rounded flex items-center gap-1"
+                    className="p-1 md:p-1.5 text-zinc-600 dark:hover:text-zinc-300 hover:text-zinc-700 transition-colors rounded flex items-center gap-1"
                     title="Formulário público de tarefas"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                   </Link>
                   <button
                     onClick={handleOpenSettings}
-                    className="p-1 md:p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors rounded"
+                    className="p-1 md:p-1.5 text-zinc-600 dark:hover:text-zinc-300 hover:text-zinc-700 transition-colors rounded"
                     title="Configurações"
                   >
                     <Settings className="w-3.5 h-3.5" />
@@ -175,44 +175,44 @@ export default function ProjectDetailClient({
         </div>
 
         {/* Tabs */}
-        <div className="flex-shrink-0 border-t border-zinc-800/40">
+        <div className="flex-shrink-0 border-t dark:border-zinc-800/40 border-zinc-200">
           <div className="px-3 md:px-4 overflow-x-auto">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="bg-transparent border-0 p-0 gap-0 h-9 min-w-max">
                 <TabsTrigger
                   value="kanban"
-                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
+                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
                 >
                   Kanban
                 </TabsTrigger>
                 <TabsTrigger
                   value="documents"
-                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
+                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
                 >
                   Documentos
                 </TabsTrigger>
                 <TabsTrigger
                   value="comments"
-                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
+                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
                 >
                   Comentários
                 </TabsTrigger>
                 <TabsTrigger
                   value="members"
-                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
+                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
                 >
                   Membros
                 </TabsTrigger>
                 <TabsTrigger
                   value="insights"
-                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
+                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
                 >
                   Insights
                 </TabsTrigger>
                 {showProgress && (
                   <TabsTrigger
                     value="gantt"
-                    className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3 flex items-center gap-1"
+                    className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-xs md:text-sm px-2 md:px-3 flex items-center gap-1"
                   >
                     <GanttChartSquare className="w-3.5 h-3.5" />
                     Gantt
@@ -220,7 +220,7 @@ export default function ProjectDetailClient({
                 )}
                 <TabsTrigger
                   value="import"
-                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
+                  className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:dark:text-zinc-200 text-zinc-800 dark:text-zinc-500 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
                 >
                   Importar/Exportar
                 </TabsTrigger>
@@ -246,6 +246,7 @@ export default function ProjectDetailClient({
                 taskTypes={taskTypes}
                 defaultTaskTypeId={defaultTaskTypeId}
                 userRole={userRole}
+                userId={projectData.ownerId}
               />
             </div>
           </TabsContent>

@@ -97,7 +97,7 @@ export function CreateTimeEntryDialog({ defaultTaskId, children }: CreateTimeEnt
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="task" className="text-xs text-zinc-400">Tarefa</Label>
+            <Label htmlFor="task" className="text-xs dark:text-zinc-400 text-zinc-600">Tarefa</Label>
             <Select
               value={formData.taskId}
               onValueChange={(value) => setFormData({ ...formData, taskId: value || '' })}
@@ -115,7 +115,7 @@ export function CreateTimeEntryDialog({ defaultTaskId, children }: CreateTimeEnt
             </Select>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="minutes" className="text-xs text-zinc-400">Minutos</Label>
+            <Label htmlFor="minutes" className="text-xs dark:text-zinc-400 text-zinc-600">Minutos</Label>
             <Input
               id="minutes"
               type="number"
@@ -129,7 +129,7 @@ export function CreateTimeEntryDialog({ defaultTaskId, children }: CreateTimeEnt
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="description" className="text-xs text-zinc-400">Descrição (opcional)</Label>
+            <Label htmlFor="description" className="text-xs dark:text-zinc-400 text-zinc-600">Descrição (opcional)</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -140,7 +140,7 @@ export function CreateTimeEntryDialog({ defaultTaskId, children }: CreateTimeEnt
             />
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
-          <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800/60">
+          <div className="flex justify-end gap-2 pt-2 border-t dark:border-zinc-800/60 border-zinc-200">
             <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
               Cancelar
             </Button>

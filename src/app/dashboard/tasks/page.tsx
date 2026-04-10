@@ -24,8 +24,8 @@ export default async function TasksPage() {
     <div className="p-6 max-w-6xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-base font-semibold text-zinc-100 tracking-tight">Tarefas</h1>
-          <p className="text-sm text-zinc-500 mt-0.5">Gerencie e acompanhe todas as tarefas</p>
+          <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight">Tarefas</h1>
+          <p className="text-sm dark:text-zinc-500 text-zinc-500 mt-0.5">Gerencie e acompanhe todas as tarefas</p>
         </div>
         <CreateTaskDialog projects={projects} members={members}>
           <button className="inline-flex items-center gap-1.5 text-xs font-medium bg-white text-black px-3 py-1.5 rounded-md hover:bg-zinc-200 transition-colors">

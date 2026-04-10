@@ -39,6 +39,7 @@ type Task = {
   status: string
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
   pipelineStageId: string | null
+  assignedToId: string | null
   assignedTo: { id: string; name: string } | null
   _timeEntries?: { minutes: number }[]
   _timeEntriesCount?: number
@@ -90,7 +91,7 @@ const templateOptions: TemplateOption[] = [
 ]
 
 const priorityColors: Record<string, string> = {
-  LOW: 'bg-zinc-800 text-zinc-400 border-zinc-700/40',
+  LOW: 'dark:bg-zinc-800 bg-zinc-100 text-zinc-400 dark:border-zinc-700/40 border-zinc-200',
   MEDIUM: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   HIGH: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
   URGENT: 'bg-red-500/10 text-red-400 border-red-500/20',
@@ -125,6 +126,7 @@ export default function KanbanBoard({
   taskTypes = [],
   defaultTaskTypeId,
   userRole,
+  userId,
 }: {
   projectId: string
   tasks: Task[]
@@ -136,6 +138,7 @@ export default function KanbanBoard({
   taskTypes?: { id: string; name: string; slaMinutes: number }[]
   defaultTaskTypeId?: string | null
   userRole?: string
+  userId?: string
 }) {
   const router = useRouter()
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
@@ -189,6 +192,26 @@ export default function KanbanBoard({
     fetchTasks()
   }, [router, fetchTasks])
 
+  // Filters, search, pagination, list view
+  const [searchTerm, setSearchTerm] = useState('')
+  const [showMyTasks, setShowMyTasks] = useState(false)
+  const [listView, setListView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('kanban-list-view') === 'true'
+    }
+    return false
+  })
+  const [expandedStages, setExpandedStages] = useState<Record<string, boolean>>({})
+  const PAGE_SIZE = 30
+  const [stagePages, setStagePages] = useState<Record<string, number>>({})
+
+  // Save list view preference
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('kanban-list-view', String(listView))
+    }
+  }, [listView])
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) setAttachedFile(file)
@@ -199,23 +222,61 @@ export default function KanbanBoard({
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  // Group tasks by stage
+  // Group tasks by stage WITH filters
+  const getFilteredTasks = useCallback(
+    (taskList: Task[]) => {
+      let filtered = taskList
+
+      // Filter: my tasks only
+      if (showMyTasks && userId) {
+        filtered = filtered.filter(t => t.assignedToId === userId || (t.assignedTo && t.assignedTo.id === userId))
+      }
+
+      // Search: id, title, description
+      if (searchTerm.trim()) {
+        const term = searchTerm.toLowerCase().trim()
+        filtered = filtered.filter(t =>
+          t.id.toLowerCase().includes(term) ||
+          t.title.toLowerCase().includes(term) ||
+          (t.description && t.description.toLowerCase().includes(term))
+        )
+      }
+
+      return filtered
+    },
+    [showMyTasks, userId, searchTerm],
+  )
+
   const getTasksForStage = useCallback(
     (stage: PipelineStage) => {
       const stageTasks = tasks.filter((t) => t.pipelineStageId === stage.id)
-      return stageTasks
+      return getFilteredTasks(stageTasks)
     },
-    [tasks],
+    [tasks, getFilteredTasks],
   )
 
   // Tasks without stage go to first stage (order 0)
   const getFirstStageTasks = useCallback(() => {
     const firstStage = stages.find((s) => s.order === 0)
     if (!firstStage) return []
-    return tasks.filter(
+    const stageTasks = tasks.filter(
       (t) => t.pipelineStageId === firstStage.id || t.pipelineStageId === null,
     )
-  }, [tasks, stages])
+    return getFilteredTasks(stageTasks)
+  }, [tasks, stages, getFilteredTasks])
+
+  // Paginated tasks for a stage
+  const getPaginatedTasks = useCallback(
+    (stageTasks: Task[], stageId: string) => {
+      const page = stagePages[stageId] || 0
+      const start = page * PAGE_SIZE
+      const end = start + PAGE_SIZE
+      const paged = stageTasks.slice(start, end)
+      const totalPages = Math.ceil(stageTasks.length / PAGE_SIZE)
+      return { paged, totalPages, currentPage: page, total: stageTasks.length }
+    },
+    [stagePages],
+  )
 
   // Handle drop on a column
   const handleDrop = useCallback(
@@ -422,10 +483,10 @@ export default function KanbanBoard({
       <>
         <div className="flex flex-col items-center justify-center min-h-[400px] py-16">
           <div className="text-center mb-8">
-            <h3 className="text-lg font-medium text-zinc-200 mb-2">
+            <h3 className="text-lg font-medium dark:text-zinc-200 text-zinc-800 mb-2">
               Configure seu quadro Kanban
             </h3>
-            <p className="text-sm text-zinc-500 max-w-md">
+            <p className="text-sm dark:text-zinc-500 text-zinc-500 max-w-md">
               Escolha um modelo de pipeline para organizar as tarefas do projeto
             </p>
           </div>
@@ -436,20 +497,20 @@ export default function KanbanBoard({
                 key={template.key}
                 disabled={creatingPipeline}
                 onClick={() => handleCreatePipeline(template.key)}
-                className="group flex flex-col items-start bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-5 hover:border-zinc-700/60 hover:bg-zinc-900/40 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group flex flex-col items-start dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg p-5 dark:hover:border-zinc-700/60 border-zinc-200 dark:hover:bg-zinc-900/40 bg-zinc-100 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="text-2xl mb-3">{template.icon}</div>
-                <h4 className="text-sm font-medium text-zinc-200 group-hover:text-zinc-100 transition-colors mb-1">
+                <h4 className="text-sm font-medium dark:text-zinc-200 text-zinc-800 group-dark:hover:text-zinc-100 text-zinc-900 transition-colors mb-1">
                   {template.label}
                 </h4>
-                <p className="text-xs text-zinc-500 mb-4 leading-relaxed">
+                <p className="text-xs dark:text-zinc-500 text-zinc-500 mb-4 leading-relaxed">
                   {template.description}
                 </p>
                 <div className="flex flex-wrap gap-1.5 mt-auto">
                   {template.stages.map((stage, i) => (
                     <span
                       key={i}
-                      className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800/60 text-zinc-400 border border-zinc-700/30"
+                      className="text-[10px] px-2 py-0.5 rounded-full dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-400 text-zinc-400 border border-zinc-700/30"
                     >
                       {stage}
                     </span>
@@ -460,7 +521,7 @@ export default function KanbanBoard({
           </div>
 
           {creatingPipeline && (
-            <p className="text-xs text-zinc-500 mt-6">Criando pipeline...</p>
+            <p className="text-xs dark:text-zinc-500 text-zinc-500 mt-6">Criando pipeline...</p>
           )}
         </div>
 
@@ -578,22 +639,203 @@ export default function KanbanBoard({
   }
 
   // --- Render: Kanban board ---
+
+  // Toolbar: search, my tasks filter, list view toggle
+  const FilterBar = () => (
+    <div className="flex flex-wrap items-center gap-2 mb-3">
+      {/* Search */}
+      <div className="relative flex-1 min-w-[200px] max-w-md">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => { setSearchTerm(e.target.value); setStagePages({}); }}
+          placeholder="Buscar por ID, título ou descrição..."
+          className="w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md pl-8 pr-3 py-1.5 text-xs dark:text-zinc-200 text-zinc-800 placeholder:dark:text-zinc-600 text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+        />
+        <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 dark:text-zinc-600 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+
+      {/* My tasks toggle */}
+      {userId && (
+        <button
+          onClick={() => { setShowMyTasks(!showMyTasks); setStagePages({}); }}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            showMyTasks
+              ? 'bg-violet-500/15 text-violet-400 border border-violet-500/30'
+              : 'dark:bg-zinc-900/60 bg-zinc-50 dark:text-zinc-500 text-zinc-500 border dark:border-zinc-800 border-zinc-300 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400'
+          }`}
+        >
+          <User className="w-3 h-3" />
+          Minhas tarefas
+        </button>
+      )}
+
+      {/* List view toggle */}
+      <button
+        onClick={() => setListView(!listView)}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+          listView
+            ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+            : 'dark:bg-zinc-900/60 bg-zinc-50 dark:text-zinc-500 text-zinc-500 border dark:border-zinc-800 border-zinc-300 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400'
+        }`}
+        title={listView ? 'Voltar para Kanban' : 'Ver como lista'}
+      >
+        {listView ? (
+          <>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 6h16M4 12h16M4 12h16M4 18h16M4 18h16" />
+            </svg>
+            Kanban
+          </>
+        ) : (
+          <>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            Lista
+          </>
+        )}
+      </button>
+    </div>
+  )
+
   return (
     <>
-      <div className="flex gap-3 overflow-x-auto pb-4 min-h-[500px] snap-x snap-mandatory md:snap-none">
+      <FilterBar />
+
+      {/* List View */}
+      {listView ? (
+        <div className="space-y-2">
+          {stages
+            .sort((a, b) => a.order - b.order)
+            .map((stage) => {
+              const stageTasks = stage.order === 0 ? getFirstStageTasks() : getTasksForStage(stage)
+              const { paged, totalPages, currentPage, total } = getPaginatedTasks(stageTasks, stage.id)
+              const isExpanded = expandedStages[stage.id] !== false
+
+              return (
+                <div key={stage.id} className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => setExpandedStages(prev => ({ ...prev, [stage.id]: !prev[stage.id] }))}
+                    className="w-full flex items-center justify-between px-4 py-3 dark:hover:bg-zinc-900/40 hover:bg-zinc-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: stage.color }} />
+                      <h3 className="text-xs font-medium dark:text-zinc-400 text-zinc-600">{stage.name}</h3>
+                      <span className="text-[11px] dark:text-zinc-600 text-zinc-400 tabular-nums">{total}</span>
+                    </div>
+                    <svg className={`w-4 h-4 dark:text-zinc-600 text-zinc-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {isExpanded && (
+                    <div>
+                      {paged.length === 0 ? (
+                        <p className="text-xs dark:text-zinc-600 text-zinc-400 text-center py-4">Nenhuma tarefa</p>
+                      ) : (
+                        <div className="divide-y dark:divide-zinc-800/40 divide-zinc-200/50">
+                          {paged.map((task) => {
+                            const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'DONE' && task.status !== 'CANCELLED'
+                            const initials = task.assignedTo ? getInitials(task.assignedTo.name) : null
+
+                            return (
+                              <div
+                                key={task.id}
+                                onClick={() => openTaskDetail(task.id)}
+                                className={`flex items-center gap-3 px-4 py-2 cursor-pointer dark:hover:bg-zinc-900/40 hover:bg-zinc-50 transition-colors min-w-0 ${isOverdue ? 'border-l-2 border-l-red-500' : ''}`}
+                              >
+                                {/* ID */}
+                                <span className="text-[10px] dark:text-zinc-600 text-zinc-400 font-mono flex-shrink-0 w-[60px] truncate" title={task.id}>
+                                  {task.id.slice(-6)}
+                                </span>
+
+                                {/* Priority dot */}
+                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                  task.priority === 'URGENT' ? 'bg-red-500' :
+                                  task.priority === 'HIGH' ? 'bg-orange-500' :
+                                  task.priority === 'MEDIUM' ? 'bg-blue-500' :
+                                  'dark:bg-zinc-700 bg-zinc-300'
+                                }`} />
+
+                                {/* Title */}
+                                <span className="text-xs dark:text-zinc-300 text-zinc-700 flex-1 min-w-0 truncate" title={task.title}>
+                                  {task.title.length > 120 ? task.title.slice(0, 120) + '…' : task.title}
+                                </span>
+
+                                {/* Assignee */}
+                                {task.assignedTo ? (
+                                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center">
+                                      <span className="text-[7px] font-bold text-white">{initials}</span>
+                                    </div>
+                                    <span className="text-[10px] dark:text-zinc-500 text-zinc-500">{task.assignedTo.name.split(' ')[0]}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-[10px] dark:text-zinc-600 text-zinc-400 flex-shrink-0">Sem responsável</span>
+                                )}
+
+                                {/* Due date */}
+                                {task.dueDate && (
+                                  <span className={`text-[10px] flex-shrink-0 ${isOverdue ? 'text-red-400' : 'dark:text-zinc-600 text-zinc-400'}`}>
+                                    {new Date(task.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                                  </span>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-between px-4 py-2 border-t dark:border-zinc-800/40 border-zinc-200">
+                          <span className="text-[10px] dark:text-zinc-600 text-zinc-400">
+                            Página {currentPage + 1} de {totalPages}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => setStagePages(prev => ({ ...prev, [stage.id]: Math.max(0, (prev[stage.id] || 0) - 1) }))}
+                              disabled={currentPage === 0}
+                              className="px-2 py-1 text-xs rounded dark:bg-zinc-900/60 bg-zinc-50 dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              ← Anterior
+                            </button>
+                            <button
+                              onClick={() => setStagePages(prev => ({ ...prev, [stage.id]: Math.min(totalPages - 1, (prev[stage.id] || 0) + 1) }))}
+                              disabled={currentPage >= totalPages - 1}
+                              className="px-2 py-1 text-xs rounded dark:bg-zinc-900/60 bg-zinc-50 dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              Próxima →
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+        </div>
+      ) : (
+        /* Kanban Board View */
+        <div className="flex gap-3 overflow-x-auto pb-4 min-h-[500px] snap-x snap-mandatory md:snap-none">
         {stages
           .sort((a, b) => a.order - b.order)
           .map((stage) => {
             const stageTasks =
               stage.order === 0 ? getFirstStageTasks() : getTasksForStage(stage)
+            const { paged, totalPages, currentPage, total } = getPaginatedTasks(stageTasks, stage.id)
 
             return (
               <div
                 key={stage.id}
-                className={`flex-shrink-0 w-[280px] md:w-72 flex flex-col bg-zinc-950/50 border rounded-lg transition-colors snap-center ${
+                className={`flex-shrink-0 w-[280px] md:w-72 flex flex-col dark:bg-zinc-950/50 bg-white border rounded-lg transition-colors snap-center ${
                   dragOverColumn === stage.id && canEdit
-                    ? 'border-zinc-600/80 bg-zinc-900/30'
-                    : 'border-zinc-800/60'
+                    ? 'border-zinc-600/80 dark:bg-zinc-900/30 bg-zinc-200/50'
+                    : 'dark:border-zinc-800/60 border-zinc-200'
                 }`}
                 onDragOver={(e) => handleDragOver(e, stage.id)}
                 onDragLeave={handleDragLeave}
@@ -603,24 +845,24 @@ export default function KanbanBoard({
                 }}
               >
                 {/* Column Header */}
-                <div className="flex items-center justify-between px-3 py-2.5 border-b border-zinc-800/40">
+                <div className="flex items-center justify-between px-3 py-2.5 border-b dark:border-zinc-800/40 border-zinc-200">
                   <div className="flex items-center gap-2">
                     <div
                       className="w-2 h-2 rounded-full"
                       style={{ backgroundColor: stage.color }}
                     />
-                    <h3 className="text-xs font-medium text-zinc-400">
+                    <h3 className="text-xs font-medium dark:text-zinc-400 text-zinc-600">
                       {stage.name}
                     </h3>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] text-zinc-600 tabular-nums">
-                      {stageTasks.length}
+                    <span className="text-[11px] dark:text-zinc-600 text-zinc-400 tabular-nums">
+                      {total}
                     </span>
                     {canEdit && (
                       <button
                         onClick={() => openAddTask(stage.id)}
-                        className="text-zinc-600 hover:text-zinc-300 transition-colors p-0.5 rounded hover:bg-zinc-800/40"
+                        className="dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 transition-colors p-0.5 rounded dark:hover:bg-zinc-800/40 bg-zinc-100"
                         title="Adicionar tarefa"
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -631,7 +873,7 @@ export default function KanbanBoard({
 
                 {/* Tasks */}
                 <div className="flex-1 p-2 space-y-2 min-h-[80px] overflow-y-auto">
-                  {stageTasks.map((task) => {
+                  {paged.map((task) => {
                     const timeLogged = getTaskTimeLogged(task)
                     const isDragging = draggedTaskId === task.id
                     const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'DONE' && task.status !== 'CANCELLED'
@@ -661,13 +903,13 @@ export default function KanbanBoard({
                           task.priority === 'URGENT' ? 'bg-red-500' :
                           task.priority === 'HIGH' ? 'bg-orange-500' :
                           task.priority === 'MEDIUM' ? 'bg-blue-500' :
-                          'bg-zinc-700'
+                          'dark:bg-zinc-700 bg-zinc-300'
                         }`} />
 
-                        <div className={`ml-2 bg-zinc-900/70 border rounded-lg overflow-hidden transition-all ${
+                        <div className={`ml-2 dark:bg-zinc-900/70 bg-zinc-100 border rounded-lg overflow-hidden transition-all ${
                           isOverdue
                             ? 'border-red-500/30 hover:border-red-500/50 shadow-[0_0_0_1px_rgba(239,68,68,0.08)]'
-                            : 'border-zinc-800/50 hover:border-zinc-700/60 hover:shadow-[0_2px_8px_rgba(0,0,0,0.3)]'
+                            : 'dark:border-zinc-800/50 border-zinc-200 dark:hover:border-zinc-700/60 hover:border-zinc-300 hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
                         }`}>
 
                           {/* Top section */}
@@ -684,7 +926,7 @@ export default function KanbanBoard({
                                 </span>
                               )}
                               {task.dueDate && !isOverdue && (
-                                <span className="flex items-center gap-0.5 text-[9px] text-zinc-600 ml-auto">
+                                <span className="flex items-center gap-0.5 text-[9px] dark:text-zinc-600 text-zinc-400 ml-auto">
                                   <Calendar className="w-2.5 h-2.5" />
                                   {new Date(task.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
                                 </span>
@@ -692,20 +934,22 @@ export default function KanbanBoard({
                             </div>
 
                             {/* Title */}
-                            <p className="text-[11px] md:text-xs font-medium text-zinc-200 group-hover:text-zinc-100 transition-colors line-clamp-2 leading-snug mb-1">
+                            <p className="text-[11px] md:text-xs font-medium dark:text-zinc-200 text-zinc-800 group-dark:hover:text-zinc-100 text-zinc-900 transition-colors line-clamp-2 leading-snug mb-1">
                               {task.title}
                             </p>
+                            {/* Task ID */}
+                            <p className="text-[9px] dark:text-zinc-600 text-zinc-400 font-mono">{task.id.slice(-6)}</p>
 
                             {/* Description snippet */}
                             {snippet && (
-                              <p className="text-[10px] text-zinc-500 italic leading-relaxed line-clamp-2">
+                              <p className="text-[10px] dark:text-zinc-500 text-zinc-500 italic leading-relaxed line-clamp-2">
                                 {snippet}
                               </p>
                             )}
                           </div>
 
                           {/* Divider */}
-                          <div className="mx-3 border-t border-zinc-800/60" />
+                          <div className="mx-3 border-t dark:border-zinc-800/60 border-zinc-200" />
 
                           {/* Bottom section */}
                           <div className="px-3 py-2 space-y-1.5">
@@ -716,20 +960,20 @@ export default function KanbanBoard({
                                   <div className="w-4 h-4 rounded-full bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center flex-shrink-0">
                                     <span className="text-[7px] font-bold text-white leading-none">{initials}</span>
                                   </div>
-                                  <span className="text-[10px] text-zinc-400 truncate max-w-[90px]">
+                                  <span className="text-[10px] dark:text-zinc-400 text-zinc-400 truncate max-w-[90px]">
                                     {task.assignedTo.name.split(' ')[0]}
                                   </span>
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-1">
-                                  <div className="w-4 h-4 rounded-full border border-dashed border-zinc-700 flex items-center justify-center">
-                                    <User className="w-2 h-2 text-zinc-700" />
+                                  <div className="w-4 h-4 rounded-full border border-dashed dark:border-zinc-700 border-zinc-300 flex items-center justify-center">
+                                    <User className="w-2 h-2 dark:text-zinc-600 text-zinc-400" />
                                   </div>
-                                  <span className="text-[10px] text-zinc-700">Sem responsável</span>
+                                  <span className="text-[10px] dark:text-zinc-600 text-zinc-400">Sem responsável</span>
                                 </div>
                               )}
                               {task.createdAt && (
-                                <span className="text-[9px] text-zinc-600 tabular-nums flex-shrink-0">
+                                <span className="text-[9px] dark:text-zinc-600 text-zinc-400 tabular-nums flex-shrink-0">
                                   {new Date(task.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
                                 </span>
                               )}
@@ -741,7 +985,7 @@ export default function KanbanBoard({
                               <div className={`flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded ${
                                 daysInStage >= 7 ? 'bg-amber-500/10 text-amber-400' :
                                 daysInStage >= 3 ? 'bg-blue-500/10 text-blue-400' :
-                                'bg-zinc-800/60 text-zinc-600'
+                                'dark:bg-zinc-800/60 bg-zinc-100 dark:text-zinc-600 text-zinc-400'
                               }`}>
                                 <Clock className="w-2 h-2" />
                                 {daysInStage}d no pipe
@@ -757,7 +1001,7 @@ export default function KanbanBoard({
 
                               {/* Total time logged */}
                               {(task._timeEntriesCount || 0) > 0 && !todayFmt && (
-                                <div className="flex items-center gap-1 text-[9px] text-zinc-600 ml-auto">
+                                <div className="flex items-center gap-1 text-[9px] dark:text-zinc-600 text-zinc-400 ml-auto">
                                   <Clock className="w-2 h-2" />
                                   {task._timeEntriesCount}h reg.
                                 </div>
@@ -769,9 +1013,32 @@ export default function KanbanBoard({
                     )
                   })}
 
-                  {stageTasks.length === 0 && (
+                  {paged.length === 0 && total === 0 && (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
-                      <p className="text-[11px] text-zinc-700">Vazio</p>
+                      <p className="text-[11px] dark:text-zinc-600 text-zinc-400">Vazio</p>
+                    </div>
+                  )}
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-1 px-2 py-2 border-t dark:border-zinc-800/40 border-zinc-200">
+                      <button
+                        onClick={() => setStagePages(prev => ({ ...prev, [stage.id]: Math.max(0, (prev[stage.id] || 0) - 1) }))}
+                        disabled={currentPage === 0}
+                        className="px-1.5 py-0.5 text-[10px] rounded dark:bg-zinc-900/60 bg-zinc-50 dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        ←
+                      </button>
+                      <span className="text-[10px] dark:text-zinc-600 text-zinc-400 tabular-nums">
+                        {currentPage + 1}/{totalPages}
+                      </span>
+                      <button
+                        onClick={() => setStagePages(prev => ({ ...prev, [stage.id]: Math.min(totalPages - 1, (prev[stage.id] || 0) + 1) }))}
+                        disabled={currentPage >= totalPages - 1}
+                        className="px-1.5 py-0.5 text-[10px] rounded dark:bg-zinc-900/60 bg-zinc-50 dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        →
+                      </button>
                     </div>
                   )}
                 </div>
@@ -779,6 +1046,7 @@ export default function KanbanBoard({
             )
           })}
       </div>
+      )}
 
       {/* Add Task Dialog */}
       <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
@@ -805,7 +1073,7 @@ export default function KanbanBoard({
                 value={newTaskDescription}
                 onChange={(e) => setNewTaskDescription(e.target.value)}
                 placeholder="Detalhes da tarefa (opcional)"
-                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-700 resize-none min-h-[60px]"
+                className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-700 resize-none min-h-[60px]"
               />
             </div>
             <div>
@@ -885,16 +1153,16 @@ export default function KanbanBoard({
           </div>
 
           {/* Attachment */}
-          <div className="border-t border-zinc-800/40 pt-4">
+          <div className="border-t dark:border-zinc-800/40 border-zinc-200 pt-4">
             <input ref={fileInputRef} type="file" onChange={handleFileSelect} className="hidden" />
             {attachedFile ? (
-              <div className="flex items-center gap-2 px-3 py-2 bg-zinc-800/40 rounded-md">
-                <Paperclip className="w-3.5 h-3.5 text-zinc-500" />
-                <span className="text-xs text-zinc-300 truncate flex-1">{attachedFile.name}</span>
-                <button type="button" onClick={removeFile} className="text-zinc-600 hover:text-zinc-300"><X className="w-3.5 h-3.5" /></button>
+              <div className="flex items-center gap-2 px-3 py-2 dark:bg-zinc-800/40 bg-zinc-100 rounded-md">
+                <Paperclip className="w-3.5 h-3.5 dark:text-zinc-500 text-zinc-500" />
+                <span className="text-xs dark:text-zinc-300 text-zinc-300 truncate flex-1">{attachedFile.name}</span>
+                <button type="button" onClick={removeFile} className="dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400"><X className="w-3.5 h-3.5" /></button>
               </div>
             ) : (
-              <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full flex items-center justify-center gap-2 border border-dashed border-zinc-700 rounded-md py-2 text-xs text-zinc-500 hover:border-zinc-600 hover:text-zinc-400 transition-colors">
+              <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full flex items-center justify-center gap-2 border border-dashed dark:border-zinc-700 border-zinc-300 rounded-md py-2 text-xs dark:text-zinc-500 text-zinc-500 hover:border-zinc-600 dark:hover:text-zinc-400 dark:text-zinc-600 text-zinc-400 transition-colors">
                 <Paperclip className="w-3.5 h-3.5" />
                 Anexar arquivo (opcional)
               </button>

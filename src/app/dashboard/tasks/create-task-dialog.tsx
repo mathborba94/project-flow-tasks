@@ -89,7 +89,7 @@ export function CreateTaskDialog({ projects = [], members = [], children }: Crea
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="title" className="text-xs text-zinc-400">Título</Label>
+            <Label htmlFor="title" className="text-xs dark:text-zinc-400 text-zinc-600">Título</Label>
             <Input
               id="title"
               value={formData.title}
@@ -100,7 +100,7 @@ export function CreateTaskDialog({ projects = [], members = [], children }: Crea
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="description" className="text-xs text-zinc-400">Descrição</Label>
+            <Label htmlFor="description" className="text-xs dark:text-zinc-400 text-zinc-600">Descrição</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -112,7 +112,7 @@ export function CreateTaskDialog({ projects = [], members = [], children }: Crea
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="project" className="text-xs text-zinc-400">Projeto</Label>
+              <Label htmlFor="project" className="text-xs dark:text-zinc-400 text-zinc-600">Projeto</Label>
               <Select
                 value={formData.projectId}
                 onValueChange={(value) => setFormData({ ...formData, projectId: value })}
@@ -128,7 +128,7 @@ export function CreateTaskDialog({ projects = [], members = [], children }: Crea
               </Select>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="assignee" className="text-xs text-zinc-400">Responsável</Label>
+              <Label htmlFor="assignee" className="text-xs dark:text-zinc-400 text-zinc-600">Responsável</Label>
               <Select
                 value={formData.assignedToId}
                 onValueChange={(value) => setFormData({ ...formData, assignedToId: value })}
@@ -146,7 +146,7 @@ export function CreateTaskDialog({ projects = [], members = [], children }: Crea
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="priority" className="text-xs text-zinc-400">Prioridade</Label>
+              <Label htmlFor="priority" className="text-xs dark:text-zinc-400 text-zinc-600">Prioridade</Label>
               <Select
                 value={formData.priority}
                 onValueChange={(value) => setFormData({ ...formData, priority: value || 'MEDIUM' })}
@@ -163,7 +163,7 @@ export function CreateTaskDialog({ projects = [], members = [], children }: Crea
               </Select>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="status" className="text-xs text-zinc-400">Status</Label>
+              <Label htmlFor="status" className="text-xs dark:text-zinc-400 text-zinc-600">Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => setFormData({ ...formData, status: value || 'TODO' })}
@@ -182,7 +182,7 @@ export function CreateTaskDialog({ projects = [], members = [], children }: Crea
             </div>
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
-          <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800/60">
+          <div className="flex justify-end gap-2 pt-2 border-t dark:border-zinc-800/60 border-zinc-200">
             <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
               Cancelar
             </Button>

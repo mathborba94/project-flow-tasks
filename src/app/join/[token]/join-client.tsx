@@ -180,7 +180,7 @@ function RegisterForm({
           type="email"
           value={invitationEmail}
           readOnly
-          className="w-full bg-zinc-900/30 border border-zinc-800/40 rounded-lg px-3 py-2 text-sm text-zinc-500 cursor-not-allowed"
+          className="w-full dark:bg-zinc-900/30 bg-zinc-200/50 border border-zinc-800/40 rounded-lg px-3 py-2 text-sm text-zinc-500 cursor-not-allowed"
         />
         <p className="text-[11px] text-zinc-700 mt-1">Definido pelo convite</p>
       </div>
@@ -257,7 +257,7 @@ function LoginForm({
           type="email"
           value={invitationEmail}
           readOnly
-          className="w-full bg-zinc-900/30 border border-zinc-800/40 rounded-lg px-3 py-2 text-sm text-zinc-500 cursor-not-allowed"
+          className="w-full dark:bg-zinc-900/30 bg-zinc-200/50 border border-zinc-800/40 rounded-lg px-3 py-2 text-sm text-zinc-500 cursor-not-allowed"
         />
       </div>
       <div>

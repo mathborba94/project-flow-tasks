@@ -12,7 +12,7 @@ function parseInsight(text: string): React.ReactNode {
   const flushList = () => {
     if (listItems.length > 0) {
       elements.push(
-        <ul key={`list-${elements.length}`} className="list-disc list-inside space-y-1 my-2 text-zinc-400">
+        <ul key={`list-${elements.length}`} className="list-disc list-inside space-y-1 my-2 dark:text-zinc-400 text-zinc-400">
           {listItems}
         </ul>
       )
@@ -38,7 +38,7 @@ function parseInsight(text: string): React.ReactNode {
       elements.push(
         <h3
           key={`h-${i}`}
-          className={`font-semibold text-zinc-200 mt-4 mb-2 ${level === 'h2' ? 'text-base' : 'text-sm'}`}
+          className={`font-semibold dark:text-zinc-200 text-zinc-800 mt-4 mb-2 ${level === 'h2' ? 'text-base' : 'text-sm'}`}
         >
           {content}
         </h3>
@@ -51,7 +51,7 @@ function parseInsight(text: string): React.ReactNode {
       flushList()
       const content = trimmed.replace(/\*\*/g, '')
       elements.push(
-        <p key={`b-${i}`} className="font-medium text-zinc-300 my-1">
+        <p key={`b-${i}`} className="font-medium dark:text-zinc-300 text-zinc-300 my-1">
           {content}
         </p>
       )
@@ -69,7 +69,7 @@ function parseInsight(text: string): React.ReactNode {
           {parts.length > 1
             ? parts.map((part, j) =>
                 j % 2 === 1 ? (
-                  <strong key={j} className="font-medium text-zinc-300">
+                  <strong key={j} className="font-medium dark:text-zinc-300 text-zinc-300">
                     {part}
                   </strong>
                 ) : (
@@ -86,11 +86,11 @@ function parseInsight(text: string): React.ReactNode {
     flushList()
     const parts = trimmed.split(/\*\*(.+?)\*\*/)
     elements.push(
-      <p key={`p-${i}`} className="text-sm text-zinc-400 leading-relaxed my-1">
+      <p key={`p-${i}`} className="text-sm dark:text-zinc-400 text-zinc-400 leading-relaxed my-1">
         {parts.length > 1
           ? parts.map((part, j) =>
               j % 2 === 1 ? (
-                <strong key={j} className="font-medium text-zinc-300">
+                <strong key={j} className="font-medium dark:text-zinc-300 text-zinc-300">
                   {part}
                 </strong>
               ) : (
@@ -158,32 +158,32 @@ export default function InsightsClient({ projectId }: { projectId: string }) {
 
   if (loading) {
     return (
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-8 text-center">
+      <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg p-8 text-center">
         <Loader2 className="w-6 h-6 text-brand mx-auto mb-3 animate-spin" />
-        <p className="text-sm text-zinc-500">Analisando dados do projeto com IA...</p>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500">Analisando dados do projeto com IA...</p>
       </div>
     )
   }
 
   if (!insight) {
     return (
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-8 text-center">
-        <AlertTriangle className="w-6 h-6 text-zinc-700 mx-auto mb-3" />
-        <p className="text-sm text-zinc-600">Não foi possível gerar insights</p>
+      <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg p-8 text-center">
+        <AlertTriangle className="w-6 h-6 dark:text-zinc-600 text-zinc-400 mx-auto mb-3" />
+        <p className="text-sm dark:text-zinc-600 text-zinc-400">Não foi possível gerar insights</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg">
-      <div className="px-4 py-3 border-b border-zinc-800/40 flex items-center justify-between">
+    <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800/60 border-zinc-200 rounded-lg">
+      <div className="px-4 py-3 border-b dark:border-zinc-800/40 border-zinc-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-brand" />
-          <h3 className="text-sm font-medium text-zinc-200">Insights da IA</h3>
+          <h3 className="text-sm font-medium dark:text-zinc-200 text-zinc-800">Insights da IA</h3>
         </div>
         <button
           onClick={handleDownloadPDF}
-          className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 rounded hover:bg-zinc-800/40"
+          className="inline-flex items-center gap-1.5 text-xs dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 transition-colors px-2 py-1 rounded dark:hover:bg-zinc-800/40 bg-zinc-100"
           title="Baixar em PDF"
         >
           <Download className="w-3.5 h-3.5" />

@@ -202,24 +202,24 @@ export default function PublicProjectClient({
           <div className="space-y-6 animate-fade-in">
             {/* Stats cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-4">
                 <p className="text-[11px] text-zinc-500 mb-1">Progresso</p>
                 <p className="text-2xl font-semibold text-zinc-100 tabular-nums">{stats.progress}%</p>
                 <div className="mt-2 w-full bg-zinc-800/40 rounded-full h-1.5">
                   <div className="h-1.5 rounded-full bg-emerald-500" style={{ width: `${stats.progress}%` }} />
                 </div>
               </div>
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-4">
                 <p className="text-[11px] text-zinc-500 mb-1">Tarefas</p>
                 <p className="text-2xl font-semibold text-zinc-100 tabular-nums">{stats.doneTasks}<span className="text-base text-zinc-600">/{stats.totalTasks}</span></p>
                 <p className="text-[11px] text-zinc-500 mt-1">concluídas</p>
               </div>
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-4">
                 <p className="text-[11px] text-zinc-500 mb-1">Em Andamento</p>
                 <p className="text-2xl font-semibold text-blue-400 tabular-nums">{stats.inProgressTasks}</p>
                 <p className="text-[11px] text-zinc-500 mt-1">em progresso</p>
               </div>
-              <div className={`bg-zinc-950/50 border rounded-lg p-4 ${stats.overdueTasks > 0 ? 'border-red-500/30' : 'border-zinc-800/60'}`}>
+              <div className={`dark:bg-zinc-950/50 bg-white border rounded-lg p-4 ${stats.overdueTasks > 0 ? 'border-red-500/30' : 'border-zinc-800/60'}`}>
                 <p className="text-[11px] text-zinc-500 mb-1">Atrasadas</p>
                 <p className={`text-2xl font-semibold tabular-nums ${stats.overdueTasks > 0 ? 'text-red-400' : 'text-zinc-100'}`}>
                   {stats.overdueTasks}
@@ -230,7 +230,7 @@ export default function PublicProjectClient({
 
             {/* Project info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-5">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-5">
                 <h3 className="text-xs font-medium text-zinc-300 mb-3">Informações do Projeto</h3>
                 <div className="space-y-3">
                   {project.description && (
@@ -271,7 +271,7 @@ export default function PublicProjectClient({
               </div>
 
               {/* Tasks by status breakdown */}
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-5">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-5">
                 <h3 className="text-xs font-medium text-zinc-300 mb-3">Distribuição de Tarefas</h3>
                 <div className="space-y-2.5">
                   {Object.entries(TASK_STATUS_CONFIG).map(([key, cfg]) => {
@@ -300,7 +300,7 @@ export default function PublicProjectClient({
 
             {/* Pipeline stages */}
             {project.pipeline && project.pipeline.stages.length > 0 && (
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-5">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-5">
                 <h3 className="text-xs font-medium text-zinc-300 mb-3">Etapas do Fluxo</h3>
                 <div className="flex items-center gap-2 flex-wrap">
                   {project.pipeline.stages.map((stage, i) => {
@@ -379,7 +379,7 @@ export default function PublicProjectClient({
                   return (
                     <div
                       key={task.id}
-                      className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 hover:border-zinc-700/60 transition-colors"
+                      className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-4 hover:border-zinc-700/60 transition-colors"
                     >
                       <div className="flex items-start gap-3">
                         <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${cfg.color}`} />
@@ -452,7 +452,7 @@ export default function PublicProjectClient({
                     href={doc.fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 hover:border-zinc-700/60 transition-colors flex items-center gap-3 group"
+                    className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-4 hover:border-zinc-700/60 transition-colors flex items-center gap-3 group"
                   >
                     <div className="w-10 h-10 bg-zinc-800/60 rounded-lg flex items-center justify-center flex-shrink-0">
                       <FileText className="w-5 h-5 text-zinc-400" />
@@ -495,7 +495,7 @@ export default function PublicProjectClient({
                     .join('')
                     .toUpperCase()
                   return (
-                    <div key={comment.id} className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4">
+                    <div key={comment.id} className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-lg p-4">
                       <div className="flex items-start gap-3">
                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center flex-shrink-0">
                           <span className="text-[10px] font-semibold text-white">{initials}</span>

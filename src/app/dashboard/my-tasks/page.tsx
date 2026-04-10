@@ -12,7 +12,7 @@ const statusLabels: Record<string, string> = {
 }
 
 const priorityColors: Record<string, string> = {
-  LOW: 'bg-zinc-800 text-zinc-400',
+  LOW: 'dark:bg-zinc-800 bg-zinc-200 dark:text-zinc-400 text-zinc-600',
   MEDIUM: 'bg-blue-500/10 text-blue-400',
   HIGH: 'bg-orange-500/10 text-orange-400',
   URGENT: 'bg-red-500/10 text-red-400',
@@ -35,7 +35,7 @@ export default async function MyTasksPage() {
   } catch {
     return (
       <div className="p-6">
-        <p className="text-sm text-zinc-500">Não autenticado.</p>
+        <p className="text-sm dark:text-zinc-500 text-zinc-500">Não autenticado.</p>
       </div>
     )
   }

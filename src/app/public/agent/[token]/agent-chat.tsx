@@ -299,7 +299,7 @@ export default function AgentChat({ agent }: { agent: Agent }) {
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-violet-600/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Header */}
-      <header className="relative z-10 border-b border-zinc-800/40 bg-zinc-950/60 backdrop-blur-sm">
+      <header className="relative z-10 border-b border-zinc-800/40 dark:bg-zinc-950 bg-white/60 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600/30 to-blue-600/30 border border-violet-500/20 flex items-center justify-center">
@@ -337,7 +337,7 @@ export default function AgentChat({ agent }: { agent: Agent }) {
       </div>
 
       {/* Input area */}
-      <div className="relative z-10 border-t border-zinc-800/40 bg-zinc-950/60 backdrop-blur-sm">
+      <div className="relative z-10 border-t border-zinc-800/40 dark:bg-zinc-950 bg-white/60 backdrop-blur-sm">
         <div className="max-w-2xl mx-auto px-4 py-4">
           {/* File preview */}
           {attachedFile && (

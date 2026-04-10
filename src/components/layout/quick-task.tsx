@@ -94,8 +94,8 @@ export default function QuickTaskButton({ userRole }: { userRole?: string }) {
           {created ? (
             <div className="py-8 text-center">
               <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-              <h3 className="text-base font-medium text-zinc-100 mb-1">Tarefa criada!</h3>
-              <p className="text-sm text-zinc-500">Redirecionando...</p>
+              <h3 className="text-base font-medium dark:text-zinc-100 text-zinc-900 mb-1">Tarefa criada!</h3>
+              <p className="text-sm dark:text-zinc-500 text-zinc-500">Redirecionando...</p>
             </div>
           ) : (
             <>
@@ -105,11 +105,11 @@ export default function QuickTaskButton({ userRole }: { userRole?: string }) {
 
               <div className="space-y-3 py-2">
                 <div>
-                  <Label className="text-xs text-zinc-400">Projeto</Label>
+                  <Label className="text-xs dark:text-zinc-400 text-zinc-400">Projeto</Label>
                   <select
                     value={selectedProject}
                     onChange={(e) => setSelectedProject(e.target.value)}
-                    className="mt-1 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+                    className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
                   >
                     {projects.length > 0 ? (
                       projects.map(p => (
@@ -122,12 +122,12 @@ export default function QuickTaskButton({ userRole }: { userRole?: string }) {
                 </div>
 
                 <div>
-                  <Label className="text-xs text-zinc-400">Título</Label>
+                  <Label className="text-xs dark:text-zinc-400 text-zinc-400">Título</Label>
                   <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="O que precisa ser feito?"
-                    className="mt-1 bg-zinc-900/60 border-zinc-800"
+                    className="mt-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -139,20 +139,20 @@ export default function QuickTaskButton({ userRole }: { userRole?: string }) {
                 </div>
 
                 <div>
-                  <Label className="text-xs text-zinc-400">Descrição (opcional)</Label>
+                  <Label className="text-xs dark:text-zinc-400 text-zinc-400">Descrição (opcional)</Label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Detalhes..."
-                    className="mt-1 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-700 resize-none min-h-[60px]"
+                    className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 dark:placeholder-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400 resize-none min-h-[60px]"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-xs text-zinc-400">Prioridade</Label>
+                  <Label className="text-xs dark:text-zinc-400 text-zinc-400">Prioridade</Label>
                   <div className="mt-1 flex gap-1.5">
                     {[
-                      { value: 'LOW', label: 'Baixa', cls: 'bg-zinc-500/10 text-zinc-400 border-zinc-700/40' },
+                      { value: 'LOW', label: 'Baixa', cls: 'bg-zinc-500/10 dark:text-zinc-400 text-zinc-400 dark:border-zinc-700/40 border-zinc-200' },
                       { value: 'MEDIUM', label: 'Média', cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
                       { value: 'HIGH', label: 'Alta', cls: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
                       { value: 'URGENT', label: 'Urgente', cls: 'bg-red-500/10 text-red-400 border-red-500/20' },

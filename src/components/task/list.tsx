@@ -17,7 +17,7 @@ interface Task {
 }
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  TODO: { label: 'A Fazer', className: 'bg-zinc-800 text-zinc-400' },
+  TODO: { label: 'A Fazer', className: 'dark:bg-zinc-800 bg-zinc-200 dark:text-zinc-400 text-zinc-600' },
   IN_PROGRESS: { label: 'Em Progresso', className: 'bg-blue-500/10 text-blue-400' },
   IN_REVIEW: { label: 'Em Revisão', className: 'bg-amber-500/10 text-amber-400' },
   DONE: { label: 'Concluído', className: 'bg-emerald-500/10 text-emerald-400' },
@@ -25,7 +25,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 }
 
 const priorityConfig: Record<string, { label: string; className: string }> = {
-  LOW: { label: 'Baixa', className: 'text-zinc-600' },
+  LOW: { label: 'Baixa', className: 'dark:text-zinc-600 text-zinc-400' },
   MEDIUM: { label: 'Média', className: 'text-blue-400' },
   HIGH: { label: 'Alta', className: 'text-orange-400' },
   URGENT: { label: 'Urgente', className: 'text-red-400' },
@@ -53,8 +53,8 @@ export default function TaskList({
 
   return (
     <>
-      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg overflow-hidden">
-        <div className="divide-y divide-zinc-800/40">
+      <div className="dark:bg-zinc-950/50 bg-white dark:border-zinc-800/60 border-zinc-200 rounded-lg overflow-hidden">
+        <div className="divide-y dark:divide-zinc-800/40 divide-zinc-200/50 divide-zinc-200">
           {tasks.map((task, i) => {
             const status = statusConfig[task.status] || statusConfig.TODO
             const priority = priorityConfig[task.priority] || priorityConfig.MEDIUM
@@ -62,21 +62,21 @@ export default function TaskList({
               <div
                 key={task.id}
                 onClick={() => openTaskDetail(task.id)}
-                className="flex items-center justify-between px-4 py-3 hover:bg-zinc-900/40 transition-colors group cursor-pointer"
+                className="flex items-center justify-between px-4 py-3 dark:hover:bg-zinc-900/40 hover:bg-zinc-50 transition-colors group cursor-pointer"
                 style={{ animationDelay: `${i * 30}ms` }}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     {task.project && (
-                      <span className="text-[11px] text-zinc-600">{task.project.name}</span>
+                      <span className="text-[11px] dark:text-zinc-600 text-zinc-400">{task.project.name}</span>
                     )}
                     {task.taskType && (
-                      <span className="text-[11px] text-zinc-700 bg-zinc-800/60 px-1.5 py-0.5 rounded">{task.taskType.name}</span>
+                      <span className="text-[11px] dark:text-zinc-700 text-zinc-500 dark:bg-zinc-800/60 bg-zinc-100 px-1.5 py-0.5 rounded">{task.taskType.name}</span>
                     )}
                   </div>
-                  <p className="text-sm text-zinc-300 group-hover:text-zinc-100 transition-colors truncate">{task.title}</p>
+                  <p className="text-sm dark:text-zinc-300 text-zinc-700 group-dark:hover:text-zinc-100 group-hover:text-zinc-900 transition-colors truncate">{task.title}</p>
                   {task.assignedTo && (
-                    <p className="text-[11px] text-zinc-600 mt-0.5">{task.assignedTo.name}</p>
+                    <p className="text-[11px] dark:text-zinc-600 text-zinc-400 mt-0.5">{task.assignedTo.name}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 ml-4">
@@ -87,7 +87,7 @@ export default function TaskList({
                     {priority.label}
                   </span>
                   {task.sla && (
-                    <span className={`text-[11px] font-medium ${task.sla.breached ? 'text-red-400' : 'text-zinc-600'}`}>
+                    <span className={`text-[11px] font-medium ${task.sla.breached ? 'text-red-400' : 'dark:text-zinc-600 text-zinc-400'}`}>
                       {task.sla.breached ? 'SLA expirado' : 'SLA OK'}
                     </span>
                   )}
@@ -99,11 +99,11 @@ export default function TaskList({
 
         {tasks.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <CheckSquare className="w-5 h-5 text-zinc-700" />
+            <div className="w-10 h-10 dark:bg-zinc-900 bg-zinc-100 dark:border-zinc-800 border-zinc-300 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <CheckSquare className="w-5 h-5 dark:text-zinc-700 text-zinc-400" />
             </div>
-            <p className="text-sm text-zinc-500">Nenhuma tarefa ainda</p>
-            <p className="text-xs text-zinc-700 mt-1">Crie sua primeira tarefa para começar</p>
+            <p className="text-sm dark:text-zinc-500 text-zinc-500">Nenhuma tarefa ainda</p>
+            <p className="text-xs dark:text-zinc-700 text-zinc-400 mt-1">Crie sua primeira tarefa para começar</p>
           </div>
         )}
       </div>

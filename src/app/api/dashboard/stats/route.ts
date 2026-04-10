@@ -1,27 +1,43 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUserWithOrg } from '@/services/auth'
 import prisma from '@/lib/prisma'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const { organizationId } = await getCurrentUserWithOrg()
 
-    // Últimos 14 dias de horas
-    const fourteenDaysAgo = new Date()
-    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14)
+    // Parse reference month from URL
+    const searchParams = request.nextUrl.searchParams
+    const monthParam = searchParams.get('month')
 
+    let monthStart: Date
+    let monthEnd: Date
+
+    if (monthParam) {
+      const [year, monthNum] = monthParam.split('-').map(Number)
+      monthStart = new Date(year, monthNum - 1, 1)
+      monthEnd = new Date(year, monthNum, 0, 23, 59, 59)
+    } else {
+      // Default: last 14 days
+      monthEnd = new Date()
+      monthStart = new Date()
+      monthStart.setDate(monthStart.getDate() - 14)
+    }
+
+    // Horas por dia no período
     const timeByDay = await prisma.$queryRaw`
       SELECT
         DATE("createdAt") as day,
         SUM(minutes) as total_minutes
       FROM "TimeEntry"
       WHERE "organizationId" = ${organizationId}
-        AND "createdAt" >= ${fourteenDaysAgo}
+        AND "createdAt" >= ${monthStart}
+        AND "createdAt" <= ${monthEnd}
       GROUP BY DATE("createdAt")
       ORDER BY day ASC
     ` as Array<{ day: Date; total_minutes: bigint }>
 
-    // Tarefas abertas vs encerradas por dia (últimos 14 dias)
+    // Tarefas abertas vs encerradas por dia no período
     const tasksByDay = await prisma.$queryRaw`
       SELECT
         DATE("createdAt") as day,
@@ -29,13 +45,14 @@ export async function GET() {
         COUNT(*) FILTER (WHERE status = 'DONE') as closed
       FROM "Task"
       WHERE "organizationId" = ${organizationId}
-        AND "createdAt" >= ${fourteenDaysAgo}
+        AND "createdAt" >= ${monthStart}
+        AND "createdAt" <= ${monthEnd}
       GROUP BY DATE("createdAt")
       ORDER BY day ASC
     ` as Array<{ day: Date; opened: bigint; closed: bigint }>
 
-    // Média de produção por semana (últimas 4 semanas)
-    const fourWeeksAgo = new Date()
+    // Média de produção por semana (últimas 4 semanas do período)
+    const fourWeeksAgo = new Date(monthStart)
     fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28)
 
     const weeklyAvg = await prisma.$queryRaw`
@@ -45,6 +62,7 @@ export async function GET() {
       FROM "Task"
       WHERE "organizationId" = ${organizationId}
         AND "createdAt" >= ${fourWeeksAgo}
+        AND "createdAt" <= ${monthEnd}
       GROUP BY DATE_TRUNC('week', "createdAt")
       ORDER BY week ASC
     ` as Array<{ week: Date; completed: bigint }>

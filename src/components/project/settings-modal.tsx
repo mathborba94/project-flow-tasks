@@ -168,7 +168,7 @@ export default function SettingsModal({
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 bg-zinc-900/60 border-zinc-800"
+                className="mt-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300 border-zinc-300"
               />
             </div>
             <div>
@@ -193,7 +193,7 @@ export default function SettingsModal({
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700 resize-none min-h-[80px]"
+              className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400 resize-none min-h-[80px]"
             />
           </div>
 
@@ -205,7 +205,7 @@ export default function SettingsModal({
                 id="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="mt-1 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+                className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 border-zinc-300 rounded-md px-3 py-1.5 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
               >
                 {statusOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -218,7 +218,7 @@ export default function SettingsModal({
                 id="type"
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="mt-1 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+                className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 border-zinc-300 rounded-md px-3 py-1.5 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
               >
                 {typeOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -237,7 +237,7 @@ export default function SettingsModal({
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
                 placeholder="0.00"
-                className="mt-1 bg-zinc-900/60 border-zinc-800"
+                className="mt-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300 border-zinc-300"
               />
             </div>
             <div>
@@ -248,7 +248,7 @@ export default function SettingsModal({
                 value={hourlyRate}
                 onChange={(e) => setHourlyRate(e.target.value)}
                 placeholder="0.00"
-                className="mt-1 bg-zinc-900/60 border-zinc-800"
+                className="mt-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300 border-zinc-300"
               />
             </div>
           </div>
@@ -262,7 +262,7 @@ export default function SettingsModal({
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="mt-1 bg-zinc-900/60 border-zinc-800"
+                className="mt-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300 border-zinc-300"
               />
             </div>
             <div>
@@ -272,7 +272,7 @@ export default function SettingsModal({
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="mt-1 bg-zinc-900/60 border-zinc-800"
+                className="mt-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300 border-zinc-300"
               />
             </div>
             <div>
@@ -282,30 +282,30 @@ export default function SettingsModal({
                 type="date"
                 value={targetEndDate}
                 onChange={(e) => setTargetEndDate(e.target.value)}
-                className="mt-1 bg-zinc-900/60 border-zinc-800"
+                className="mt-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300 border-zinc-300"
               />
             </div>
           </div>
 
           {/* Product Owner */}
-          <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40">
-            <h3 className="text-sm font-medium text-zinc-300 mb-3">Product Owner (P.O.)</h3>
+          <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 border dark:border-zinc-800/40 border-zinc-200">
+            <h3 className="text-sm font-medium dark:text-zinc-300 text-zinc-300 mb-3">Product Owner (P.O.)</h3>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-8 h-8 bg-violet-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <User className="w-4 h-4 text-violet-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-zinc-400">Responsável pelo projeto</p>
+                <p className="text-xs dark:text-zinc-400 text-zinc-400">Responsável pelo projeto</p>
                 {project.owner && (
-                  <p className="text-sm text-zinc-200 truncate">
-                    {project.owner.name} <span className="text-zinc-600">({project.owner.email})</span>
+                  <p className="text-sm dark:text-zinc-200 text-zinc-800 truncate">
+                    {project.owner.name} <span className="dark:text-zinc-600 text-zinc-400">({project.owner.email})</span>
                   </p>
                 )}
               </div>
             </div>
-            <Label htmlFor="owner" className="text-xs text-zinc-400">Transferir propriedade</Label>
+            <Label htmlFor="owner" className="text-xs dark:text-zinc-400 text-zinc-400">Transferir propriedade</Label>
             {loadingUsers ? (
-              <div className="mt-1 flex items-center gap-2 text-xs text-zinc-600">
+              <div className="mt-1 flex items-center gap-2 text-xs dark:text-zinc-600 text-zinc-400">
                 <Loader2 className="w-3 h-3 animate-spin" />
                 Carregando usuários...
               </div>
@@ -314,7 +314,7 @@ export default function SettingsModal({
                 id="owner"
                 value={ownerId}
                 onChange={(e) => setOwnerId(e.target.value)}
-                className="mt-1 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                className="mt-1 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600"
               >
                 <option value="">Manter owner atual</option>
                 {orgUsers
@@ -332,16 +332,16 @@ export default function SettingsModal({
 
         {/* Pipeline & Tasks Config */}
         {stages.length > 0 && (
-          <div className="bg-zinc-900/40 rounded-lg p-4 space-y-4 border border-zinc-800/40">
-            <h3 className="text-sm font-medium text-zinc-300">Pipeline & Tarefas</h3>
+          <div className="dark:bg-zinc-900/40 bg-zinc-100 rounded-lg p-4 space-y-4 border dark:border-zinc-800/40 border-zinc-200">
+            <h3 className="text-sm font-medium dark:text-zinc-300 text-zinc-300">Pipeline & Tarefas</h3>
             <div>
-              <Label htmlFor="completionStage" className="text-xs text-zinc-400">Etapa de Conclusão</Label>
-              <p className="text-[11px] text-zinc-600 mt-0.5 mb-1.5">Tarefas não poderão ser criadas diretamente nesta etapa</p>
+              <Label htmlFor="completionStage" className="text-xs dark:text-zinc-400 text-zinc-400">Etapa de Conclusão</Label>
+              <p className="text-[11px] dark:text-zinc-600 text-zinc-400 mt-0.5 mb-1.5">Tarefas não poderão ser criadas diretamente nesta etapa</p>
               <select
                 id="completionStage"
                 value={completionStageId}
                 onChange={(e) => setCompletionStageId(e.target.value)}
-                className="mt-0 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                className="mt-0 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600"
               >
                 <option value="">Nenhuma (todas as etapas permitem criação)</option>
                 {stages.map(s => (
@@ -355,9 +355,9 @@ export default function SettingsModal({
                 id="allowPublicTasks"
                 checked={allowPublicTasks}
                 onChange={(e) => setAllowPublicTasks(e.target.checked)}
-                className="w-4 h-4 rounded bg-zinc-800 border-zinc-700 text-brand focus:ring-brand"
+                className="w-4 h-4 rounded dark:bg-zinc-800 bg-zinc-100 bg-zinc-100 dark:border-zinc-700 border-zinc-300 border-zinc-300 text-brand focus:ring-brand"
               />
-              <Label htmlFor="allowPublicTasks" className="text-sm text-zinc-300 cursor-pointer">
+              <Label htmlFor="allowPublicTasks" className="text-sm dark:text-zinc-300 text-zinc-300 cursor-pointer">
                 Permitir formulário público de tarefas
               </Label>
             </div>

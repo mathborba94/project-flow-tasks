@@ -25,7 +25,7 @@ interface GanttProps {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof Circle }> = {
-  TODO:        { label: 'A Fazer',     color: 'text-zinc-400',    bg: 'bg-zinc-600',    icon: Circle },
+  TODO:        { label: 'A Fazer',     color: 'dark:text-zinc-400 text-zinc-400',    bg: 'bg-zinc-600',    icon: Circle },
   IN_PROGRESS: { label: 'Em Progresso',color: 'text-blue-400',    bg: 'bg-blue-500',    icon: Clock },
   IN_REVIEW:   { label: 'Em Revisão',  color: 'text-amber-400',   bg: 'bg-amber-500',   icon: AlertCircle },
   DONE:        { label: 'Concluído',   color: 'text-emerald-400', bg: 'bg-emerald-500', icon: CheckCircle2 },
@@ -168,9 +168,9 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
   if (tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <Calendar className="w-10 h-10 text-zinc-700 mb-3" />
-        <p className="text-sm text-zinc-500">Nenhuma tarefa para exibir no Gantt</p>
-        <p className="text-xs text-zinc-600 mt-1">Adicione tarefas com datas para visualizar o cronograma</p>
+        <Calendar className="w-10 h-10 dark:text-zinc-600 text-zinc-400 mb-3" />
+        <p className="text-sm dark:text-zinc-500 text-zinc-500">Nenhuma tarefa para exibir no Gantt</p>
+        <p className="text-xs dark:text-zinc-600 text-zinc-400 mt-1">Adicione tarefas com datas para visualizar o cronograma</p>
       </div>
     )
   }
@@ -185,26 +185,26 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
           {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
             <div key={key} className="flex items-center gap-1.5">
               <div className={`w-3 h-3 rounded-sm ${cfg.bg}`} />
-              <span className="text-[11px] text-zinc-500">{cfg.label}</span>
+              <span className="text-[11px] dark:text-zinc-500 text-zinc-500">{cfg.label}</span>
             </div>
           ))}
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={scrollLeft} className="p-1 rounded text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/60 transition-colors">
+          <button onClick={scrollLeft} className="p-1 rounded dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 dark:hover:bg-zinc-800/60 bg-zinc-100 transition-colors">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <button onClick={scrollRight} className="p-1 rounded text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/60 transition-colors">
+          <button onClick={scrollRight} className="p-1 rounded dark:text-zinc-500 text-zinc-500 dark:hover:text-zinc-300 dark:text-zinc-600 text-zinc-400 dark:hover:bg-zinc-800/60 bg-zinc-100 transition-colors">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      <div className="flex border border-zinc-800/60 rounded-lg overflow-hidden">
+      <div className="flex border dark:border-zinc-800/60 border-zinc-200 rounded-lg overflow-hidden">
         {/* Fixed label column */}
-        <div className="flex-shrink-0 bg-zinc-950" style={{ width: LABEL_WIDTH }}>
+        <div className="flex-shrink-0 dark:bg-zinc-950 bg-white" style={{ width: LABEL_WIDTH }}>
           {/* Header spacer for month + day rows */}
-          <div className="h-[52px] border-b border-zinc-800/60 bg-zinc-900/60 px-3 flex items-end pb-1">
-            <span className="text-[10px] text-zinc-600 uppercase tracking-wider">Tarefa</span>
+          <div className="h-[52px] border-b dark:border-zinc-800/60 border-zinc-200 dark:bg-zinc-900/60 bg-zinc-50 px-3 flex items-end pb-1">
+            <span className="text-[10px] dark:text-zinc-600 text-zinc-400 uppercase tracking-wider">Tarefa</span>
           </div>
 
           {/* Groups */}
@@ -214,10 +214,10 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
             return (
               <div key={group.status}>
                 {/* Group header */}
-                <div className="h-7 px-3 flex items-center gap-1.5 bg-zinc-900/30 border-b border-zinc-800/40">
+                <div className="h-7 px-3 flex items-center gap-1.5 dark:bg-zinc-900/30 bg-zinc-200/50 border-b dark:border-zinc-800/40 border-zinc-200">
                   <Icon className={`w-3 h-3 ${cfg.color} flex-shrink-0`} />
                   <span className={`text-[10px] font-medium ${cfg.color}`}>{cfg.label}</span>
-                  <span className="text-[10px] text-zinc-600 ml-auto">{group.tasks.length}</span>
+                  <span className="text-[10px] dark:text-zinc-600 text-zinc-400 ml-auto">{group.tasks.length}</span>
                 </div>
                 {/* Tasks */}
                 {group.tasks.map(task => (
@@ -226,7 +226,7 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
                     className="h-9 px-3 flex items-center border-b border-zinc-800/20 hover:bg-zinc-800/20 transition-colors"
                     title={task.title}
                   >
-                    <span className="text-xs text-zinc-300 truncate">{task.title}</span>
+                    <span className="text-xs dark:text-zinc-300 text-zinc-300 truncate">{task.title}</span>
                   </div>
                 ))}
               </div>
@@ -242,20 +242,20 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
         >
           <div style={{ width: totalDays * DAY_PX, position: 'relative' }}>
             {/* Month header */}
-            <div className="h-6 flex border-b border-zinc-800/40 bg-zinc-900/60 sticky top-0">
+            <div className="h-6 flex border-b dark:border-zinc-800/40 border-zinc-200 dark:bg-zinc-900/60 bg-zinc-50 sticky top-0">
               {months.map((m, i) => (
                 <div
                   key={i}
-                  className="flex items-center px-2 border-r border-zinc-800/40 flex-shrink-0"
+                  className="flex items-center px-2 border-r dark:border-zinc-800/40 border-zinc-200 flex-shrink-0"
                   style={{ width: m.span * DAY_PX }}
                 >
-                  <span className="text-[10px] text-zinc-500 whitespace-nowrap">{m.label}</span>
+                  <span className="text-[10px] dark:text-zinc-500 text-zinc-500 whitespace-nowrap">{m.label}</span>
                 </div>
               ))}
             </div>
 
             {/* Day header */}
-            <div className="h-[26px] flex border-b border-zinc-800/60 bg-zinc-900/40 sticky top-6">
+            <div className="h-[26px] flex border-b dark:border-zinc-800/60 border-zinc-200 dark:bg-zinc-900/40 bg-zinc-100 sticky top-6">
               {days.map((d, i) => {
                 const isWeekend = d.getDay() === 0 || d.getDay() === 6
                 const isToday = diffDays(minDate, d) === todayOffset
@@ -263,12 +263,12 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
                   <div
                     key={i}
                     className={`flex-shrink-0 flex items-center justify-center border-r border-zinc-800/20 ${
-                      isWeekend ? 'bg-zinc-900/60' : ''
+                      isWeekend ? 'dark:bg-zinc-900/60 bg-zinc-50' : ''
                     } ${isToday ? 'bg-blue-500/10' : ''}`}
                     style={{ width: DAY_PX }}
                   >
                     <span className={`text-[9px] tabular-nums ${
-                      isToday ? 'text-blue-400 font-medium' : isWeekend ? 'text-zinc-600' : 'text-zinc-600'
+                      isToday ? 'text-blue-400 font-medium' : isWeekend ? 'dark:text-zinc-600 text-zinc-400' : 'dark:text-zinc-600 text-zinc-400'
                     }`}>
                       {d.getDate()}
                     </span>
@@ -289,14 +289,14 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
             {grouped.map(group => (
               <div key={group.status}>
                 {/* Group header row */}
-                <div className="h-7 border-b border-zinc-800/40 bg-zinc-900/20 relative">
+                <div className="h-7 border-b dark:border-zinc-800/40 border-zinc-200 dark:bg-zinc-900/20 bg-zinc-100/50 relative">
                   {/* Weekend stripes */}
                   {days.map((d, i) => {
                     const isWeekend = d.getDay() === 0 || d.getDay() === 6
                     return isWeekend ? (
                       <div
                         key={i}
-                        className="absolute top-0 bottom-0 bg-zinc-900/40"
+                        className="absolute top-0 bottom-0 dark:bg-zinc-900/40 bg-zinc-100"
                         style={{ left: i * DAY_PX, width: DAY_PX }}
                       />
                     ) : null
@@ -327,7 +327,7 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
                         return isWeekend ? (
                           <div
                             key={i}
-                            className="absolute top-0 bottom-0 bg-zinc-900/30"
+                            className="absolute top-0 bottom-0 dark:bg-zinc-900/30 bg-zinc-200/50"
                             style={{ left: i * DAY_PX, width: DAY_PX }}
                           />
                         ) : null
@@ -359,7 +359,7 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
       {/* Tooltip */}
       {tooltip && (
         <div
-          className="fixed z-50 bg-zinc-900 border border-zinc-700 rounded-lg p-3 shadow-2xl pointer-events-none"
+          className="fixed z-50 dark:bg-zinc-900 bg-white border dark:border-zinc-700 border-zinc-300 border-zinc-300 rounded-lg p-3 shadow-2xl pointer-events-none"
           style={{
             left: Math.min(tooltip.x + 12, window.innerWidth - 260),
             top: tooltip.y - 80,
@@ -367,27 +367,27 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
             maxWidth: 260,
           }}
         >
-          <p className="text-xs font-medium text-zinc-100 mb-2 leading-tight">{tooltip.task.title}</p>
+          <p className="text-xs font-medium dark:text-zinc-100 text-zinc-900 mb-2 leading-tight">{tooltip.task.title}</p>
           <div className="space-y-1">
             {tooltip.task.stageName && (
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-zinc-500">Etapa</span>
-                <span className="text-[10px] text-zinc-300">{tooltip.task.stageName}</span>
+                <span className="text-[10px] dark:text-zinc-500 text-zinc-500">Etapa</span>
+                <span className="text-[10px] dark:text-zinc-300 text-zinc-300">{tooltip.task.stageName}</span>
               </div>
             )}
             {tooltip.task.assignedTo && (
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-zinc-500">Responsável</span>
-                <span className="text-[10px] text-zinc-300">{tooltip.task.assignedTo.name}</span>
+                <span className="text-[10px] dark:text-zinc-500 text-zinc-500">Responsável</span>
+                <span className="text-[10px] dark:text-zinc-300 text-zinc-300">{tooltip.task.assignedTo.name}</span>
               </div>
             )}
             {tooltip.task.dueDate && (
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-zinc-500">Prazo</span>
+                <span className="text-[10px] dark:text-zinc-500 text-zinc-500">Prazo</span>
                 <span className={`text-[10px] tabular-nums ${
                   toDate(tooltip.task.dueDate)! < today && tooltip.task.status !== 'DONE'
                     ? 'text-red-400'
-                    : 'text-zinc-300'
+                    : 'dark:text-zinc-300 text-zinc-300'
                 }`}>
                   {toDate(tooltip.task.dueDate)!.toLocaleDateString('pt-BR')}
                 </span>
@@ -395,15 +395,15 @@ export default function GanttChart({ tasks, stages = [], projectStartDate, proje
             )}
             {tooltip.task.completedAt && (
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-zinc-500">Concluído em</span>
-                <span className="text-[10px] text-zinc-300 tabular-nums">
+                <span className="text-[10px] dark:text-zinc-500 text-zinc-500">Concluído em</span>
+                <span className="text-[10px] dark:text-zinc-300 text-zinc-300 tabular-nums">
                   {toDate(tooltip.task.completedAt)!.toLocaleDateString('pt-BR')}
                 </span>
               </div>
             )}
-            <div className="flex items-center justify-between pt-1 border-t border-zinc-800">
-              <span className="text-[10px] text-zinc-500">Status</span>
-              <span className={`text-[10px] ${STATUS_CONFIG[tooltip.task.status]?.color || 'text-zinc-400'}`}>
+            <div className="flex items-center justify-between pt-1 border-t dark:border-zinc-800 border-zinc-300 border-zinc-300">
+              <span className="text-[10px] dark:text-zinc-500 text-zinc-500">Status</span>
+              <span className={`text-[10px] ${STATUS_CONFIG[tooltip.task.status]?.color || 'dark:text-zinc-400 text-zinc-400'}`}>
                 {STATUS_CONFIG[tooltip.task.status]?.label || tooltip.task.status}
               </span>
             </div>

@@ -218,7 +218,7 @@ export default function KnowledgeManager({
   }
 
   const statusConfig: Record<string, { label: string; color: string }> = {
-    DRAFT: { label: 'Rascunho', color: 'bg-zinc-800 text-zinc-400' },
+    DRAFT: { label: 'Rascunho', color: 'dark:bg-zinc-800 bg-zinc-100 dark:text-zinc-400 text-zinc-400' },
     PUBLISHED: { label: 'Publicado', color: 'bg-emerald-500/10 text-emerald-400' },
   }
 
@@ -227,15 +227,15 @@ export default function KnowledgeManager({
       <div className="mb-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-base font-semibold text-zinc-100 tracking-tight">Base de Conhecimento</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">Gerencie categorias e artigos</p>
+            <h1 className="text-base font-semibold dark:text-zinc-100 text-zinc-900 tracking-tight">Base de Conhecimento</h1>
+            <p className="text-sm dark:text-zinc-500 text-zinc-500 mt-0.5">Gerencie categorias e artigos</p>
           </div>
           <div className="flex items-center gap-2">
             {isPublic && orgSlug && (
               <a
                 href={`/public/knowledge/${orgSlug}`}
                 target="_blank"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 border border-zinc-800 px-3 py-1.5 rounded-md hover:bg-zinc-900 transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-medium dark:text-zinc-400 text-zinc-400 border dark:border-zinc-800 border-zinc-300 px-3 py-1.5 rounded-md dark:hover:bg-zinc-900 bg-zinc-100 transition-colors"
               >
                 <Globe className="w-3.5 h-3.5" />
                 Ver público
@@ -246,13 +246,13 @@ export default function KnowledgeManager({
       </div>
 
       {/* Settings — apenas admin/owner */}
-      {canManageSettings && <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 mb-4 animate-fade-in">
+      {canManageSettings && <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg p-4 mb-4 animate-fade-in">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Settings className="w-4 h-4 text-zinc-500" />
+            <Settings className="w-4 h-4 dark:text-zinc-500 text-zinc-500" />
             <div>
-              <p className="text-sm text-zinc-300 font-medium">Base de Conhecimento Pública</p>
-              <p className="text-xs text-zinc-500">Permitir acesso público aos artigos marcados como públicos</p>
+              <p className="text-sm dark:text-zinc-300 text-zinc-700 font-medium">Base de Conhecimento Pública</p>
+              <p className="text-xs dark:text-zinc-500 text-zinc-500">Permitir acesso público aos artigos marcados como públicos</p>
             </div>
           </div>
           <button
@@ -269,13 +269,13 @@ export default function KnowledgeManager({
         <div className="animate-fade-in-delay">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <FolderOpen className="w-4 h-4 text-zinc-500" />
-              <h2 className="text-sm font-medium text-zinc-300">Categorias</h2>
+              <FolderOpen className="w-4 h-4 dark:text-zinc-500 text-zinc-500" />
+              <h2 className="text-sm font-medium dark:text-zinc-300 text-zinc-700">Categorias</h2>
             </div>
             {canManageCategories && (
               <button
                 onClick={openNewCategory}
-                className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+                className="inline-flex items-center gap-1 text-xs dark:text-zinc-400 text-zinc-400 dark:hover:text-zinc-300 text-zinc-700 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Nova
@@ -284,28 +284,28 @@ export default function KnowledgeManager({
           </div>
           <div className="space-y-2">
             {categories.map(cat => (
-              <div key={cat.id} className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-3 hover:border-zinc-700/60 transition-colors group">
+              <div key={cat.id} className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg p-3 dark:hover:border-zinc-700 border-zinc-300/60 transition-colors group">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                     <div>
-                      <p className="text-xs font-medium text-zinc-300">{cat.name}</p>
-                      <p className="text-[11px] text-zinc-500">{cat._count?.articles || 0} artigos</p>
+                      <p className="text-xs font-medium dark:text-zinc-300 text-zinc-700">{cat.name}</p>
+                      <p className="text-[11px] dark:text-zinc-500 text-zinc-500">{cat._count?.articles || 0} artigos</p>
                     </div>
                   </div>
                   {canManageCategories && (
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => openEditCategory(cat)} className="p-1 text-zinc-600 hover:text-zinc-400">
+                      <button onClick={() => openEditCategory(cat)} className="p-1 dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-400 dark:text-zinc-600 text-zinc-400">
                         <Edit2 className="w-3 h-3" />
                       </button>
-                      <button onClick={() => deleteCategory(cat.id)} className="p-1 text-zinc-600 hover:text-red-400">
+                      <button onClick={() => deleteCategory(cat.id)} className="p-1 dark:text-zinc-600 text-zinc-400 hover:text-red-400">
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
                   )}
                 </div>
                 {cat.description && (
-                  <p className="text-[11px] text-zinc-500 mt-1">{cat.description}</p>
+                  <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mt-1">{cat.description}</p>
                 )}
                 {cat.includeInPublic && (
                   <Badge variant="outline" className="text-[10px] mt-1 bg-blue-500/10 text-blue-400 border-blue-500/20">
@@ -315,8 +315,8 @@ export default function KnowledgeManager({
               </div>
             ))}
             {categories.length === 0 && (
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-6 text-center">
-                <p className="text-xs text-zinc-500">Nenhuma categoria</p>
+              <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg p-6 text-center">
+                <p className="text-xs dark:text-zinc-500 text-zinc-500">Nenhuma categoria</p>
               </div>
             )}
           </div>
@@ -326,13 +326,13 @@ export default function KnowledgeManager({
         <div className="lg:col-span-2 animate-fade-in-delay-2">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-zinc-500" />
-              <h2 className="text-sm font-medium text-zinc-300">Artigos</h2>
+              <BookOpen className="w-4 h-4 dark:text-zinc-500 text-zinc-500" />
+              <h2 className="text-sm font-medium dark:text-zinc-300 text-zinc-700">Artigos</h2>
             </div>
             {canEdit && (
               <button
                 onClick={openNewArticle}
-                className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+                className="inline-flex items-center gap-1 text-xs dark:text-zinc-400 text-zinc-400 dark:hover:text-zinc-300 text-zinc-700 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Novo
@@ -341,32 +341,32 @@ export default function KnowledgeManager({
           </div>
           <div className="space-y-2">
             {articles.map(article => (
-              <div key={article.id} className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-3 hover:border-zinc-700/60 transition-colors group">
+              <div key={article.id} className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg p-3 dark:hover:border-zinc-700 border-zinc-300/60 transition-colors group">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <button
                         onClick={() => setViewingArticle(article)}
-                        className="text-xs font-medium text-zinc-300 hover:text-zinc-100 transition-colors text-left"
+                        className="text-xs font-medium dark:text-zinc-300 text-zinc-700 dark:hover:text-zinc-100 text-zinc-900 transition-colors text-left"
                       >
                         {article.title}
                       </button>
-                      <Badge variant="outline" className={`text-[10px] ${statusConfig[article.status]?.color || 'bg-zinc-800 text-zinc-400'}`}>
+                      <Badge variant="outline" className={`text-[10px] ${statusConfig[article.status]?.color || 'dark:bg-zinc-800 bg-zinc-100 dark:text-zinc-400 text-zinc-400'}`}>
                         {statusConfig[article.status]?.label || article.status}
                       </Badge>
                     </div>
                     {article.category && (
-                      <p className="text-[11px] text-zinc-500">
+                      <p className="text-[11px] dark:text-zinc-500 text-zinc-500">
                         {article.category.name}
                       </p>
                     )}
                   </div>
                   {canEdit && (
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
-                      <button onClick={() => openEditArticle(article)} className="p-1 text-zinc-600 hover:text-zinc-400">
+                      <button onClick={() => openEditArticle(article)} className="p-1 dark:text-zinc-600 text-zinc-400 dark:hover:text-zinc-400 dark:text-zinc-600 text-zinc-400">
                         <Edit2 className="w-3 h-3" />
                       </button>
-                      <button onClick={() => deleteArticle(article.id)} className="p-1 text-zinc-600 hover:text-red-400">
+                      <button onClick={() => deleteArticle(article.id)} className="p-1 dark:text-zinc-600 text-zinc-400 hover:text-red-400">
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
@@ -375,8 +375,8 @@ export default function KnowledgeManager({
               </div>
             ))}
             {articles.length === 0 && (
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-6 text-center">
-                <p className="text-xs text-zinc-500">Nenhum artigo</p>
+              <div className="dark:bg-zinc-950/50 bg-white border dark:border-zinc-800 border-zinc-300/60 rounded-lg p-6 text-center">
+                <p className="text-xs dark:text-zinc-500 text-zinc-500">Nenhum artigo</p>
               </div>
             )}
           </div>
@@ -399,24 +399,24 @@ export default function KnowledgeManager({
               <textarea
                 value={catDesc}
                 onChange={e => setCatDesc(e.target.value)}
-                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700 resize-none min-h-[60px]"
+                className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400 resize-none min-h-[60px]"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>Cor</Label>
                 <div className="flex items-center gap-2 mt-1.5">
-                  <input type="color" value={catColor} onChange={e => setCatColor(e.target.value)} className="w-8 h-8 rounded border border-zinc-700" />
-                  <span className="text-xs text-zinc-400">{catColor}</span>
+                  <input type="color" value={catColor} onChange={e => setCatColor(e.target.value)} className="w-8 h-8 rounded border dark:border-zinc-700 border-zinc-300" />
+                  <span className="text-xs dark:text-zinc-400 text-zinc-400">{catColor}</span>
                 </div>
               </div>
               <div className="flex items-end">
-                <label className="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
+                <label className="flex items-center gap-2 text-xs dark:text-zinc-400 text-zinc-400 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={catPublic}
                     onChange={e => setCatPublic(e.target.checked)}
-                    className="rounded border-zinc-700 bg-zinc-900"
+                    className="rounded border-zinc-700 dark:bg-zinc-900 bg-zinc-100"
                   />
                   Incluir na base pública
                 </label>
@@ -448,7 +448,7 @@ export default function KnowledgeManager({
               <select
                 value={artCategory}
                 onChange={e => setArtCategory(e.target.value)}
-                className="mt-1.5 w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+                className="mt-1.5 w-full dark:bg-zinc-900 bg-zinc-100 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
               >
                 <option value="">Sem categoria</option>
                 {categories.map(c => (
@@ -461,7 +461,7 @@ export default function KnowledgeManager({
               <select
                 value={artStatus}
                 onChange={e => setArtStatus(e.target.value as 'DRAFT' | 'PUBLISHED')}
-                className="mt-1.5 w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+                className="mt-1.5 w-full dark:bg-zinc-900 bg-zinc-100 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400"
               >
                 <option value="DRAFT">Rascunho</option>
                 <option value="PUBLISHED">Publicado</option>
@@ -472,7 +472,7 @@ export default function KnowledgeManager({
               <textarea
                 value={artContent}
                 onChange={e => setArtContent(e.target.value)}
-                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-800 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700 resize-none min-h-[200px]"
+                className="mt-1.5 w-full dark:bg-zinc-900/60 bg-zinc-50 border dark:border-zinc-800 border-zinc-300 rounded-md px-3 py-2 text-sm dark:text-zinc-200 text-zinc-800 focus:outline-none focus:ring-1 dark:focus:ring-zinc-700 focus:ring-zinc-400 resize-none min-h-[200px]"
               />
             </div>
           </div>
@@ -493,14 +493,14 @@ export default function KnowledgeManager({
           </DialogHeader>
           <div className="py-2 max-h-[60vh] overflow-y-auto">
             {viewingArticle?.category && (
-              <p className="text-xs text-zinc-500 mb-3">
+              <p className="text-xs dark:text-zinc-500 text-zinc-500 mb-3">
                 Categoria: {viewingArticle.category.name}
               </p>
             )}
-            <div className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
+            <div className="text-sm dark:text-zinc-300 text-zinc-700 whitespace-pre-wrap leading-relaxed">
               {viewingArticle?.content}
             </div>
-            <p className="text-[11px] text-zinc-500 mt-4">
+            <p className="text-[11px] dark:text-zinc-500 text-zinc-500 mt-4">
               Atualizado em {viewingArticle?.updatedAt ? new Date(viewingArticle.updatedAt).toLocaleDateString('pt-BR') : '-'}
             </p>
           </div>

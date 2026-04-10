@@ -111,10 +111,10 @@ export default function DashboardSidebarClient({
   return (
     <>
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-12 bg-[#09090b]/95 backdrop-blur-sm border-b border-zinc-800/60 flex items-center justify-between px-3">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-12 bg-[hsl(var(--sidebar-bg))]/95 backdrop-blur-sm border-b border-[hsl(var(--sidebar-border))] flex items-center justify-between px-3">
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="p-1.5 -ml-1.5 text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="p-1.5 -ml-1.5 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -122,13 +122,13 @@ export default function DashboardSidebarClient({
           {orgLogoUrl ? (
             <img src={orgLogoUrl} alt="" className="w-5 h-5 rounded-md object-cover" />
           ) : (
-            <div className="w-5 h-5 bg-zinc-800 rounded-md flex items-center justify-center">
+            <div className="w-5 h-5 bg-[hsl(var(--sidebar-nav-active))] rounded-md flex items-center justify-center">
               <svg className="w-3 h-3 text-violet-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
           )}
-          <span className="text-xs font-semibold text-zinc-200">{orgName || 'ProjectFlow'}</span>
+          <span className="text-xs font-semibold text-[hsl(var(--sidebar-nav-text-active))]">{orgName || 'ProjectFlow'}</span>
         </div>
         <div className="w-8" />
       </header>
@@ -143,16 +143,16 @@ export default function DashboardSidebarClient({
 
       {/* Mobile Sidebar (Drawer) */}
       <div
-        className={`md:hidden fixed inset-y-0 left-0 z-50 w-[260px] bg-[#09090b] transform transition-transform duration-200 ease-out ${
+        className={`md:hidden fixed inset-y-0 left-0 z-50 w-[260px] bg-[hsl(var(--sidebar-bg))] transform transition-transform duration-200 ease-out ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between px-4 h-12 border-b border-zinc-800/60 flex-shrink-0">
-            <span className="text-sm font-semibold text-zinc-200">Menu</span>
+          <div className="flex items-center justify-between px-4 h-12 border-b border-[hsl(var(--sidebar-border))] flex-shrink-0">
+            <span className="text-sm font-semibold text-[hsl(var(--sidebar-nav-text-active))]">Menu</span>
             <button
               onClick={closeMobileMenu}
-              className="p-1 text-zinc-500 hover:text-zinc-300 transition-colors"
+              className="p-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -177,12 +177,12 @@ export default function DashboardSidebarClient({
 
           <div className="space-y-4 py-2">
             <div>
-              <Label className="text-xs text-zinc-400">Nome</Label>
+              <Label className="text-xs dark:text-zinc-400 text-zinc-400">Nome</Label>
               <div className="flex gap-2 mt-1">
                 <Input
                   value={profileName}
                   onChange={(e) => setProfileName(e.target.value)}
-                  className="bg-zinc-900/60 border-zinc-800"
+                  className="dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300"
                 />
                 <Button size="sm" onClick={handleSaveProfile} disabled={saving || !profileName.trim()}>
                   Salvar
@@ -191,26 +191,26 @@ export default function DashboardSidebarClient({
             </div>
 
             <div>
-              <Label className="text-xs text-zinc-400">Email</Label>
-              <p className="text-sm text-zinc-300 mt-1">{userEmail || '-'}</p>
+              <Label className="text-xs dark:text-zinc-400 text-zinc-400">Email</Label>
+              <p className="text-sm dark:text-zinc-300 text-zinc-300 mt-1">{userEmail || '-'}</p>
             </div>
 
-            <div className="border-t border-zinc-800/40 pt-4">
-              <Label className="text-xs text-zinc-400">Alterar Senha</Label>
+            <div className="border-t dark:border-zinc-800/40 border-zinc-200 pt-4">
+              <Label className="text-xs dark:text-zinc-400 text-zinc-400">Alterar Senha</Label>
               <div className="space-y-2 mt-2">
                 <Input
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Senha atual"
-                  className="bg-zinc-900/60 border-zinc-800"
+                  className="dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300"
                 />
                 <Input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Nova senha"
-                  className="bg-zinc-900/60 border-zinc-800"
+                  className="dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300"
                 />
                 <Button
                   size="sm"
@@ -223,7 +223,7 @@ export default function DashboardSidebarClient({
             </div>
 
             {message && (
-              <p className="text-xs text-zinc-400 text-center">{message}</p>
+              <p className="text-xs dark:text-zinc-400 text-zinc-400 text-center">{message}</p>
             )}
           </div>
 

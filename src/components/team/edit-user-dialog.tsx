@@ -83,7 +83,7 @@ export function EditUserDialog({ user, canEdit }: EditUserDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         {canEdit ? (
-          <button className="p-1 text-zinc-600 hover:text-zinc-300 transition-colors">
+          <button className="p-1 text-zinc-600 dark:hover:text-zinc-300 text-zinc-700 hover:text-zinc-700 transition-colors">
             <Pencil className="w-3.5 h-3.5" />
           </button>
         ) : (
@@ -99,7 +99,7 @@ export function EditUserDialog({ user, canEdit }: EditUserDialogProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="name" className="text-xs text-zinc-400">Nome</Label>
+            <Label htmlFor="name" className="text-xs dark:text-zinc-400 text-zinc-400">Nome</Label>
             <Input
               id="name"
               value={formData.name}
@@ -109,7 +109,7 @@ export function EditUserDialog({ user, canEdit }: EditUserDialogProps) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="email" className="text-xs text-zinc-400">Email</Label>
+            <Label htmlFor="email" className="text-xs dark:text-zinc-400 text-zinc-400">Email</Label>
             <Input
               id="email"
               type="email"
@@ -121,7 +121,7 @@ export function EditUserDialog({ user, canEdit }: EditUserDialogProps) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="hourlyCost" className="text-xs text-zinc-400">Valor/hora</Label>
+              <Label htmlFor="hourlyCost" className="text-xs dark:text-zinc-400 text-zinc-400">Valor/hora</Label>
               <Input
                 id="hourlyCost"
                 type="number"
@@ -131,21 +131,21 @@ export function EditUserDialog({ user, canEdit }: EditUserDialogProps) {
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="role" className="text-xs text-zinc-400">Função</Label>
-              <div className="h-8 flex items-center px-2 text-sm text-zinc-500">
+              <Label htmlFor="role" className="text-xs dark:text-zinc-400 text-zinc-400">Função</Label>
+              <div className="h-8 flex items-center px-2 text-sm dark:text-zinc-500 text-zinc-500">
                 {roleLabels[user.role] || user.role}
               </div>
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <Label className="text-xs text-zinc-400">Status</Label>
+            <Label className="text-xs dark:text-zinc-400 text-zinc-400">Status</Label>
             <button
               type="button"
               onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
               className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full transition-colors ${
                 formData.isActive
                   ? 'bg-emerald-500/10 text-emerald-400'
-                  : 'bg-zinc-800 text-zinc-500'
+                  : 'bg-zinc-800 dark:text-zinc-500 text-zinc-500'
               }`}
             >
               {formData.isActive ? (
@@ -156,7 +156,7 @@ export function EditUserDialog({ user, canEdit }: EditUserDialogProps) {
             </button>
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
-          <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800/60">
+          <div className="flex justify-end gap-2 pt-2 border-t dark:border-zinc-800 border-zinc-200">
             <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
               Cancelar
             </Button>

@@ -236,8 +236,8 @@ export default function LandingPage() {
       <section className="relative z-10 px-6 pb-24 bg-[#09090b]">
         <Reveal>
           <div className="max-w-5xl mx-auto">
-            <div className="bg-zinc-950/60 border border-zinc-800/60 rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.7)] backdrop-blur-sm">
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800/40 bg-zinc-900/30">
+            <div className="dark:bg-zinc-950 bg-white/60 border border-zinc-800/60 rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.7)] backdrop-blur-sm">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800/40 dark:bg-zinc-900/30 bg-zinc-200/50">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
                 <div className="w-2.5 h-2.5 rounded-full bg-amber-500/60" />
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/60" />
@@ -312,7 +312,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <Reveal delay={0}>
-              <div className="border border-zinc-800/60 rounded-2xl p-8 bg-zinc-950/40 hover:border-zinc-700/60 transition-colors group h-full">
+              <div className="border border-zinc-800/60 rounded-2xl p-8 dark:bg-zinc-950 bg-white/40 hover:border-zinc-700/60 transition-colors group h-full">
                 <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:border-emerald-500/40 transition-colors">
                   <DollarSign className="w-6 h-6 text-emerald-400" />
                 </div>
@@ -337,7 +337,7 @@ export default function LandingPage() {
             </Reveal>
 
             <Reveal delay={80}>
-              <div className="border border-zinc-800/60 rounded-2xl p-8 bg-zinc-950/40 hover:border-zinc-700/60 transition-colors group h-full">
+              <div className="border border-zinc-800/60 rounded-2xl p-8 dark:bg-zinc-950 bg-white/40 hover:border-zinc-700/60 transition-colors group h-full">
                 <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:border-blue-500/40 transition-colors">
                   <Timer className="w-6 h-6 text-blue-400" />
                 </div>
@@ -363,7 +363,7 @@ export default function LandingPage() {
           </div>
 
           <Reveal delay={120}>
-            <div className="mt-6 border border-zinc-800/60 rounded-xl p-5 bg-zinc-950/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="mt-6 border border-zinc-800/60 rounded-xl p-5 dark:bg-zinc-950 bg-white/40 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <TrendingUp className="w-4 h-4 text-violet-400 flex-shrink-0" />
                 <p className="text-sm text-zinc-300 font-medium">Reduza custos operacionais em até 30% com visibilidade real-time</p>
@@ -428,7 +428,7 @@ export default function LandingPage() {
 
             {/* Right */}
             <Reveal delay={100} y={32}>
-              <div className="bg-zinc-950/60 border border-violet-500/15 rounded-2xl p-6 shadow-[0_0_80px_rgba(139,92,246,0.08)]">
+              <div className="dark:bg-zinc-950 bg-white/60 border border-violet-500/15 rounded-2xl p-6 shadow-[0_0_80px_rgba(139,92,246,0.08)]">
                 <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-zinc-800/60">
                   <div className="w-7 h-7 bg-violet-500/15 border border-violet-500/25 rounded-lg flex items-center justify-center">
                     <Brain className="w-3.5 h-3.5 text-violet-400" />
@@ -514,7 +514,7 @@ export default function LandingPage() {
             {/* Right: chat mockup */}
             <Reveal delay={80} y={32}>
               <div className="relative">
-                <div className="bg-zinc-950/70 border border-zinc-800/60 rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.6)]">
+                <div className="dark:bg-zinc-950 bg-white/70 border border-zinc-800/60 rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.6)]">
                   <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-800/40 bg-zinc-900/40">
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-600/40 to-blue-600/40 border border-violet-500/20 flex items-center justify-center">
                       <Bot className="w-3.5 h-3.5 text-violet-300" />
@@ -696,7 +696,7 @@ export default function LandingPage() {
           </div>
           <div className="space-y-4">
             <Reveal delay={60}>
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-6">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-xl p-6">
                 <div className="flex items-center gap-2 mb-5">
                   <Target className="w-4 h-4 text-violet-400" />
                   <h3 className="text-sm font-semibold text-zinc-200">Para quem é?</h3>
@@ -720,7 +720,7 @@ export default function LandingPage() {
             </Reveal>
 
             <Reveal delay={120}>
-              <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-xl p-6">
+              <div className="dark:bg-zinc-950/50 bg-white border border-zinc-800/60 rounded-xl p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   <h3 className="text-sm font-semibold text-zinc-200">Stack Tecnológico</h3>

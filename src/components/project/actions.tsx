@@ -20,7 +20,7 @@ export default function ProjectActions({
               body: JSON.stringify({ action: 'archive' }),
             }).then(() => window.location.reload())
           }}
-          className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors rounded"
+          className="p-1.5 text-zinc-600 dark:hover:text-zinc-300 hover:text-zinc-700 transition-colors rounded"
           title="Arquivar projeto"
         >
           <Archive className="w-3.5 h-3.5" />
@@ -34,7 +34,7 @@ export default function ProjectActions({
               body: JSON.stringify({ action: 'unarchive' }),
             }).then(() => window.location.reload())
           }}
-          className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors rounded"
+          className="p-1.5 text-zinc-600 dark:hover:text-zinc-300 hover:text-zinc-700 transition-colors rounded"
           title="Desarquivar"
         >
           <RotateCcw className="w-3.5 h-3.5" />

@@ -2,6 +2,152 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme CSS Variables ─── */
+:root {
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --popover: 0 0% 98%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+
+  /* Sidebar-specific variables for light mode */
+  --sidebar-bg: 0 0% 98%;
+  --sidebar-border: 240 5.9% 90%;
+  --sidebar-nav-hover: 240 4.8% 95.9%;
+  --sidebar-nav-active: 240 4.8% 95.9%;
+  --sidebar-nav-text: 240 3.8% 46.1%;
+  --sidebar-nav-text-hover: 240 5.9% 10%;
+  --sidebar-nav-text-active: 240 10% 3.9%;
+  --sidebar-nav-icon: 240 5% 65%;
+  --sidebar-nav-icon-active: 240 4% 45%;
+  --sidebar-user-bg: 240 4.8% 95.9%;
+}
+
+.dark {
+  --background: 0 0% 4%;
+  --foreground: 0 0% 98%;
+  --popover: 0 0% 7%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 4%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 10%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 15%;
+  --input: 0 0% 15%;
+  --ring: 0 0% 25%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 98%;
+
+  /* Sidebar-specific variables for dark mode */
+  --sidebar-bg: 0 0% 4%;
+  --sidebar-border: 0 0% 15%;
+  --sidebar-nav-hover: 0 0% 8%;
+  --sidebar-nav-active: 0 0% 15%;
+  --sidebar-nav-text: 0 0% 35%;
+  --sidebar-nav-text-hover: 0 0% 80%;
+  --sidebar-nav-text-active: 0 0% 98%;
+  --sidebar-nav-icon: 0 0% 35%;
+  --sidebar-nav-icon-active: 0 0% 80%;
+  --sidebar-user-bg: 0 0% 8%;
+}
+
+/* ─── Semantic utility classes for theme support ─── */
+/* These map common hardcoded zinc colors to theme variables */
+
+.card-bg {
+  @apply dark:bg-zinc-950/50 bg-white;
+}
+.card-bg-muted {
+  @apply dark:bg-zinc-900/60 bg-zinc-50;
+}
+.card-bg-strong {
+  @apply dark:bg-zinc-900 bg-zinc-100;
+}
+.card-border {
+  @apply dark:border-zinc-800/60 border-zinc-200;
+}
+.card-hover-border {
+  @apply dark:hover:border-zinc-700/60 hover:border-zinc-300;
+}
+.text-primary {
+  @apply dark:text-zinc-100 text-zinc-900;
+}
+.text-secondary {
+  @apply dark:text-zinc-300 text-zinc-700;
+}
+.text-muted {
+  @apply dark:text-zinc-400 text-zinc-500;
+}
+.text-muted-fg {
+  @apply dark:text-zinc-500 text-zinc-500;
+}
+.text-subtle {
+  @apply dark:text-zinc-600 text-zinc-400;
+}
+.input-bg {
+  @apply dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-800 border-zinc-300;
+}
+.input-text {
+  @apply dark:text-zinc-200 text-zinc-900 dark:placeholder:text-zinc-600 placeholder:text-zinc-400;
+}
+.hover-bg {
+  @apply dark:hover:bg-zinc-900/40 hover:bg-zinc-100;
+}
+.hover-text {
+  @apply dark:hover:text-zinc-300 hover:text-zinc-700;
+}
+.badge-bg {
+  @apply dark:bg-zinc-800 bg-zinc-200;
+}
+.badge-text {
+  @apply dark:text-zinc-400 text-zinc-600;
+}
+.divider {
+  @apply dark:border-zinc-800/40 border-zinc-200;
+}
+.divider-strong {
+  @apply dark:border-zinc-800/60 border-zinc-300;
+}
+.empty-text {
+  @apply dark:text-zinc-600 text-zinc-400;
+}
+.section-title {
+  @apply dark:text-zinc-100 text-zinc-900 text-base font-semibold tracking-tight;
+}
+.section-subtitle {
+  @apply dark:text-zinc-500 text-zinc-500 text-sm;
+}
+.row-hover {
+  @apply dark:hover:bg-zinc-900/40 hover:bg-zinc-50 transition-colors;
+}
+.tag-neutral {
+  @apply dark:bg-zinc-800 bg-zinc-100 dark:text-zinc-400 text-zinc-600 dark:border-zinc-700 border-zinc-300;
+}
+
 /* ─── Scroll-reveal animations ─── */
 .reveal-item {
   opacity: 0;
@@ -56,7 +202,7 @@
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--ring));
+    background: hsl(var(--muted-foreground));
   }
 }
 

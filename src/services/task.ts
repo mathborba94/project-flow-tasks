@@ -105,8 +105,14 @@ export async function updateTask(organizationId: string, taskId: string, data: U
   // Handle dueDate conversion
   if ('dueDate' in data) {
     if (data.dueDate) {
-      // If it's a string, convert to Date. If it's already a Date, use it. If null, set null.
-      updateData.dueDate = typeof data.dueDate === 'string' ? new Date(data.dueDate) : data.dueDate
+      if (typeof data.dueDate === 'string') {
+        // For date-only strings (YYYY-MM-DD), use noon UTC to avoid timezone day-shift
+        // e.g. "2026-04-15" + T12:00:00Z = correct day for UTC-12 through UTC+12
+        const dateStr = data.dueDate.includes('T') ? data.dueDate : `${data.dueDate}T12:00:00.000Z`
+        updateData.dueDate = new Date(dateStr)
+      } else {
+        updateData.dueDate = data.dueDate
+      }
     } else if (data.dueDate === null) {
       updateData.dueDate = null
     } else {
