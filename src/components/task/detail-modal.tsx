@@ -95,6 +95,7 @@ export default function TaskDetailModal({
   stages,
   members,
   completionStageId,
+  userRole,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -105,6 +106,7 @@ export default function TaskDetailModal({
   stages?: Stage[]
   members?: { id: string; name: string }[]
   completionStageId?: string | null
+  userRole?: string
 }) {
   const router = useRouter()
   const [task, setTask] = useState<Task | null>(initialTask)
@@ -160,6 +162,10 @@ export default function TaskDetailModal({
   } | null>(null)
   const [kbCategoryId, setKbCategoryId] = useState<string | null>(null)
   const [savingKb, setSavingKb] = useState(false)
+
+  // Delete task
+  const [deletingTask, setDeletingTask] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const timeEntries = task ? (timeEntriesMap[task.id] || []) : []
   const comments = task ? (commentsMap[task.id] || []) : []
@@ -490,6 +496,26 @@ export default function TaskDetailModal({
     setEditMode(false)
   }
 
+  const handleDeleteTask = async () => {
+    if (!task) return
+    setDeletingTask(true)
+    try {
+      const res = await fetch(`/api/tasks/${task.id}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        onOpenChange(false)
+        onUpdate?.()
+        router.refresh()
+      }
+    } catch (e) {
+      console.error('Failed to delete task:', e)
+    } finally {
+      setDeletingTask(false)
+      setShowDeleteConfirm(false)
+    }
+  }
+
   const generateKbArticle = async () => {
     if (!task) return
     setGeneratingKb(true)
@@ -617,6 +643,16 @@ export default function TaskDetailModal({
               <Button size="sm" variant="outline" onClick={() => setEditMode(true)} className="h-7 px-3 text-xs">
                 <Edit2 className="w-3 h-3 mr-1" />
                 Editar
+              </Button>
+            )}
+            {!editMode && task && (userRole === 'OWNER' || userRole === 'ADMIN') && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="h-7 px-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10"
+              >
+                <Trash2 className="w-3 h-3" />
               </Button>
             )}
             <Button size="sm" variant="ghost" onClick={handleClose} className="h-7 w-7 p-0 text-zinc-500 hover:text-zinc-300">
@@ -1054,6 +1090,41 @@ export default function TaskDetailModal({
               className={nextStage?.id === completionStageId ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}
             >
               {nextStage?.id === completionStageId ? 'Concluir Tarefa' : 'Confirmar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      {/* Delete Task Confirmation Dialog */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-400">
+              <Trash2 className="w-5 h-5" />
+              Excluir Tarefa
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-zinc-300 mb-2">
+              Tem certeza que deseja excluir a tarefa <strong className="text-zinc-100">"{task?.title}"</strong>?
+            </p>
+            <p className="text-xs text-zinc-500">
+              Esta ação não pode ser desfeita. Todas as horas registradas, comentários e anexos serão removidos permanentemente.
+            </p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deletingTask}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleDeleteTask}
+              disabled={deletingTask}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {deletingTask ? (
+                <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Excluindo...</>
+              ) : (
+                <><Trash2 className="w-3 h-3 mr-1" /> Excluir</>
+              )}
             </Button>
           </div>
         </DialogContent>

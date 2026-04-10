@@ -5,15 +5,16 @@ import { Download, Upload, FileSpreadsheet, Check, AlertTriangle, X } from 'luci
 
 export default function CsvImportExport({ projectId }: { projectId: string }) {
   const [importing, setImporting] = useState(false)
-  const [importResult, setImportResult] = useState<{ created: number; errors: any[] } | null>(null)
+  const [importResult, setImportResult] = useState<{ created: number; timeEntriesCreated: number; errors: any[] } | null>(null)
   const [importError, setImportError] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const csvFileInputRef = useRef<HTMLInputElement>(null)
+  const xlsxFileInputRef = useRef<HTMLInputElement>(null)
 
   const handleExport = () => {
     window.open(`/api/projects/${projectId}/tasks/export`, '_blank')
   }
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCsvFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -32,7 +33,7 @@ export default function CsvImportExport({ projectId }: { projectId: string }) {
 
       if (res.ok) {
         const data = await res.json()
-        setImportResult({ created: data.created, errors: data.errors || [] })
+        setImportResult({ created: data.created, timeEntriesCreated: 0, errors: data.errors || [] })
       } else {
         const data = await res.json()
         setImportError(data.error || 'Erro ao importar')
@@ -41,7 +42,39 @@ export default function CsvImportExport({ projectId }: { projectId: string }) {
       setImportError('Erro ao processar arquivo')
     } finally {
       setImporting(false)
-      if (fileInputRef.current) fileInputRef.current.value = ''
+      if (csvFileInputRef.current) csvFileInputRef.current.value = ''
+    }
+  }
+
+  const handleXlsxFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setImporting(true)
+    setImportResult(null)
+    setImportError(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await fetch(`/api/projects/${projectId}/tasks/import-xlsx`, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setImportResult({ created: data.created, timeEntriesCreated: data.timeEntriesCreated || 0, errors: data.errors || [] })
+      } else {
+        const data = await res.json()
+        setImportError(data.error || 'Erro ao importar')
+      }
+    } catch {
+      setImportError('Erro ao processar arquivo')
+    } finally {
+      setImporting(false)
+      if (xlsxFileInputRef.current) xlsxFileInputRef.current.value = ''
     }
   }
 
@@ -50,7 +83,7 @@ export default function CsvImportExport({ projectId }: { projectId: string }) {
       {/* Header */}
       <div>
         <h2 className="text-sm font-medium text-zinc-200 mb-1">Importar / Exportar Tarefas</h2>
-        <p className="text-xs text-zinc-500">Gerencie suas tarefas em lote usando arquivos CSV</p>
+        <p className="text-xs text-zinc-500">Gerencie suas tarefas em lote usando arquivos CSV ou Excel</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -75,31 +108,51 @@ export default function CsvImportExport({ projectId }: { projectId: string }) {
         </div>
 
         {/* Import Section */}
-        <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-lg p-5">
+        <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-lg p-5 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
               <Upload className="w-4 h-4 text-blue-400" />
             </div>
             <h3 className="text-sm font-medium text-zinc-200">Importar</h3>
           </div>
-          <p className="text-xs text-zinc-500 mb-1">
-            Envie um arquivo CSV para criar tarefas em lote.
-          </p>
-          <p className="text-[11px] text-zinc-600 mb-4 font-mono bg-zinc-900/60 rounded px-2 py-1 inline-block">
-            Title,Description,Status,Priority,AssigneeEmail,TaskType,DueDate
-          </p>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv"
-            onChange={handleFileChange}
-            disabled={importing}
-            className="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-zinc-800 file:text-zinc-300 file:hover:bg-zinc-700 disabled:opacity-50 cursor-pointer"
-          />
+          {/* CSV Import */}
+          <div>
+            <p className="text-xs text-zinc-400 mb-2 font-medium">CSV (tarefas básicas)</p>
+            <p className="text-[11px] text-zinc-600 mb-2 font-mono bg-zinc-900/60 rounded px-2 py-1 inline-block">
+              Title,Description,Status,Priority,AssigneeEmail,TaskType,DueDate
+            </p>
+            <input
+              ref={csvFileInputRef}
+              type="file"
+              accept=".csv"
+              onChange={handleCsvFileChange}
+              disabled={importing}
+              className="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-zinc-800 file:text-zinc-300 file:hover:bg-zinc-700 disabled:opacity-50 cursor-pointer"
+            />
+          </div>
+
+          {/* XLSX Import */}
+          <div>
+            <p className="text-xs text-zinc-400 mb-2 font-medium">Excel (Pipefy - completo)</p>
+            <p className="text-[11px] text-zinc-600 mb-2 font-mono bg-zinc-900/60 rounded px-2 py-1 inline-block">
+              Codigo, Titulo, Horas executadas, Responsaveis, etc.
+            </p>
+            <input
+              ref={xlsxFileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleXlsxFileChange}
+              disabled={importing}
+              className="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-zinc-800 file:text-zinc-300 file:hover:bg-zinc-700 disabled:opacity-50 cursor-pointer"
+            />
+            <p className="text-[11px] text-zinc-600 mt-1">
+              Importa tarefas + histórico de horas executadas
+            </p>
+          </div>
 
           {importing && (
-            <p className="text-xs text-zinc-500 mt-2">Importando...</p>
+            <p className="text-xs text-zinc-500">Importando...</p>
           )}
         </div>
       </div>
@@ -111,6 +164,11 @@ export default function CsvImportExport({ projectId }: { projectId: string }) {
             <Check className="w-4 h-4 text-emerald-400" />
             <h3 className="text-sm font-medium text-emerald-400">
               Importação concluída — {importResult.created} tarefas criadas
+              {importResult.timeEntriesCreated > 0 && (
+                <span className="text-emerald-400/70 ml-2">
+                  ({importResult.timeEntriesCreated} registros de horas)
+                </span>
+              )}
             </h3>
           </div>
           {importResult.errors.length > 0 && (

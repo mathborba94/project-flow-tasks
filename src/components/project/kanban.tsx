@@ -124,6 +124,7 @@ export default function KanbanBoard({
   allowPublicTasks,
   taskTypes = [],
   defaultTaskTypeId,
+  userRole,
 }: {
   projectId: string
   tasks: Task[]
@@ -134,6 +135,7 @@ export default function KanbanBoard({
   allowPublicTasks?: boolean
   taskTypes?: { id: string; name: string; slaMinutes: number }[]
   defaultTaskTypeId?: string | null
+  userRole?: string
 }) {
   const router = useRouter()
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
@@ -158,6 +160,34 @@ export default function KanbanBoard({
   const [attachedFile, setAttachedFile] = useState<File | null>(null)
   const [uploadingFile, setUploadingFile] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Task refresh - refetch tasks from API
+  const fetchTasks = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/tasks?projectId=${projectId}`)
+      if (res.ok) {
+        const data = await res.json()
+        // Serialize to match kanban expected format
+        const serialized = data.map((t: any) => ({
+          ...t,
+          createdAt: t.createdAt ? new Date(t.createdAt).toISOString() : new Date().toISOString(),
+          dueDate: t.dueDate ? new Date(t.dueDate).toISOString() : null,
+          _timeEntries: [],
+          _timeEntriesCount: t._count?.timeEntries || 0,
+          stageEnteredAt: t.createdAt ? new Date(t.createdAt).toISOString() : new Date().toISOString(),
+          todayMinutes: 0,
+        }))
+        setTasks(serialized)
+      }
+    } catch (e) {
+      console.error('Failed to refresh tasks:', e)
+    }
+  }, [projectId])
+
+  const handleTaskUpdate = useCallback(() => {
+    router.refresh()
+    fetchTasks()
+  }, [router, fetchTasks])
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -363,11 +393,6 @@ export default function KanbanBoard({
   const openTaskDetail = (taskId: string) => {
     setSelectedTaskId(taskId)
     setShowTaskDetail(true)
-  }
-
-  // Handle task update - refresh tasks list
-  const handleTaskUpdate = () => {
-    router.refresh()
   }
 
   // Calculate total minutes for a task
@@ -904,6 +929,7 @@ export default function KanbanBoard({
         stages={stages}
         members={members}
         completionStageId={completionStageId}
+        userRole={userRole}
       />
     </>
   )

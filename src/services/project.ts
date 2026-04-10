@@ -148,6 +148,7 @@ export async function updateProject(organizationId: string, projectId: string, d
   if (data.hourlyRate !== undefined) updateData.hourlyRate = data.hourlyRate
   if ('completionStageId' in data) updateData.completionStageId = data.completionStageId || null
   if ('allowPublicTasks' in data) updateData.allowPublicTasks = data.allowPublicTasks
+  if ('ownerId' in data) updateData.ownerId = data.ownerId || null
 
   // Handle date fields - convert strings to Date objects or set to null
   if ('startDate' in data) {

@@ -34,6 +34,8 @@ interface ProjectDetailClientProps {
     totalCost: number
     completionStageId: string | null
     allowPublicTasks: boolean
+    ownerId?: string
+    owner?: { id: string; name: string; email: string } | null
   }
   status: { label: string; className: string }
   typeLabels: Record<string, string>
@@ -47,6 +49,7 @@ interface ProjectDetailClientProps {
   taskTypes: any[]
   defaultTaskTypeId: string | null
   isViewer: boolean
+  userRole?: string
 }
 
 export default function ProjectDetailClient({
@@ -64,6 +67,7 @@ export default function ProjectDetailClient({
   taskTypes,
   defaultTaskTypeId,
   isViewer,
+  userRole,
 }: ProjectDetailClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -241,6 +245,7 @@ export default function ProjectDetailClient({
                 allowPublicTasks={projectData.allowPublicTasks}
                 taskTypes={taskTypes}
                 defaultTaskTypeId={defaultTaskTypeId}
+                userRole={userRole}
               />
             </div>
           </TabsContent>

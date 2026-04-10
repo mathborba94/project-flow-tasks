@@ -42,7 +42,7 @@ export default function MembersClient({ projectId }: { projectId: string }) {
 
   useEffect(() => {
     // Buscar usuários da org que ainda não são membros
-    if (showAdd && members.length > 0) {
+    if (showAdd) {
       fetch('/api/users')
         .then(r => r.json())
         .then(data => {

@@ -150,6 +150,7 @@ export default async function ProjectDetailPage({
         slaMinutes: tt.slaMinutes,
       }))}
       defaultTaskTypeId={org?.defaultTaskTypeId}
+      userRole={userRole}
     />
   )
 }

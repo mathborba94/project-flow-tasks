@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { User, Loader2 } from 'lucide-react'
 
 interface Project {
   id: string
@@ -27,6 +28,15 @@ interface Project {
   targetEndDate: Date | string | null
   completionStageId: string | null
   allowPublicTasks: boolean
+  ownerId?: string
+  owner?: { id: string; name: string; email: string } | null
+}
+
+interface OrgUser {
+  id: string
+  name: string
+  email: string
+  role: string
 }
 
 export default function SettingsModal({
@@ -55,7 +65,29 @@ export default function SettingsModal({
   const [targetEndDate, setTargetEndDate] = useState(project.targetEndDate ? (typeof project.targetEndDate === 'string' ? project.targetEndDate.split('T')[0] : project.targetEndDate.toISOString().split('T')[0]) : '')
   const [completionStageId, setCompletionStageId] = useState(project.completionStageId || '')
   const [allowPublicTasks, setAllowPublicTasks] = useState(project.allowPublicTasks || false)
+  const [ownerId, setOwnerId] = useState(project.ownerId || '')
+  const [orgUsers, setOrgUsers] = useState<OrgUser[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  // Carregar usuários da organização para seleção de owner
+  useEffect(() => {
+    if (open) {
+      setLoadingUsers(true)
+      fetch('/api/users')
+        .then(r => r.ok ? r.json() : [])
+        .then(data => {
+          setOrgUsers(data)
+        })
+        .catch(() => {})
+        .finally(() => setLoadingUsers(false))
+    }
+  }, [open])
+
+  // Sincronizar ownerId quando o modal abrir ou project mudar
+  useEffect(() => {
+    setOwnerId(project.ownerId || project.owner?.id || '')
+  }, [open, project.ownerId, project.owner?.id])
 
   const handleSave = async () => {
     setSaving(true)
@@ -76,6 +108,7 @@ export default function SettingsModal({
           targetEndDate: targetEndDate || null,
           completionStageId: completionStageId || null,
           allowPublicTasks,
+          ownerId: ownerId || null,
         }),
       })
 
@@ -92,6 +125,8 @@ export default function SettingsModal({
           type: updated.type,
           budget: updated.budget,
           hourlyRate: updated.hourlyRate,
+          ownerId: updated.ownerId,
+          owner: updated.owner,
         })
         onOpenChange(false)
       }
@@ -250,6 +285,48 @@ export default function SettingsModal({
                 className="mt-1 bg-zinc-900/60 border-zinc-800"
               />
             </div>
+          </div>
+
+          {/* Product Owner */}
+          <div className="bg-zinc-900/40 rounded-lg p-4 border border-zinc-800/40">
+            <h3 className="text-sm font-medium text-zinc-300 mb-3">Product Owner (P.O.)</h3>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 bg-violet-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <User className="w-4 h-4 text-violet-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-zinc-400">Responsável pelo projeto</p>
+                {project.owner && (
+                  <p className="text-sm text-zinc-200 truncate">
+                    {project.owner.name} <span className="text-zinc-600">({project.owner.email})</span>
+                  </p>
+                )}
+              </div>
+            </div>
+            <Label htmlFor="owner" className="text-xs text-zinc-400">Transferir propriedade</Label>
+            {loadingUsers ? (
+              <div className="mt-1 flex items-center gap-2 text-xs text-zinc-600">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Carregando usuários...
+              </div>
+            ) : (
+              <select
+                id="owner"
+                value={ownerId}
+                onChange={(e) => setOwnerId(e.target.value)}
+                className="mt-1 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+              >
+                <option value="">Manter owner atual</option>
+                {orgUsers
+                  .filter(u => u.role === 'OWNER' || u.role === 'ADMIN')
+                  .map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.name} ({u.role === 'OWNER' ? 'Proprietário' : 'Admin'})
+                    </option>
+                  ))
+                }
+              </select>
+            )}
           </div>
         </div>
 
