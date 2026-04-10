@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     
     const filter = timeEntryFilterSchema.parse({
-      taskId: searchParams.get('taskId'),
-      projectId: searchParams.get('projectId'),
-      userId: searchParams.get('userId'),
-      startDate: searchParams.get('startDate'),
-      endDate: searchParams.get('endDate'),
+      taskId: searchParams.get('taskId') ?? undefined,
+      projectId: searchParams.get('projectId') ?? undefined,
+      userId: searchParams.get('userId') ?? undefined,
+      startDate: searchParams.get('startDate') ?? undefined,
+      endDate: searchParams.get('endDate') ?? undefined,
     })
 
     const entries = await timeEntryService.listTimeEntries(organizationId, filter)

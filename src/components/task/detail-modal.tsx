@@ -16,7 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
   Clock, User, Calendar, Flag, Hash, Save, X,
   ArrowRight, Plus, Send, Timer, MessageSquare, History, Loader2,
-  CheckCircle2, Trash2, Edit2, Paperclip, FileText, Mail
+  CheckCircle2, Trash2, Edit2, Paperclip, FileText, Mail, BookOpen, Sparkles
 } from 'lucide-react'
 import TaskHistoryLog from '@/components/task/history-log'
 
@@ -93,6 +93,8 @@ export default function TaskDetailModal({
   onUpdate,
   taskIds,
   stages,
+  members,
+  completionStageId,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -101,6 +103,8 @@ export default function TaskDetailModal({
   onUpdate?: () => void
   taskIds?: string[]
   stages?: Stage[]
+  members?: { id: string; name: string }[]
+  completionStageId?: string | null
 }) {
   const router = useRouter()
   const [task, setTask] = useState<Task | null>(initialTask)
@@ -139,6 +143,23 @@ export default function TaskDetailModal({
   // Stage confirmation dialog
   const [showStageConfirm, setShowStageConfirm] = useState(false)
   const [nextStage, setNextStage] = useState<Stage | null>(null)
+  const [completionDate, setCompletionDate] = useState('')
+
+  // Project members for assignee select
+  const [projectMembers, setProjectMembers] = useState<{ id: string; name: string }[]>([])
+
+  // KB article generation
+  const [generatingKb, setGeneratingKb] = useState(false)
+  const [showKbDialog, setShowKbDialog] = useState(false)
+  const [kbDraft, setKbDraft] = useState<{
+    title: string
+    content: string
+    suggestedCategoryId: string | null
+    suggestedCategoryName: string | null
+    categories: { id: string; name: string }[]
+  } | null>(null)
+  const [kbCategoryId, setKbCategoryId] = useState<string | null>(null)
+  const [savingKb, setSavingKb] = useState(false)
 
   const timeEntries = task ? (timeEntriesMap[task.id] || []) : []
   const comments = task ? (commentsMap[task.id] || []) : []
@@ -237,6 +258,21 @@ export default function TaskDetailModal({
       return () => clearInterval(interval)
     }
   }, [task])
+
+  // Fetch project members when entering edit mode
+  useEffect(() => {
+    if (editMode && task?.projectId) {
+      const membersSource = members && members.length > 0 ? members : null
+      if (membersSource) {
+        setProjectMembers(membersSource)
+      } else {
+        fetch(`/api/projects/${task.projectId}/members`)
+          .then(r => r.ok ? r.json() : [])
+          .then((data: any[]) => setProjectMembers(data.map(m => ({ id: m.user.id, name: m.user.name }))))
+          .catch(() => setProjectMembers([]))
+      }
+    }
+  }, [editMode, task?.projectId, members])
 
   const handleSave = async () => {
     if (!task || !editTitle.trim()) return
@@ -407,6 +443,12 @@ export default function TaskDetailModal({
     if (!next) return
 
     setNextStage(next)
+
+    // Pre-fill today's date for completion confirmation
+    if (next.id === completionStageId) {
+      setCompletionDate(new Date().toISOString().split('T')[0])
+    }
+
     setShowStageConfirm(true)
   }
 
@@ -415,19 +457,27 @@ export default function TaskDetailModal({
     setShowStageConfirm(false)
 
     const currentNextStage = nextStage
+    const isCompletion = currentNextStage.id === completionStageId
     setNextStage(null)
 
     try {
+      const body: Record<string, any> = { pipelineStageId: currentNextStage.id }
+      if (isCompletion) {
+        body.status = 'DONE'
+        body.completedAt = completionDate
+          ? new Date(completionDate + 'T12:00:00').toISOString()
+          : new Date().toISOString()
+      }
+
       const res = await fetch(`/api/tasks/${task.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pipelineStageId: currentNextStage.id,
-        }),
+        body: JSON.stringify(body),
       })
       if (res.ok) {
         const updated = await res.json()
         setTask(updated)
+        onUpdate?.()
       }
     } catch (e) {
       console.error('Failed to advance stage:', e)
@@ -438,6 +488,49 @@ export default function TaskDetailModal({
     onOpenChange(false)
     setTask(null)
     setEditMode(false)
+  }
+
+  const generateKbArticle = async () => {
+    if (!task) return
+    setGeneratingKb(true)
+    try {
+      const res = await fetch(`/api/tasks/${task.id}/generate-kb`, { method: 'POST' })
+      if (res.ok) {
+        const data = await res.json()
+        setKbDraft(data)
+        setKbCategoryId(data.suggestedCategoryId || null)
+        setShowKbDialog(true)
+      }
+    } catch (e) {
+      console.error('Failed to generate KB article:', e)
+    } finally {
+      setGeneratingKb(false)
+    }
+  }
+
+  const handleSaveKbArticle = async (status: 'DRAFT' | 'PUBLISHED') => {
+    if (!kbDraft) return
+    setSavingKb(true)
+    try {
+      const res = await fetch('/api/knowledge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: kbDraft.title,
+          content: kbDraft.content,
+          status,
+          categoryId: kbCategoryId || null,
+        }),
+      })
+      if (res.ok) {
+        setShowKbDialog(false)
+        setKbDraft(null)
+      }
+    } catch (e) {
+      console.error('Failed to save KB article:', e)
+    } finally {
+      setSavingKb(false)
+    }
   }
 
   const formatTime = (minutes: number) => {
@@ -466,9 +559,14 @@ export default function TaskDetailModal({
 
   const hasNextTask = taskIds && task ? taskIds.indexOf(task.id) < taskIds.length - 1 : false
   const hasPrevTask = taskIds && task ? taskIds.indexOf(task.id) > 0 : false
-  const hasNextStage = stages && task?.pipelineStageId
-    ? stages.some(s => s.order > (stages.find(st => st.id === task.pipelineStageId)?.order ?? -1))
-    : false
+  const currentStageOrder = task?.pipelineStageId
+    ? (stages?.find(st => st.id === task.pipelineStageId)?.order ?? -1)
+    : -1
+  const nextStageCandidateId = stages?.find(s => s.order === currentStageOrder + 1)?.id
+  const hasNextStage = task?.status !== 'DONE'
+    && task?.status !== 'CANCELLED'
+    && !!nextStageCandidateId
+  const nextStageIsCompletion = nextStageCandidateId === completionStageId
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -487,13 +585,34 @@ export default function TaskDetailModal({
               </Button>
             )}
             {hasNextStage && (
-              <Button size="sm" variant="ghost" onClick={handleNextStageClick} className="h-7 px-2 text-xs text-emerald-400 hover:text-emerald-300">
-                <ArrowRight className="w-3 h-3 mr-1" />
-                Avançar etapa
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleNextStageClick}
+                className={`h-7 px-2 text-xs ${nextStageIsCompletion ? 'text-emerald-400 hover:text-emerald-300' : 'text-zinc-400 hover:text-zinc-200'}`}
+              >
+                {nextStageIsCompletion
+                  ? <><CheckCircle2 className="w-3 h-3 mr-1" /> Concluir Tarefa</>
+                  : <><ArrowRight className="w-3 h-3 mr-1" /> Avançar etapa</>
+                }
               </Button>
             )}
           </div>
           <div className="flex items-center gap-2">
+            {!editMode && task?.status === 'DONE' && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={generateKbArticle}
+                disabled={generatingKb}
+                className="h-7 px-3 text-xs border-violet-500/30 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10"
+              >
+                {generatingKb
+                  ? <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  : <Sparkles className="w-3 h-3 mr-1" />}
+                Gerar Artigo KB
+              </Button>
+            )}
             {!editMode && task && (
               <Button size="sm" variant="outline" onClick={() => setEditMode(true)} className="h-7 px-3 text-xs">
                 <Edit2 className="w-3 h-3 mr-1" />
@@ -647,7 +766,18 @@ export default function TaskDetailModal({
                             <Label className="text-xs text-zinc-400">Responsável</Label>
                             <select value={editAssignedToId || ''} onChange={(e) => setEditAssignedToId(e.target.value || null)} className="mt-1 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600">
                               <option value="">Sem responsável</option>
-                              {task.assignedTo && <option value={task.assignedTo.id}>{task.assignedTo.name}</option>}
+                              {projectMembers.length > 0
+                                ? projectMembers.map(m => (
+                                    <option key={m.id} value={m.id}>{m.name}</option>
+                                  ))
+                                : task.assignedTo && (
+                                    <option value={task.assignedTo.id}>{task.assignedTo.name}</option>
+                                  )
+                              }
+                              {/* If current assignee is not in project members, still include them */}
+                              {projectMembers.length > 0 && task.assignedTo && !projectMembers.find(m => m.id === task.assignedTo!.id) && (
+                                <option value={task.assignedTo.id}>{task.assignedTo.name}</option>
+                              )}
                             </select>
                           </div>
                           <div>
@@ -885,17 +1015,119 @@ export default function TaskDetailModal({
       <Dialog open={showStageConfirm} onOpenChange={setShowStageConfirm}>
         <DialogContent className="max-w-md" showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>Avançar Etapa</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              {nextStage?.id === completionStageId
+                ? <><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Confirmar Conclusão</>
+                : <><ArrowRight className="w-4 h-4" /> Avançar Etapa</>
+              }
+            </DialogTitle>
           </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-zinc-400">
-              Deseja mover esta tarefa para a etapa{' '}
-              <span className="font-medium text-zinc-200">"{nextStage?.name}"</span>?
-            </p>
-          </div>
-          <div className="flex justify-end gap-2">
+          {nextStage?.id === completionStageId ? (
+            <div className="py-2 space-y-4">
+              <p className="text-sm text-zinc-400">
+                Esta tarefa será movida para{' '}
+                <span className="font-medium text-zinc-200">"{nextStage?.name}"</span>{' '}
+                e marcada como concluída. A data registrada será usada no relatório de assertividade de SLA.
+              </p>
+              <div>
+                <Label className="text-xs text-zinc-400">Data de conclusão</Label>
+                <input
+                  type="date"
+                  value={completionDate}
+                  onChange={(e) => setCompletionDate(e.target.value)}
+                  className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="py-4">
+              <p className="text-sm text-zinc-400">
+                Deseja mover esta tarefa para a etapa{' '}
+                <span className="font-medium text-zinc-200">"{nextStage?.name}"</span>?
+              </p>
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={() => { setShowStageConfirm(false); setNextStage(null) }}>Cancelar</Button>
-            <Button onClick={confirmNextStage}>Confirmar</Button>
+            <Button
+              onClick={confirmNextStage}
+              className={nextStage?.id === completionStageId ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}
+            >
+              {nextStage?.id === completionStageId ? 'Concluir Tarefa' : 'Confirmar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      {/* KB Article Review Dialog */}
+      <Dialog open={showKbDialog} onOpenChange={setShowKbDialog}>
+        <DialogContent className="max-w-2xl !max-h-[85vh] !flex !flex-col !overflow-hidden" showCloseButton={false}>
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-violet-400" />
+              Artigo Gerado por IA
+            </DialogTitle>
+            <p className="text-xs text-zinc-500 mt-1">Revise e edite o conteúdo antes de salvar na base de conhecimento.</p>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto py-4 space-y-4">
+            <div>
+              <Label className="text-xs text-zinc-400">Título</Label>
+              <input
+                type="text"
+                value={kbDraft?.title || ''}
+                onChange={(e) => setKbDraft(prev => prev ? { ...prev, title: e.target.value } : null)}
+                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-zinc-400">Categoria</Label>
+              <select
+                value={kbCategoryId || ''}
+                onChange={(e) => setKbCategoryId(e.target.value || null)}
+                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-md px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+              >
+                <option value="">Sem categoria</option>
+                {kbDraft?.categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              {kbDraft?.suggestedCategoryName && (
+                <p className="text-xs text-violet-400/80 mt-1 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  IA sugeriu: <strong>{kbDraft.suggestedCategoryName}</strong>
+                </p>
+              )}
+            </div>
+            <div>
+              <Label className="text-xs text-zinc-400">Conteúdo (Markdown)</Label>
+              <textarea
+                value={kbDraft?.content || ''}
+                onChange={(e) => setKbDraft(prev => prev ? { ...prev, content: e.target.value } : null)}
+                className="mt-1.5 w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600 resize-none min-h-[280px] font-mono text-xs leading-relaxed"
+              />
+            </div>
+          </div>
+          <div className="flex justify-between items-center pt-4 border-t border-zinc-800/40 flex-shrink-0">
+            <Button variant="ghost" onClick={() => setShowKbDialog(false)} className="text-zinc-400">
+              Cancelar
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => handleSaveKbArticle('DRAFT')}
+                disabled={savingKb || !kbDraft?.title}
+              >
+                {savingKb ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : null}
+                Salvar Rascunho
+              </Button>
+              <Button
+                onClick={() => handleSaveKbArticle('PUBLISHED')}
+                disabled={savingKb || !kbDraft?.title}
+                className="bg-violet-600 hover:bg-violet-700 text-white border-0"
+              >
+                {savingKb ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <BookOpen className="w-3 h-3 mr-1" />}
+                Publicar na KB
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

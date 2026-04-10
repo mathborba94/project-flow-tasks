@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import { getCurrentUserWithOrg } from '@/services/auth'
 import { getProjectById } from '@/services/project'
 import { listTasks } from '@/services/task'
-import { listOrganizationMembers } from '@/services/organization'
 import prisma from '@/lib/prisma'
 import Link from 'next/link'
 import KanbanBoard from '@/components/project/kanban'
@@ -39,10 +38,9 @@ export default async function ProjectDetailPage({
     userRole = user.role
   } catch {}
 
-  const [project, tasks, orgMembers, taskTypes, org] = await Promise.all([
+  const [project, tasks, taskTypes, org] = await Promise.all([
     getProjectById(organizationId, id),
     listTasks(organizationId, { projectId: id }),
-    listOrganizationMembers(organizationId),
     prisma.taskType.findMany({
       where: { organizationId },
       orderBy: { name: 'asc' },
@@ -56,6 +54,9 @@ export default async function ProjectDetailPage({
   if (!project) {
     notFound()
   }
+
+  // Extract project members (only people who are members of this project)
+  const orgMembers = project.members.map((m: any) => ({ id: m.user.id, name: m.user.name }))
 
   // Get pipeline stages - use project's own pipeline
   const pipeline = await prisma.pipeline.findUnique({
@@ -71,12 +72,54 @@ export default async function ProjectDetailPage({
   const completedTasks = tasks.filter((t: { status: string }) => t.status === 'DONE').length
   const progress = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0
 
+  const taskIds = tasks.map((t: { id: string }) => t.id)
+
+  // Compute stageEnteredAt: last STAGE_CHANGED event per task
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+
+  const [stageHistories, todayTimeEntries] = await Promise.all([
+    taskIds.length > 0
+      ? prisma.taskHistory.findMany({
+          where: {
+            taskId: { in: taskIds },
+            eventType: 'STAGE_CHANGED',
+          },
+          select: { taskId: true, createdAt: true },
+          orderBy: { createdAt: 'desc' },
+        })
+      : [],
+    taskIds.length > 0
+      ? prisma.timeEntry.groupBy({
+          by: ['taskId'],
+          where: {
+            taskId: { in: taskIds },
+            createdAt: { gte: todayStart },
+          },
+          _sum: { minutes: true },
+        })
+      : [],
+  ])
+
+  // Build maps for O(1) lookups
+  const stageEnteredMap = new Map<string, string>()
+  for (const h of stageHistories) {
+    if (!stageEnteredMap.has(h.taskId)) {
+      stageEnteredMap.set(h.taskId, h.createdAt.toISOString())
+    }
+  }
+  const todayMinutesMap = new Map<string, number>(todayTimeEntries.map(e => [e.taskId, e._sum.minutes || 0] as const))
+
   // Serialize for client components
-  const serializedTasks = tasks.map((t: { id: string; title: string; description: string | null; status: string; priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'; assignedToId: string | null; pipelineStageId: string | null; assignedTo: { id: string; name: string } | null; _count?: { timeEntries: number } }) => ({
+  const serializedTasks = tasks.map((t: { id: string; title: string; description: string | null; status: string; priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'; assignedToId: string | null; pipelineStageId: string | null; assignedTo: { id: string; name: string } | null; _count?: { timeEntries: number }; createdAt: Date; dueDate?: Date | null }) => ({
     ...t,
+    createdAt: t.createdAt.toISOString(),
+    dueDate: t.dueDate ? t.dueDate.toISOString() : null,
     assignedTo: t.assignedTo,
     _timeEntries: [],
     _timeEntriesCount: t._count?.timeEntries || 0,
+    stageEnteredAt: stageEnteredMap.get(t.id) || t.createdAt.toISOString(),
+    todayMinutes: todayMinutesMap.get(t.id) || 0,
   }))
 
   const serializedStages = pipeline?.stages.map(s => ({

@@ -114,7 +114,12 @@ export async function updateTask(organizationId: string, taskId: string, data: U
     }
   }
 
-  if (isCompleting) {
+  // Handle explicit completedAt (string → Date)
+  if ('completedAt' in updateData && updateData.completedAt) {
+    updateData.completedAt = new Date(updateData.completedAt)
+  }
+
+  if (isCompleting && !updateData.completedAt) {
     updateData.completedAt = new Date()
   }
 

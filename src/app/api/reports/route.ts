@@ -8,6 +8,83 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const reportType = searchParams.get('type')
 
+    if (reportType === 'summary') {
+      const startDate = searchParams.get('startDate')
+      const endDate = searchParams.get('endDate')
+
+      const timeWhere: any = { organizationId }
+      if (startDate || endDate) {
+        timeWhere.createdAt = {}
+        if (startDate) timeWhere.createdAt.gte = new Date(startDate)
+        if (endDate) timeWhere.createdAt.lte = new Date(endDate + 'T23:59:59')
+      }
+
+      const taskWhere: any = { organizationId }
+      if (startDate || endDate) {
+        taskWhere.createdAt = {}
+        if (startDate) taskWhere.createdAt.gte = new Date(startDate)
+        if (endDate) taskWhere.createdAt.lte = new Date(endDate + 'T23:59:59')
+      }
+
+      const [projects, tasks, timeStats, taskTypeStats] = await Promise.all([
+        prisma.project.findMany({
+          where: { organizationId, archived: false },
+          select: {
+            id: true, name: true, color: true, status: true, type: true,
+            _count: { select: { tasks: true } },
+          },
+          orderBy: { name: 'asc' },
+        }),
+        prisma.task.findMany({
+          where: taskWhere,
+          select: { id: true, status: true, priority: true },
+        }),
+        prisma.timeEntry.groupBy({
+          by: ['projectId'],
+          where: timeWhere,
+          _sum: { minutes: true, costSnapshot: true },
+        }),
+        prisma.timeEntry.groupBy({
+          by: ['taskId'],
+          where: timeWhere,
+          _sum: { minutes: true, costSnapshot: true },
+          _count: true,
+        }),
+      ])
+
+      const totalMinutes = timeStats.reduce((s, t) => s + (t._sum.minutes || 0), 0)
+      const totalCost = timeStats.reduce((s, t) => s + Number(t._sum.costSnapshot || 0), 0)
+
+      const timeByProject = new Map(timeStats.map(t => [t.projectId, t._sum]))
+      const projectsWithStats = projects.map(p => ({
+        ...p,
+        totalHours: (timeByProject.get(p.id)?.minutes || 0) / 60,
+        totalCost: Number(timeByProject.get(p.id)?.costSnapshot || 0),
+      }))
+
+      const tasksByStatus = tasks.reduce((acc, t) => {
+        acc[t.status] = (acc[t.status] || 0) + 1
+        return acc
+      }, {} as Record<string, number>)
+
+      const tasksByPriority = tasks.reduce((acc, t) => {
+        acc[t.priority] = (acc[t.priority] || 0) + 1
+        return acc
+      }, {} as Record<string, number>)
+
+      return NextResponse.json({
+        projects: projectsWithStats,
+        tasks,
+        tasksByStatus,
+        tasksByPriority,
+        totalHours: totalMinutes / 60,
+        totalCost,
+        completionRate: tasks.length > 0
+          ? Math.round((tasks.filter(t => t.status === 'DONE').length / tasks.length) * 100)
+          : 0,
+      })
+    }
+
     if (reportType === 'hours-consumption') {
       const projectId = searchParams.get('projectId')
       const userId = searchParams.get('userId')
@@ -78,12 +155,28 @@ export async function GET(request: NextRequest) {
 
     if (reportType === 'overdue-tasks') {
       const now = new Date()
+      const projectId = searchParams.get('projectId')
+      const assigneeId = searchParams.get('assigneeId')
+      const dueDateFrom = searchParams.get('dueDateFrom')
+      const dueDateTo = searchParams.get('dueDateTo')
+
+      const where: any = {
+        organizationId,
+        status: { notIn: ['DONE', 'CANCELLED'] },
+      }
+      if (projectId) where.projectId = projectId
+      if (assigneeId) where.assignedToId = assigneeId
+
+      if (dueDateFrom || dueDateTo) {
+        where.dueDate = {}
+        if (dueDateFrom) where.dueDate.gte = new Date(dueDateFrom)
+        if (dueDateTo) where.dueDate.lte = new Date(dueDateTo + 'T23:59:59')
+      } else {
+        where.dueDate = { lt: now }
+      }
+
       const tasks = await prisma.task.findMany({
-        where: {
-          organizationId,
-          dueDate: { lt: now },
-          status: { notIn: ['DONE', 'CANCELLED'] },
-        },
+        where,
         include: {
           assignedTo: { select: { id: true, name: true } },
           project: { select: { id: true, name: true } },
@@ -95,8 +188,22 @@ export async function GET(request: NextRequest) {
     }
 
     if (reportType === 'project-health') {
+      const statusFilter = searchParams.get('status')
+      const typeFilter = searchParams.get('type')
+      const startDate = searchParams.get('startDate')
+      const endDate = searchParams.get('endDate')
+
+      const projectWhere: any = { organizationId, archived: false }
+      if (statusFilter) projectWhere.status = statusFilter
+      if (typeFilter) projectWhere.type = typeFilter
+      if (startDate || endDate) {
+        projectWhere.createdAt = {}
+        if (startDate) projectWhere.createdAt.gte = new Date(startDate)
+        if (endDate) projectWhere.createdAt.lte = new Date(endDate + 'T23:59:59')
+      }
+
       const projects = await prisma.project.findMany({
-        where: { organizationId, archived: false },
+        where: projectWhere,
         include: {
           owner: { select: { id: true, name: true } },
           _count: { select: { tasks: true } },
@@ -105,9 +212,17 @@ export async function GET(request: NextRequest) {
       })
 
       const projectIds = projects.map(p => p.id)
+
+      const timeWhere: any = { projectId: { in: projectIds }, organizationId }
+      if (startDate || endDate) {
+        timeWhere.createdAt = {}
+        if (startDate) timeWhere.createdAt.gte = new Date(startDate)
+        if (endDate) timeWhere.createdAt.lte = new Date(endDate + 'T23:59:59')
+      }
+
       const timeEntries = await prisma.timeEntry.groupBy({
         by: ['projectId'],
-        where: { projectId: { in: projectIds }, organizationId },
+        where: timeWhere,
         _sum: { minutes: true, costSnapshot: true },
       })
 

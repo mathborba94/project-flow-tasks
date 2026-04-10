@@ -41,7 +41,11 @@ type Task = {
   pipelineStageId: string | null
   assignedTo: { id: string; name: string } | null
   _timeEntries?: { minutes: number }[]
+  _timeEntriesCount?: number
   dueDate?: string | null
+  createdAt?: string
+  stageEnteredAt?: string
+  todayMinutes?: number
 }
 
 type User = {
@@ -376,9 +380,16 @@ export default function KanbanBoard({
     if (minutes === 0) return null
     const hours = Math.floor(minutes / 60)
     const mins = minutes % 60
-    if (hours > 0) return `${hours}h ${mins > 0 ? `${mins}m` : ''}`
+    if (hours > 0) return `${hours}h${mins > 0 ? `${mins}m` : ''}`
     return `${mins}m`
   }
+
+  const getDaysInStage = (task: Task): number => {
+    const since = task.stageEnteredAt ? new Date(task.stageEnteredAt) : (task.createdAt ? new Date(task.createdAt) : new Date())
+    return Math.max(0, Math.floor((Date.now() - since.getTime()) / 86400000))
+  }
+
+  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 
   // --- Render: No stages - show template picker ---
   if (stages.length === 0) {
@@ -467,13 +478,13 @@ export default function KanbanBoard({
               </div>
               {taskTypes.length > 0 && (
                 <div>
-                  <Label htmlFor="task-type">Tipo de Tarefa</Label>
+                  <Label htmlFor="task-type">Tipo / SLA</Label>
                   <Select
                     value={newTaskTypeId}
                     onValueChange={setNewTaskTypeId}
                   >
                     <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Selecione" />
+                      <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
                     <SelectContent>
                       {taskTypes.map((tt) => (
@@ -483,11 +494,26 @@ export default function KanbanBoard({
                       ))}
                     </SelectContent>
                   </Select>
+                  {(() => {
+                    const tt = taskTypes.find(t => t.id === newTaskTypeId)
+                    if (!tt) return null
+                    const due = new Date(Date.now() + tt.slaMinutes * 60 * 1000)
+                    const fmt = due.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                    const hours = Math.floor(tt.slaMinutes / 60)
+                    const mins = tt.slaMinutes % 60
+                    const slaFmt = hours > 0 ? `${hours}h${mins > 0 ? `${mins}m` : ''}` : `${mins}m`
+                    return (
+                      <div className="mt-1.5 flex items-center gap-1.5 text-xs text-amber-400/90 bg-amber-500/8 border border-amber-500/15 rounded-md px-3 py-2">
+                        <Calendar className="w-3 h-3 flex-shrink-0" />
+                        <span>Prazo SLA: <strong>{fmt}</strong> <span className="text-amber-500/70">({slaFmt})</span></span>
+                      </div>
+                    )
+                  })()}
                 </div>
               )}
               {members.length > 0 && (
                 <div>
-                  <Label htmlFor="task-assignee">Responsavel</Label>
+                  <Label htmlFor="task-assignee">Responsável</Label>
                   <Select
                     value={newTaskAssignee}
                     onValueChange={setNewTaskAssignee}
@@ -584,6 +610,15 @@ export default function KanbanBoard({
                     const timeLogged = getTaskTimeLogged(task)
                     const isDragging = draggedTaskId === task.id
                     const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'DONE' && task.status !== 'CANCELLED'
+                    const daysInStage = getDaysInStage(task)
+                    const todayFmt = formatTime(task.todayMinutes || 0)
+                    const totalFmt = formatTime(timeLogged || (task._timeEntriesCount ? task._timeEntriesCount * 30 : 0))
+                    const snippet = task.description
+                      ? task.description.length > 100
+                        ? task.description.slice(0, 97) + '…'
+                        : task.description
+                      : null
+                    const initials = task.assignedTo ? getInitials(task.assignedTo.name) : null
 
                     return (
                       <div
@@ -592,52 +627,118 @@ export default function KanbanBoard({
                         onDragStart={() => handleDragStart(task.id)}
                         onDragEnd={handleDragEnd}
                         onClick={() => openTaskDetail(task.id)}
-                        className={`group cursor-pointer bg-zinc-900/60 border rounded-md p-2.5 md:p-3 transition-all ${
-                          isDragging
-                            ? 'opacity-50 scale-95'
-                            : 'hover:border-zinc-700/60'
-                        } ${isOverdue ? 'border-red-500/40 hover:border-red-500/60' : 'border-zinc-800/40'} ${canEdit ? 'cursor-grab active:cursor-grabbing' : ''}`}
+                        className={`group relative cursor-pointer rounded-lg transition-all duration-150 ${
+                          isDragging ? 'opacity-40 scale-95' : ''
+                        } ${canEdit ? 'cursor-grab active:cursor-grabbing' : ''}`}
                       >
-                        {/* Title */}
-                        <p className="text-[11px] md:text-xs text-zinc-300 group-hover:text-zinc-100 transition-colors line-clamp-2 mb-1.5 md:mb-2 leading-relaxed">
-                          {task.title}
-                        </p>
+                        {/* Priority accent bar on left */}
+                        <div className={`absolute left-0 top-2 bottom-2 w-[3px] rounded-full ${
+                          task.priority === 'URGENT' ? 'bg-red-500' :
+                          task.priority === 'HIGH' ? 'bg-orange-500' :
+                          task.priority === 'MEDIUM' ? 'bg-blue-500' :
+                          'bg-zinc-700'
+                        }`} />
 
-                        {/* Meta row */}
-                        <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <div className="flex items-center gap-1.5">
-                            {/* Priority badge */}
-                            <Badge
-                              variant="outline"
-                              className={`text-[10px] px-1.5 py-0 border ${priorityColors[task.priority]}`}
-                            >
-                              {priorityLabels[task.priority]}
-                            </Badge>
+                        <div className={`ml-2 bg-zinc-900/70 border rounded-lg overflow-hidden transition-all ${
+                          isOverdue
+                            ? 'border-red-500/30 hover:border-red-500/50 shadow-[0_0_0_1px_rgba(239,68,68,0.08)]'
+                            : 'border-zinc-800/50 hover:border-zinc-700/60 hover:shadow-[0_2px_8px_rgba(0,0,0,0.3)]'
+                        }`}>
 
-                            {/* Due date */}
-                            {task.dueDate && (
-                              <span className={`flex items-center gap-0.5 text-[10px] ${isOverdue ? 'text-red-400' : 'text-zinc-600'}`}>
-                                <Calendar className="w-2.5 h-2.5" />
-                                {new Date(task.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                          {/* Top section */}
+                          <div className="px-3 pt-3 pb-2">
+                            {/* Priority + overdue row */}
+                            <div className="flex items-center gap-1.5 mb-2">
+                              <span className={`text-[9px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded border ${priorityColors[task.priority]}`}>
+                                {priorityLabels[task.priority]}
                               </span>
-                            )}
+                              {isOverdue && (
+                                <span className="flex items-center gap-0.5 text-[9px] text-red-400 font-medium">
+                                  <AlertTriangle className="w-2.5 h-2.5" />
+                                  Atrasada
+                                </span>
+                              )}
+                              {task.dueDate && !isOverdue && (
+                                <span className="flex items-center gap-0.5 text-[9px] text-zinc-600 ml-auto">
+                                  <Calendar className="w-2.5 h-2.5" />
+                                  {new Date(task.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                                </span>
+                              )}
+                            </div>
 
-                            {/* Time logged */}
-                            {timeLogged > 0 && (
-                              <span className="flex items-center gap-0.5 text-[10px] text-zinc-600">
-                                <Clock className="w-2.5 h-2.5" />
-                                {formatTime(timeLogged)}
-                              </span>
+                            {/* Title */}
+                            <p className="text-[11px] md:text-xs font-medium text-zinc-200 group-hover:text-zinc-100 transition-colors line-clamp-2 leading-snug mb-1">
+                              {task.title}
+                            </p>
+
+                            {/* Description snippet */}
+                            {snippet && (
+                              <p className="text-[10px] text-zinc-500 italic leading-relaxed line-clamp-2">
+                                {snippet}
+                              </p>
                             )}
                           </div>
 
-                          {/* Assignee */}
-                          {task.assignedTo && (
-                            <span className="flex items-center gap-1 text-[10px] text-zinc-500">
-                              <User className="w-2.5 h-2.5" />
-                              {task.assignedTo.name.split(' ')[0]}
-                            </span>
-                          )}
+                          {/* Divider */}
+                          <div className="mx-3 border-t border-zinc-800/60" />
+
+                          {/* Bottom section */}
+                          <div className="px-3 py-2 space-y-1.5">
+                            {/* Assignee + Created */}
+                            <div className="flex items-center justify-between gap-2">
+                              {task.assignedTo ? (
+                                <div className="flex items-center gap-1.5">
+                                  <div className="w-4 h-4 rounded-full bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <span className="text-[7px] font-bold text-white leading-none">{initials}</span>
+                                  </div>
+                                  <span className="text-[10px] text-zinc-400 truncate max-w-[90px]">
+                                    {task.assignedTo.name.split(' ')[0]}
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1">
+                                  <div className="w-4 h-4 rounded-full border border-dashed border-zinc-700 flex items-center justify-center">
+                                    <User className="w-2 h-2 text-zinc-700" />
+                                  </div>
+                                  <span className="text-[10px] text-zinc-700">Sem responsável</span>
+                                </div>
+                              )}
+                              {task.createdAt && (
+                                <span className="text-[9px] text-zinc-600 tabular-nums flex-shrink-0">
+                                  {new Date(task.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Metrics row */}
+                            <div className="flex items-center gap-2">
+                              {/* Days in stage */}
+                              <div className={`flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded ${
+                                daysInStage >= 7 ? 'bg-amber-500/10 text-amber-400' :
+                                daysInStage >= 3 ? 'bg-blue-500/10 text-blue-400' :
+                                'bg-zinc-800/60 text-zinc-600'
+                              }`}>
+                                <Clock className="w-2 h-2" />
+                                {daysInStage}d no pipe
+                              </div>
+
+                              {/* Hours today */}
+                              {todayFmt && (
+                                <div className="flex items-center gap-1 text-[9px] font-medium bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded">
+                                  <Clock className="w-2 h-2" />
+                                  {todayFmt} hoje
+                                </div>
+                              )}
+
+                              {/* Total time logged */}
+                              {(task._timeEntriesCount || 0) > 0 && !todayFmt && (
+                                <div className="flex items-center gap-1 text-[9px] text-zinc-600 ml-auto">
+                                  <Clock className="w-2 h-2" />
+                                  {task._timeEntriesCount}h reg.
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )
@@ -703,13 +804,13 @@ export default function KanbanBoard({
             </div>
             {taskTypes.length > 0 && (
               <div>
-                <Label htmlFor="task-type">Tipo de Tarefa</Label>
+                <Label htmlFor="task-type">Tipo / SLA</Label>
                 <Select
                   value={newTaskTypeId}
                   onValueChange={setNewTaskTypeId}
                 >
                   <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Selecione" />
+                    <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
                     {taskTypes.map((tt) => (
@@ -719,6 +820,21 @@ export default function KanbanBoard({
                     ))}
                   </SelectContent>
                 </Select>
+                {(() => {
+                  const tt = taskTypes.find(t => t.id === newTaskTypeId)
+                  if (!tt) return null
+                  const due = new Date(Date.now() + tt.slaMinutes * 60 * 1000)
+                  const fmt = due.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                  const hours = Math.floor(tt.slaMinutes / 60)
+                  const mins = tt.slaMinutes % 60
+                  const slaFmt = hours > 0 ? `${hours}h${mins > 0 ? `${mins}m` : ''}` : `${mins}m`
+                  return (
+                    <div className="mt-1.5 flex items-center gap-1.5 text-xs text-amber-400/90 bg-amber-500/8 border border-amber-500/15 rounded-md px-3 py-2">
+                      <Calendar className="w-3 h-3 flex-shrink-0" />
+                      <span>Prazo SLA: <strong>{fmt}</strong> <span className="text-amber-500/70">({slaFmt})</span></span>
+                    </div>
+                  )
+                })()}
               </div>
             )}
             {members.length > 0 && (
@@ -786,6 +902,8 @@ export default function KanbanBoard({
         onUpdate={handleTaskUpdate}
         taskIds={tasks.map(t => t.id)}
         stages={stages}
+        members={members}
+        completionStageId={completionStageId}
       />
     </>
   )

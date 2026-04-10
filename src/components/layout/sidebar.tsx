@@ -16,6 +16,7 @@ import {
   Bot,
   Info,
   X,
+  HelpCircle,
 } from 'lucide-react'
 import QuickTaskButton from './quick-task'
 
@@ -129,10 +130,14 @@ export function Sidebar({ userName, userEmail, userRole, orgLogoUrl, orgLogoShap
         })}
       </nav>
 
-      {/* Bottom nav — only for admin/owner */}
-      {canAccessSettings && (
-        <div className="px-2 pb-2 space-y-0.5 border-t border-zinc-800/40 pt-2">
-          {[{ href: '/dashboard/settings', label: 'Organização', icon: Settings }].map(item => {
+      {/* Bottom nav */}
+      <div className="px-2 pb-2 space-y-0.5 border-t border-zinc-800/40 pt-2">
+        {(() => {
+          const bottomItems = [
+            ...(canAccessSettings ? [{ href: '/dashboard/settings', label: 'Organização', icon: Settings }] : []),
+            { href: '/dashboard/help', label: 'Ajuda', icon: HelpCircle },
+          ]
+          return bottomItems.map(item => {
             const isActive = pathname === item.href
             return (
               <Link
@@ -151,9 +156,9 @@ export function Sidebar({ userName, userEmail, userRole, orgLogoUrl, orgLogoShap
                 <span className="truncate">{item.label}</span>
               </Link>
             )
-          })}
-        </div>
-      )}
+          })
+        })()}
+      </div>
 
       {/* Quick Task Button */}
       {userRole !== 'VIEWER' && (

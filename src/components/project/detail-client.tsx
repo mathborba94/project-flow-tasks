@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Settings, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Settings, ExternalLink, GanttChartSquare, Share2 } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import KanbanBoard from '@/components/project/kanban'
 import ProjectActions from '@/components/project/actions'
@@ -13,6 +13,7 @@ import DocumentsClient from '@/components/project/documents'
 import MembersClient from '@/components/project/members'
 import SettingsModal from '@/components/project/settings-modal'
 import CsvImportExport from '@/components/project/csv-import-export'
+import GanttChart from '@/components/project/gantt'
 
 interface ProjectDetailClientProps {
   projectId: string
@@ -134,6 +135,17 @@ export default function ProjectDetailClient({
             </div>
 
             <div className="flex items-center gap-0.5 md:gap-1">
+              {showProgress && projectData.allowPublicTasks && (
+                <Link
+                  href={`/public/projects/${projectId}`}
+                  target="_blank"
+                  className="hidden md:flex items-center gap-1.5 px-2 py-1 text-[11px] text-zinc-500 hover:text-zinc-300 border border-zinc-800/60 hover:border-zinc-700/60 rounded transition-colors"
+                  title="Página pública do projeto"
+                >
+                  <Share2 className="w-3 h-3" />
+                  Compartilhar
+                </Link>
+              )}
               {!isViewer && (
                 <>
                   <ProjectActions projectId={projectId} archived={projectData.archived} />
@@ -193,6 +205,15 @@ export default function ProjectDetailClient({
                 >
                   Insights
                 </TabsTrigger>
+                {showProgress && (
+                  <TabsTrigger
+                    value="gantt"
+                    className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3 flex items-center gap-1"
+                  >
+                    <GanttChartSquare className="w-3.5 h-3.5" />
+                    Gantt
+                  </TabsTrigger>
+                )}
                 <TabsTrigger
                   value="import"
                   className="rounded-none border-b-2 border-transparent data-active:border-zinc-400 data-active:bg-transparent data-active:text-zinc-200 text-zinc-500 text-xs md:text-sm px-2 md:px-3"
@@ -235,6 +256,17 @@ export default function ProjectDetailClient({
           <TabsContent value="insights" className="h-full overflow-y-auto p-4">
             <InsightsClient projectId={projectId} />
           </TabsContent>
+          {showProgress && (
+            <TabsContent value="gantt" className="h-full overflow-y-auto p-4">
+              <GanttChart
+                tasks={serializedTasks}
+                stages={serializedStages}
+                projectStartDate={projectData.startDate}
+                projectEndDate={projectData.endDate}
+                projectTargetEndDate={projectData.targetEndDate}
+              />
+            </TabsContent>
+          )}
           <TabsContent value="import" className="h-full overflow-y-auto p-4">
             <CsvImportExport projectId={projectId} />
           </TabsContent>

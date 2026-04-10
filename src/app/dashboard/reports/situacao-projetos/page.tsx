@@ -1,20 +1,33 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, FolderKanban, TrendingUp, DollarSign, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, FolderKanban, TrendingUp, DollarSign, AlertTriangle, CheckCircle2, Filter } from 'lucide-react'
 
 export default function SituacaoProjetosPage() {
   const [projects, setProjects] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [statusFilter, setStatusFilter] = useState('')
+  const [typeFilter, setTypeFilter] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
-  useEffect(() => {
-    fetch('/api/reports?type=project-health')
+  const loadProjects = useCallback(() => {
+    setLoading(true)
+    const params = new URLSearchParams({ type: 'project-health' })
+    if (statusFilter) params.set('status', statusFilter)
+    if (typeFilter) params.set('type', typeFilter)
+    if (startDate) params.set('startDate', startDate)
+    if (endDate) params.set('endDate', endDate)
+
+    fetch(`/api/reports?${params}`)
       .then(r => r.json())
       .then(data => setProjects(data.projects || []))
       .catch(() => setProjects([]))
       .finally(() => setLoading(false))
-  }, [])
+  }, [statusFilter, typeFilter, startDate, endDate])
+
+  useEffect(() => { loadProjects() }, [loadProjects])
 
   const getProgressColor = (pct: number) => {
     if (pct >= 80) return 'text-emerald-400'
@@ -42,6 +55,14 @@ export default function SituacaoProjetosPage() {
     COMPLETED: 'bg-zinc-800 text-zinc-400',
   }
 
+  const hasFilters = statusFilter || typeFilter || startDate || endDate
+  const clearFilters = () => {
+    setStatusFilter('')
+    setTypeFilter('')
+    setStartDate('')
+    setEndDate('')
+  }
+
   return (
     <div className="p-6 max-w-6xl">
       <div className="mb-6 animate-fade-in">
@@ -53,12 +74,70 @@ export default function SituacaoProjetosPage() {
         <p className="text-sm text-zinc-500 mt-0.5">Saúde dos projetos: progresso, orçamento e atrasos</p>
       </div>
 
+      {/* Filters */}
+      <div className="bg-zinc-950/50 border border-zinc-800/60 rounded-lg p-4 mb-5 animate-fade-in">
+        <div className="flex items-center gap-2 mb-3">
+          <Filter className="w-3.5 h-3.5 text-zinc-500" />
+          <span className="text-xs font-medium text-zinc-400">Filtros</span>
+          {hasFilters && (
+            <button onClick={clearFilters} className="ml-auto text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors">
+              Limpar filtros
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div>
+            <label className="text-[11px] text-zinc-500 mb-1 block">Status</label>
+            <select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+            >
+              <option value="">Todos</option>
+              <option value="ACTIVE">Ativo</option>
+              <option value="PAUSED">Pausado</option>
+              <option value="COMPLETED">Concluído</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-[11px] text-zinc-500 mb-1 block">Tipo</label>
+            <select
+              value={typeFilter}
+              onChange={e => setTypeFilter(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+            >
+              <option value="">Todos os tipos</option>
+              <option value="SCOPE_FIXED">Escopo Fechado</option>
+              <option value="CONTINUOUS">Contínuo</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-[11px] text-zinc-500 mb-1 block">Criado a partir de</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={e => setStartDate(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+            />
+          </div>
+          <div>
+            <label className="text-[11px] text-zinc-500 mb-1 block">Criado até</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={e => setEndDate(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-md px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+            />
+          </div>
+        </div>
+      </div>
+
       {loading ? (
         <div className="p-8 text-center"><p className="text-sm text-zinc-500">Carregando...</p></div>
       ) : projects.length === 0 ? (
         <div className="p-8 text-center">
           <FolderKanban className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-          <p className="text-sm text-zinc-500">Nenhum projeto encontrado</p>
+          <p className="text-sm text-zinc-500">Nenhum projeto encontrado com os filtros selecionados</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -75,6 +154,9 @@ export default function SituacaoProjetosPage() {
                   <h3 className="text-sm font-medium text-zinc-200">{project.name}</h3>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full ${statusColors[project.status] || statusColors.ACTIVE}`}>
                     {statusLabels[project.status] || project.status}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800/60 text-zinc-500">
+                    {project.type === 'SCOPE_FIXED' ? 'Escopo Fechado' : 'Contínuo'}
                   </span>
                 </div>
                 <div className="text-right">
@@ -103,7 +185,7 @@ export default function SituacaoProjetosPage() {
                 ) : (
                   <div>
                     <p className="text-[11px] text-zinc-500 mb-1">Tipo</p>
-                    <p className="text-xs text-zinc-400">{project.type === 'CONTINUOUS' ? 'Contínuo' : 'Escopo Fechado'}</p>
+                    <p className="text-xs text-zinc-400">Contínuo</p>
                   </div>
                 )}
                 <div>

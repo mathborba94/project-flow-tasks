@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const createTaskSchema = z.object({
   title: z.string().min(1).max(500),
-  description: z.string().max(10000).optional(),
+  description: z.string().max(10000).nullable().optional(),
   projectId: z.string().cuid().nullable().optional(),
   taskTypeId: z.string().cuid().nullable().optional(),
   pipelineStageId: z.string().cuid().nullable().optional(),
@@ -14,7 +14,9 @@ export const createTaskSchema = z.object({
   attachmentName: z.string().nullable().optional(),
 })
 
-export const updateTaskSchema = createTaskSchema.partial()
+export const updateTaskSchema = createTaskSchema.partial().extend({
+  completedAt: z.string().datetime().nullable().optional(),
+})
 
 export const taskFilterSchema = z.object({
   status: z.enum(['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE', 'CANCELLED']).optional(),
