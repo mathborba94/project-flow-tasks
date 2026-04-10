@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const createTimeEntrySchema = z.object({
   taskId: z.string().cuid(),
   minutes: z.number().int().min(1).max(1440),
-  description: z.string().max(2000).optional(),
+  description: z.string().min(1).max(2000),
 })
 
 export const timeEntryFilterSchema = z.object({

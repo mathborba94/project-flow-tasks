@@ -311,7 +311,7 @@ export default function TaskDetailModal({
   }
 
   const handleAddTimeEntry = async () => {
-    if (!task || !timeMinutes) return
+    if (!task || !timeMinutes || !timeDesc.trim()) return
     setSubmittingTime(true)
     try {
       const res = await fetch('/api/time-entries', {
@@ -320,7 +320,7 @@ export default function TaskDetailModal({
         body: JSON.stringify({
           taskId: task.id,
           minutes: parseInt(timeMinutes),
-          description: timeDesc.trim() || null,
+          description: timeDesc.trim(),
         }),
       })
       if (res.ok) {
@@ -925,9 +925,9 @@ export default function TaskDetailModal({
                       <div className="flex gap-3">
                         <div className="flex gap-2 flex-1">
                           <Input type="number" value={timeMinutes} onChange={(e) => setTimeMinutes(e.target.value)} placeholder="Minutos" className="w-28 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-700 border-zinc-300" />
-                          <Input value={timeDesc} onChange={(e) => setTimeDesc(e.target.value)} placeholder="Descrição (opcional)" className="flex-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-700 border-zinc-300" />
+                          <Input value={timeDesc} onChange={(e) => setTimeDesc(e.target.value)} placeholder="Descrição (obrigatória)" className="flex-1 dark:bg-zinc-900/60 bg-zinc-50 dark:border-zinc-700 border-zinc-300" />
                         </div>
-                        <Button onClick={handleAddTimeEntry} disabled={submittingTime || !timeMinutes}><Plus className="w-4 h-4 mr-1" />Registrar</Button>
+                        <Button onClick={handleAddTimeEntry} disabled={submittingTime || !timeMinutes || !timeDesc.trim()}><Plus className="w-4 h-4 mr-1" />Registrar</Button>
                       </div>
                     </div>
 
